@@ -32,9 +32,6 @@ function ButtonComp({screenWidth, screenHeight}) {
         const newSettingX = screenWidth/1280 * 809
         const newSettingY = screenHeight/720 * 663
 
-        // console.log('newSettingX', newSettingX)
-        // console.log('newSettingY', newSettingY)
-
         setOverviewXY({ pageX: newOverviewX, pageY: newOverviewY })
         setAlarmXY({ pageX: newAlarmX, pageY: newAlarmY })
         setTrendXY({ pageX: newTrendX, pageY: newTrendY })
