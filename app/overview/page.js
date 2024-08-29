@@ -1,5 +1,6 @@
 'use client'
 import React from 'react';
+import ButtonComp from '@/components/ButtonComp';
 
 function page(props) {
 
@@ -14,14 +15,27 @@ function page(props) {
 
         setScreenSize({ width: screenWidth, height: screenHeight });
 
-    })
+    }, [])
+
+    const handlePageXY = async (e) => {
+        console.log('pageX', e.pageX)
+        console.log('pageY', e.pageY)
+    }
 
     return (
-        <div className='w-screen h-screen'>
+        <div 
+        style={{width: screenSize.width+'px', height: screenSize.height+'px'}}
+        >
             <div 
-            style={{maxWidth: screenSize.width+'px', maxHeight: screenSize.height+'px'}}
-            className="bg-[url('/overview.png')] bg-contain bg-center bg-no-repeat text-black"
+            className="w-full h-full bg-[url('/overview.png')] bg-contain bg-center bg-no-repeat text-black"
+            onClick={(e) => handlePageXY(e)}
             >
+                {
+                    screenSize.width !== 0 ?
+                    <ButtonComp screenWidth={screenSize.width} screenHeight={screenSize.height}/>
+                    :
+                    ''
+                }
             </div>
         </div>
     );
