@@ -47,31 +47,31 @@ function ButtonComp({screenWidth, screenHeight}) {
             <Link href="/overview">
                 <button
                     style={{ top: overviewXY.pageY + 'px', left: overviewXY.pageX + 'px' }}
-                    className='absolute border-1 py-5 px-16 rounded-md cursor-pointer'>
+                    className='absolute py-5 px-16 rounded-md cursor-pointer'>
                 </button>
             </Link>
             <Link href="/alarm">
                 <button
                     style={{ top: alarmXY.pageY + 'px', left: alarmXY.pageX + 'px' }}
-                    className='absolute border-1 py-5 px-16 rounded-md cursor-pointer'>
+                    className='absolute py-5 px-16 rounded-md cursor-pointer'>
                 </button>
             </Link>
             <Link href="/trend">
                 <button
                     style={{ top: trendXY.pageY + 'px', left: trendXY.pageX + 'px' }}
-                    className='absolute border-1 py-5 px-16 rounded-md cursor-pointer'>
+                    className='absolute py-5 px-16 rounded-md cursor-pointer'>
                 </button>
             </Link>
             <Link href="/log">
                 <button
                     style={{ top: logXY.pageY + 'px', left: logXY.pageX + 'px' }}
-                    className='absolute border-1 py-5 px-16 rounded-md cursor-pointer'>
+                    className='absolute py-5 px-16 rounded-md cursor-pointer'>
                 </button>
             </Link>
             <Link href="/setting">
                 <button
                     style={{ top: settingXY.pageY + 'px', left: settingXY.pageX + 'px' }}
-                    className='absolute border-1 py-5 px-16 rounded-md cursor-pointer'>
+                    className='absolute py-5 px-16 rounded-md cursor-pointer'>
                 </button>
             </Link>
         </div>
