@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Thermal Monitoring",
+  title: "Switchgear Thermal Monitoring",
   description: "Application for Monitoring",
 };
 

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    
+
     const buttons = [
         { label: 'OVERVIEW', x: 0.222, y: 0.926, width: 0.1, height: 0.052, href: '/canvas/overview' },
         { label: 'ALARM', x: 0.325, y: 0.926, width: 0.1, height: 0.052, href: '/canvas/alarm' },
