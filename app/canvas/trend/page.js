@@ -3,6 +3,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
+const chartData = [
+    { time: '00:00', value: 20 },
+    { time: '01:00', value: 22 },
+    { time: '02:00', value: 21 },
+    { time: '03:00', value: 23 },
+    { time: '04:00', value: 24 },
+    { time: '05:00', value: 26 },
+];
+
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
@@ -63,6 +72,9 @@ export default function page() {
             // Draw the background image
             ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
 
+            // Draw the chart
+            drawChart(ctx, xOffset, yOffset, imgWidth, imgHeight);
+
             // Draw the image to fill the entire canvas
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
@@ -87,6 +99,63 @@ export default function page() {
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
         };
+
+        const drawChart = (ctx, xOffset, yOffset, imgWidth, imgHeight) => {
+            const chartWidth = imgWidth * 0.6;
+            const chartHeight = imgHeight * 0.3;
+            const startX = xOffset + imgWidth * 0.2;
+            const startY = yOffset + imgHeight * 0.65;
+        
+            const maxValue = Math.max(...chartData.map(data => data.value));
+            const minValue = Math.min(...chartData.map(data => data.value));
+        
+            // Draw X and Y axes
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX + chartWidth, startY);  // X-axis
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX, startY - chartHeight); // Y-axis
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+        
+            // Plot points and draw the line
+            ctx.beginPath();
+            ctx.moveTo(startX, startY - ((chartData[0].value - minValue) / (maxValue - minValue)) * chartHeight);
+        
+            chartData.forEach((data, index) => {
+                const x = startX + (index / (chartData.length - 1)) * chartWidth;
+                const y = startY - ((data.value - minValue) / (maxValue - minValue)) * chartHeight;
+        
+                ctx.lineTo(x, y);  // Draw line
+        
+                // Draw the point
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = 'blue';
+                ctx.fill();
+            });
+        
+            // Draw the line (Blue)
+            ctx.strokeStyle = 'blue';
+            ctx.stroke();
+        
+            // Draw time labels on X-axis
+            ctx.font = `${imgHeight * 0.02}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            chartData.forEach((data, index) => {
+                const x = startX + (index / (chartData.length - 1)) * chartWidth;
+                ctx.fillText(data.time, x, startY + 5);
+            });
+        
+            // Draw value labels on Y-axis
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            [minValue, maxValue].forEach((value, index) => {
+                const y = startY - (index * chartHeight);
+                ctx.fillText(value, startX - 10, y);
+            });
+        };
+             
 
         const handleClick = (event) => {
             const rect = canvas.getBoundingClientRect();

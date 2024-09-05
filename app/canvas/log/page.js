@@ -21,13 +21,13 @@ export default function page() {
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
-        
+
         if (typeof window !== 'undefined') {
             const currentPath = window.location.pathname; // Get current path
-    
+
             console.log('currentPath', currentPath)
             console.log('currentPath', currentPath.split('/'))
-    
+
             // currPath = currentPath.split('/')[2]
             bgImage.src = `/${currentPath.split('/')[2]}.png`;
         }
@@ -35,8 +35,8 @@ export default function page() {
         const resizeCanvas = () => {
             const canvasWidth = window.innerWidth;
             const canvasHeight = window.innerHeight;
-            console.log('canvasWidth',canvasWidth)
-            console.log('canvasHeight',canvasHeight)
+            console.log('canvasWidth', canvasWidth)
+            console.log('canvasHeight', canvasHeight)
             canvas.width = canvasWidth;
             canvas.height = canvasHeight;
             drawCanvas(canvasWidth, canvasHeight);
@@ -63,6 +63,9 @@ export default function page() {
             // Draw the background image
             ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
 
+            // Draw the table on the bgImage
+            drawTable(ctx, xOffset, yOffset, imgWidth, imgHeight);
+
             // Draw the image to fill the entire canvas
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
@@ -86,6 +89,47 @@ export default function page() {
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
+        };
+
+        const drawTable = (ctx, xOffset, yOffset, imgWidth, imgHeight) => {
+            const rows = 5;
+            const cols = 4;
+            const cellWidth = imgWidth * 0.16;
+            const cellHeight = imgHeight * 0.06;
+
+            const marginTop = imgHeight * 0.1;  // Adjust this value to set the margin top
+            const marginLeft = imgWidth * 0.02;  // Adjust this value to set the margin top
+            const startX = xOffset + imgWidth * 0.15 + marginLeft;
+            const startY = yOffset + imgHeight * 0.25 + marginTop;
+
+            const headers = ['Time', 'Temperature', 'Status', 'Notes'];
+
+            // Adjust font size based on cell height
+            ctx.font = `${cellHeight * 0.5}px Arial`;
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+
+            headers.forEach((header, index) => {
+                ctx.fillText(header, startX + index * cellWidth + 10, startY - cellHeight / 2);
+            });
+
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+
+            for (let i = 0; i <= rows; i++) {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY + i * cellHeight);
+                ctx.lineTo(startX + cols * cellWidth, startY + i * cellHeight);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i <= cols; i++) {
+                ctx.beginPath();
+                ctx.moveTo(startX + i * cellWidth, startY);
+                ctx.lineTo(startX + i * cellWidth, startY + rows * cellHeight);
+                ctx.stroke();
+            }
         };
 
         const handleClick = (event) => {
@@ -130,7 +174,7 @@ export default function page() {
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
         canvas.addEventListener('mousemove', handleMouseMove);
-        
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);
