@@ -38,7 +38,7 @@ export default function page() {
         const ctx = canvas.getContext('2d');
         const bgImage = new Image();
 
-        console.log('site', site)
+        // console.log('site', site)
 
         if(site == 'DONGGI'){
             bgImage.src = `/v2/donggi/overview.png`;
@@ -212,7 +212,7 @@ export default function page() {
 
         const intervalId = setInterval(() => {
             updatePanelValue(data)
-            console.log('panelValue', panelValue)
+            // console.log('panelValue', panelValue)
         }, 1000);
 
         bgImage.onload = resizeCanvas;

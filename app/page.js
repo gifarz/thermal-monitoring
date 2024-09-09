@@ -2,27 +2,20 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { menuButton } from '@/utils/coordinates';
 
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
 
-    const buttons = [
-        { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/' },
-        { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/overview' },
-        { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
-        { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trend' },
-        { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/log' },
-        { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
-    ];
-
-    const sites = [
-        { label: 'DONGGI', x: 0.02, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-        { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-    ];
+    // const sites = [
+    //     { label: 'DONGGI', x: 0.02, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    //     { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    // ];
 
     useEffect(() => {
 
+        const site = localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI'
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
@@ -64,7 +57,7 @@ export default function page() {
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
             // Draw buttons
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 const btnX = xOffset + button.x * imgWidth;
                 const btnY = yOffset + button.y * imgHeight;
                 const btnWidth = button.width * imgWidth;
@@ -110,7 +103,7 @@ export default function page() {
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -138,7 +131,7 @@ export default function page() {
             const y = event.clientY - rect.top;
             let hovering = false;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -173,7 +166,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
         };
-    }, [buttons]);
+    }, [menuButton]);
 
     return (
         <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
