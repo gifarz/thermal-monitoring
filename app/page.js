@@ -76,26 +76,6 @@ export default function page() {
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
-
-            sites.forEach(site => {
-                const siteX = xOffset + site.x * imgWidth;
-                const siteY = yOffset + site.y * imgHeight;
-                const siteWidth = site.width * imgWidth;
-                const siteHeight = site.height * imgHeight;
-
-                // Draw site background
-                ctx.fillStyle = 'transparent';
-                ctx.fillRect(siteX, siteY, siteWidth, siteHeight);
-
-                // Draw site label
-                // ctx.fillStyle = 'white';
-                // ctx.font = `${siteHeight * 0.5}px Arial`;
-                // ctx.textAlign = 'center';
-                // ctx.textBaseline = 'middle';
-                ctx.fillText(site.label, siteX + siteWidth / 2, siteY + siteHeight / 2);
-
-                site.bounds = { x: siteX, y: siteY, width: siteWidth, height: siteHeight };
-            });
         };
 
         const handleClick = (event) => {
@@ -112,17 +92,6 @@ export default function page() {
                     router.push(button.href);
                 }
             });
-
-            sites.forEach(site => {
-                if (
-                    x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
-                    y > site.bounds.y && y < site.bounds.y + site.bounds.height
-                ) {
-                    // Set the site to the localStorage
-                    localStorage.setItem('site', site.label)
-                    router.push(site.href);
-                }
-            });
         };
 
         const handleMouseMove = (event) => {
@@ -135,15 +104,6 @@ export default function page() {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
-                ) {
-                    hovering = true;
-                }
-            });
-
-            sites.forEach(site => {
-                if (
-                    x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
-                    y > site.bounds.y && y < site.bounds.y + site.bounds.height
                 ) {
                     hovering = true;
                 }
