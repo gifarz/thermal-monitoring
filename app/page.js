@@ -6,20 +6,20 @@ import { useRouter } from 'next/navigation';
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    
+
     const buttons = [
-        { label: 'OVERVIEW', x: 0.159, y: 0.937, width: 0.1, height: 0.052, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.261, y: 0.937, width: 0.1, height: 0.052, href: '/' },
-        { label: 'ALARM', x: 0.363, y: 0.937, width: 0.1, height: 0.052, href: '/alarm' },
-        { label: 'TREND', x: 0.465, y: 0.937, width: 0.1, height: 0.052, href: '/trend' },
-        { label: 'LOG', x: 0.567, y: 0.937, width: 0.1, height: 0.052, href: '/log' },
-        { label: 'SETTING', x: 0.669, y: 0.937, width: 0.1, height: 0.052, href: '/setting' },
+        { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/' },
+        { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/overview' },
+        { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
+        { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trend' },
+        { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/log' },
+        { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
     ];
 
     const sites = [
-      { label: 'DONGGI', x: 0.02, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-      { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-  ];
+        { label: 'DONGGI', x: 0.02, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+        { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    ];
 
     useEffect(() => {
 
@@ -28,7 +28,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/canvas/arsitektur.png`;
+        bgImage.src = `/v2/donggi/architecture.png`;
 
         const resizeCanvas = () => {
             const canvasWidth = window.innerWidth;
@@ -85,25 +85,25 @@ export default function page() {
             });
 
             sites.forEach(site => {
-              const siteX = xOffset + site.x * imgWidth;
-              const siteY = yOffset + site.y * imgHeight;
-              const siteWidth = site.width * imgWidth;
-              const siteHeight = site.height * imgHeight;
+                const siteX = xOffset + site.x * imgWidth;
+                const siteY = yOffset + site.y * imgHeight;
+                const siteWidth = site.width * imgWidth;
+                const siteHeight = site.height * imgHeight;
 
-              // Draw site background
-              ctx.fillStyle = 'transparent';
-              ctx.fillRect(siteX, siteY, siteWidth, siteHeight);
+                // Draw site background
+                ctx.fillStyle = 'transparent';
+                ctx.fillRect(siteX, siteY, siteWidth, siteHeight);
 
-              // Draw site label
-              // ctx.fillStyle = 'white';
-              // ctx.font = `${siteHeight * 0.5}px Arial`;
-              // ctx.textAlign = 'center';
-              // ctx.textBaseline = 'middle';
-              ctx.fillText(site.label, siteX + siteWidth / 2, siteY + siteHeight / 2);
+                // Draw site label
+                // ctx.fillStyle = 'white';
+                // ctx.font = `${siteHeight * 0.5}px Arial`;
+                // ctx.textAlign = 'center';
+                // ctx.textBaseline = 'middle';
+                ctx.fillText(site.label, siteX + siteWidth / 2, siteY + siteHeight / 2);
 
-              site.bounds = { x: siteX, y: siteY, width: siteWidth, height: siteHeight };
-          });
-      };
+                site.bounds = { x: siteX, y: siteY, width: siteWidth, height: siteHeight };
+            });
+        };
 
         const handleClick = (event) => {
             const rect = canvas.getBoundingClientRect();
@@ -121,15 +121,15 @@ export default function page() {
             });
 
             sites.forEach(site => {
-              if (
-                  x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
-                  y > site.bounds.y && y < site.bounds.y + site.bounds.height
-              ) {
-                  // Set the site to the localStorage
-                  localStorage.setItem('site', site.label)
-                  router.push(site.href);
-              }
-          });
+                if (
+                    x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
+                    y > site.bounds.y && y < site.bounds.y + site.bounds.height
+                ) {
+                    // Set the site to the localStorage
+                    localStorage.setItem('site', site.label)
+                    router.push(site.href);
+                }
+            });
         };
 
         const handleMouseMove = (event) => {
@@ -148,12 +148,12 @@ export default function page() {
             });
 
             sites.forEach(site => {
-              if (
-                  x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
-                  y > site.bounds.y && y < site.bounds.y + site.bounds.height
-              ) {
-                  hovering = true;
-              }
+                if (
+                    x > site.bounds.x && x < site.bounds.x + site.bounds.width &&
+                    y > site.bounds.y && y < site.bounds.y + site.bounds.height
+                ) {
+                    hovering = true;
+                }
             });
 
             if (hovering) {
@@ -167,7 +167,7 @@ export default function page() {
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
         canvas.addEventListener('mousemove', handleMouseMove);
-        
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);

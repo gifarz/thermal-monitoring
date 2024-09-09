@@ -1,29 +1,34 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { menuButton, detailValues } from '@/utils/coordinates';
+import selectDonggiData from '@/pages/api/selectDonggiData';
+import useSWR from 'swr';
 
 export default function page() {
-    const canvasRef = useRef(null);
-    const router = useRouter(); // Initialize the router
-    
-    const buttons = [
-        { label: 'OVERVIEW', x: 0.159, y: 0.937, width: 0.1, height: 0.052, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.261, y: 0.937, width: 0.1, height: 0.052, href: '/' },
-        { label: 'ALARM', x: 0.363, y: 0.937, width: 0.1, height: 0.052, href: '/alarm' },
-        { label: 'TREND', x: 0.465, y: 0.937, width: 0.1, height: 0.052, href: '/trend' },
-        { label: 'LOG', x: 0.567, y: 0.937, width: 0.1, height: 0.052, href: '/log' },
-        { label: 'SETTING', x: 0.669, y: 0.937, width: 0.1, height: 0.052, href: '/setting' },
-    ];
+    const [ detailValue, setDetailValue ] = React.useState(detailValues)
+    const { data, error, isLoading } = useSWR(
+        '/api/selectDonggiData', 
+        selectDonggiData, 
+        { refreshInterval: 1000 }
+    )
 
-    useEffect(() => {
+    const canvasRef = React.useRef(null);
+    const router = useRouter(); // Initialize the router
+    const searchParams = useSearchParams()
+
+    const ref = searchParams.get('ref')
+    const refPrefix = ref.split('-')[1] // ex donggi-L102, the value is L102
+
+    React.useEffect(() => {
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
 
-        bgImage.src = `/canvas/detail.png`;
+        bgImage.src = `/v2/donggi/detail.png`;
 
         const resizeCanvas = () => {
             const canvasWidth = window.innerWidth;
@@ -59,7 +64,7 @@ export default function page() {
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
             // Draw buttons
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 const btnX = xOffset + button.x * imgWidth;
                 const btnY = yOffset + button.y * imgHeight;
                 const btnWidth = button.width * imgWidth;
@@ -79,14 +84,32 @@ export default function page() {
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
 
-      };
+            // Draw each label on the canvas
+            detailValue.forEach(label => {
+                const labelX = xOffset + label.x * imgWidth;
+                const labelY = yOffset + label.y * imgHeight;
+                const labelWidth = label.width * imgWidth;
+                const labelHeight = label.height * imgHeight;
+
+                // Set font and style for text
+                ctx.fillStyle = 'black'; // Text color
+                ctx.font = `${labelHeight * 0.2}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                ctx.fillText(label.value, labelX + labelWidth / 2, labelY + labelHeight / 2);
+
+                label.bounds = { x: labelX, y: labelY, width: labelWidth, height: labelHeight };
+            });
+
+        };
 
         const handleClick = (event) => {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -103,7 +126,7 @@ export default function page() {
             const y = event.clientY - rect.top;
             let hovering = false;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -123,13 +146,36 @@ export default function page() {
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
         canvas.addEventListener('mousemove', handleMouseMove);
-        
+
+        const intervalId = setInterval(() => {
+            updateDetailValue()
+            // console.log('detailValue', detailValue)
+        }, 1000);
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
+            clearInterval(intervalId);
         };
-    }, [buttons]);
+
+    }, [menuButton, detailValue, data]);
+
+    const updateDetailValue = () => {
+        if(data){
+            // Filter the data based on refPrefix (e.g., "L103")
+            const filteredData =  data.filter(item => item.tname.includes(refPrefix));
+        
+            // console.log('filteredData', filteredData)
+            // Update the labels array where tag matches the last part of tname (e.g., "T01")
+            const updatedValue = detailValues.map(data => {
+              const matchingData = filteredData.find(item => item.tname.endsWith(data.tag));
+              return matchingData != undefined ? { ...data, value: matchingData.tvalue } : data;
+            });
+        
+            setDetailValue(updatedValue);
+        }
+    };
 
     return (
         <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>

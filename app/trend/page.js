@@ -2,19 +2,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { menuButton } from '@/utils/coordinates';
 
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    
-    const buttons = [
-        { label: 'OVERVIEW', x: 0.159, y: 0.937, width: 0.1, height: 0.052, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.261, y: 0.937, width: 0.1, height: 0.052, href: '/' },
-        { label: 'ALARM', x: 0.363, y: 0.937, width: 0.1, height: 0.052, href: '/alarm' },
-        { label: 'TREND', x: 0.465, y: 0.937, width: 0.1, height: 0.052, href: '/trend' },
-        { label: 'LOG', x: 0.567, y: 0.937, width: 0.1, height: 0.052, href: '/log' },
-        { label: 'SETTING', x: 0.669, y: 0.937, width: 0.1, height: 0.052, href: '/setting' },
-    ];
 
     useEffect(() => {
 
@@ -23,7 +15,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/canvas/trend.png`;
+        bgImage.src = `/v2/donggi/trending.png`;
 
         const resizeCanvas = () => {
             const canvasWidth = window.innerWidth;
@@ -59,7 +51,7 @@ export default function page() {
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
             // Draw buttons
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 const btnX = xOffset + button.x * imgWidth;
                 const btnY = yOffset + button.y * imgHeight;
                 const btnWidth = button.width * imgWidth;
@@ -86,7 +78,7 @@ export default function page() {
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -103,7 +95,7 @@ export default function page() {
             const y = event.clientY - rect.top;
             let hovering = false;
 
-            buttons.forEach(button => {
+            menuButton.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
@@ -129,7 +121,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
         };
-    }, [buttons]);
+    }, [menuButton]);
 
     return (
         <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
