@@ -2,36 +2,26 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-// import { menuButton } from '@/utils/coordinates';
+import { menuButton } from '@/utils/coordinates';
 
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    const [locStorage, setLocStorage] = React.useState("DONGGI")
 
-    const menuButton = [
-        { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/arch/`+locStorage.toLowerCase() },
-        { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
-        { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trend' },
-        { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/log' },
-        { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
-    ];
-
-    const sites = [
-        { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-        { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-    ];
+    // const sites = [
+    //     { label: 'DONGGI', x: 0.02, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    //     { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    // ];
 
     useEffect(() => {
 
-        setLocStorage(localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI')
+        const site = localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI'
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
 
-        bgImage.src = `/v1/arsitektur.png`;
+        bgImage.src = `/v2/donggi/architecture.png`;
 
         const resizeCanvas = () => {
             const canvasWidth = window.innerWidth;
@@ -74,38 +64,17 @@ export default function page() {
                 const btnHeight = button.height * imgHeight;
 
                 // Draw button background
-                // ctx.fillStyle = 'black';
-                // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+                ctx.fillStyle = 'transparent';
+                ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
 
                 // Draw button label
                 // ctx.fillStyle = 'white';
                 // ctx.font = `${btnHeight * 0.5}px Arial`;
                 // ctx.textAlign = 'center';
                 // ctx.textBaseline = 'middle';
-                // ctx.fillText(button.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
+                ctx.fillText(button.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-            });
-
-            // Draw sites
-            sites.forEach(site => {
-                const btnX = xOffset + site.x * imgWidth;
-                const btnY = yOffset + site.y * imgHeight;
-                const btnWidth = site.width * imgWidth;
-                const btnHeight = site.height * imgHeight;
-
-                // Draw site background
-                // ctx.fillStyle = 'black';
-                // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-                // Draw site label
-                // ctx.fillStyle = 'white';
-                // ctx.font = `${btnHeight * 0.5}px Arial`;
-                // ctx.textAlign = 'center';
-                // ctx.textBaseline = 'middle';
-                // ctx.fillText(site.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
-
-                site.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
         };
 
@@ -123,16 +92,6 @@ export default function page() {
                     router.push(button.href);
                 }
             });
-
-            sites.forEach(button => {
-                if (
-                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
-                ) {
-                    // Navigate to the respective page without a full page refresh
-                    router.push(button.href);
-                }
-            });
         };
 
         const handleMouseMove = (event) => {
@@ -142,15 +101,6 @@ export default function page() {
             let hovering = false;
 
             menuButton.forEach(button => {
-                if (
-                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
-                ) {
-                    hovering = true;
-                }
-            });
-
-            sites.forEach(button => {
                 if (
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
