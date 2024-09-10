@@ -40,6 +40,16 @@ export default function page() {
         };
 
         const drawCanvas = (canvasWidth, canvasHeight) => {
+            // Get device pixel ratio (for handling high-DPI screens)
+            const dpr = window.devicePixelRatio || 1;
+
+            // Set canvas dimensions based on the device pixel ratio
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+
+            // Scale the context to handle high-DPI
+            ctx.scale(dpr, dpr);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const imgAspectRatio = bgImage.width / bgImage.height;
