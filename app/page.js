@@ -25,6 +25,8 @@ export default function page() {
 
     useEffect(() => {
 
+        router.push('/v2/architecture');
+
         setLocStorage(localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI')
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -70,8 +72,13 @@ export default function page() {
             const xOffset = (canvasWidth - imgWidth) / 2;
             const yOffset = (canvasHeight - imgHeight) / 2;
 
+            // Using image resolution for width and height
+            // const imgWidth2 = bgImage.width;
+            // const imgHeight2 = bgImage.height;
+
             // Draw the background image
-            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
+            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight); // Responsive
+            // ctx.drawImage(bgImage, 0, 0, imgWidth, imgHeight);
 
             // Draw the image to fill the entire canvas
             // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
@@ -186,11 +193,14 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
         };
-    }, [menuButton]);
+    }, [menuButton, router]);
 
     return (
-        <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-            <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
+        // <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
+        //     <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
+        // </div>
+        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto' }}>
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: 'auto' }} />
         </div>
     );
 };

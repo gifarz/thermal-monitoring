@@ -12,3 +12,10 @@ model realtime {
   tname  String  @db.VarChar(45)
   tvalue String? @db.VarChar(45)
 }
+
+model alg_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
+}

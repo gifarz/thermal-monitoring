@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <NextUIProvider className="light text-foreground bg-background overflow-hidden">
+        <NextUIProvider className="light text-foreground bg-background">
           <NextThemesProvider attribute="class" defaultTheme="light">
             {children}
           </NextThemesProvider>

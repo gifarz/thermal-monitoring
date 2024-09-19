@@ -3,10 +3,33 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
+import { useTable } from 'react-table';
+
+const columns = [
+    {
+        Header: 'Name',
+        accessor: 'name',
+    },
+    {
+        Header: 'Age',
+        accessor: 'age',
+    },
+    {
+        Header: 'Country',
+        accessor: 'country',
+    },
+];
+
+const data = [
+    { name: 'John', age: 25, country: 'USA' },
+    { name: 'Jane', age: 28, country: 'Canada' },
+    { name: 'Michael', age: 22, country: 'UK' },
+];
 
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
+    const tableInstance = useTable({ columns, data });
 
     useEffect(() => {
 
@@ -80,6 +103,8 @@ export default function page() {
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
+
+            // handleTable();
         };
 
         const handleClick = (event) => {
@@ -120,11 +145,44 @@ export default function page() {
             }
         };
 
+        const handleTable = () => {
+            // Draw table headers and rows
+            const startX = 50;
+            const startY = 50;
+            const cellWidth = 100;
+            const cellHeight = 40;
+
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.strokeStyle = 'black';
+
+            // Draw headers
+            tableInstance.headerGroups.forEach(headerGroup => {
+                headerGroup.headers.forEach((column, colIndex) => {
+                    const x = startX + colIndex * cellWidth;
+                    ctx.strokeRect(x, startY, cellWidth, cellHeight);
+                    ctx.fillText(column.render('Header'), x + cellWidth / 2, startY + cellHeight / 2);
+                });
+            });
+
+            // Draw rows
+            tableInstance.rows.forEach((row, rowIndex) => {
+                tableInstance.prepareRow(row);
+                row.cells.forEach((cell, colIndex) => {
+                    const x = startX + colIndex * cellWidth;
+                    const y = startY + (rowIndex + 1) * cellHeight;
+                    ctx.strokeRect(x, y, cellWidth, cellHeight);
+                    ctx.fillText(cell.render('Cell'), x + cellWidth / 2, y + cellHeight / 2);
+                });
+            });
+        }
+
         bgImage.onload = resizeCanvas;
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
         canvas.addEventListener('mousemove', handleMouseMove);
-        
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);

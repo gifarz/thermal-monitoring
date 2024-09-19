@@ -17,14 +17,14 @@ import {
     maxYValue2,
     avgYValue2
 } from '@/utils/coordinates';
-import selectDonggiData from '@/pages/api/selectDonggiData';
+import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 
 export default function page() {
     const [ panelValue, setPanelValue ] = React.useState()
     const { data, error, isLoading } = useSWR(
         '/api/selectDonggiData', 
-        selectDonggiData, 
+        selectRealtimeDonggi, 
         { refreshInterval: 1000 }
     )
 
@@ -119,7 +119,7 @@ export default function page() {
                 const panelHeight = panel.height * imgHeight;
 
                 // Draw panel background
-                ctx.fillStyle = 'tranparent';
+                ctx.fillStyle = 'transparent';
                 // ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
 
                 // Draw panel label
