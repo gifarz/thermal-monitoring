@@ -8,13 +8,22 @@ import dynamic from 'next/dynamic'
 const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ssr: false });
 
 function page(props) {
-
-    const site = localStorage.getItem('site').toLowerCase()
+    const [ imageUrl, setImageUrl ] = React.useState()
     const pathname = usePathname()
-    const pageName = pathname.split('/')[2]
 
-    const imageUrl = `/v2/${site}/${pageName}`
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const site = localStorage.getItem('site').toLowerCase()
+            const pageName = pathname.split('/')[2]
+        
+            const url = `/v2/${site}/${pageName}`
 
+            setImageUrl(url)
+        }
+    }, []);
+
+    if (!imageUrl) return
+    
     return (
         <>
             <MainPageV2Comp path={imageUrl}/>

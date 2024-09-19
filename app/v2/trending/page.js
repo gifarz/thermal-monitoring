@@ -14,21 +14,27 @@ const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ss
 
 
 function page(props) {
-
-    const [trendingValue, setTrendingValue] = React.useState()
+    const [ imageUrl, setImageUrl ] = React.useState()
     const { data, error, isLoading } = useSWR(
         '/api/selectDonggiData',
         selectAlgDonggi,
         { refreshInterval: 1000 }
     )
-    const site = localStorage.getItem('site').toLowerCase()
     const pathname = usePathname()
-    const pageName = pathname.split('/')[2]
 
-    const imageUrl = `/v2/${site}/${pageName}`
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const site = localStorage.getItem('site').toLowerCase()
+            const pageName = pathname.split('/')[2]
+        
+            const url = `/v2/${site}/${pageName}`
+
+            setImageUrl(url)
+        }
+    }, []);
 
     if (error) return <p>Error when loading page</p>
-    if (isLoading) return
+    if (isLoading || !imageUrl) return
 
     console.log('data', data)
 
