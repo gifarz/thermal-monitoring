@@ -8,6 +8,12 @@ import useSWR from 'swr';
 import {
     Progress
 } from "@nextui-org/react";
+import dynamic from 'next/dynamic'
+ 
+const DynamicComponentWithNoSSR = dynamic(
+  () => import('@/components/MainPageV2Comp'),
+  { ssr: false }
+)
 
 function page(props) {
 
@@ -29,8 +35,10 @@ function page(props) {
     console.log('data', data)
 
     return (
-        // <></>
-        <MainPageV2Comp path={imageUrl} trending={data}/>
+        <>
+            <MainPageV2Comp path={imageUrl} trending={data}/>
+            <DynamicComponentWithNoSSR />
+        </>
     );
 }
 

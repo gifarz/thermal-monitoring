@@ -3,6 +3,12 @@
 import MainPageV2Comp from '@/components/MainPageV2Comp';
 import React from 'react';
 import { usePathname } from 'next/navigation'
+import dynamic from 'next/dynamic'
+ 
+const DynamicComponentWithNoSSR = dynamic(
+  () => import('@/components/MainPageV2Comp'),
+  { ssr: false }
+)
 
 function page(props) {
 
@@ -13,7 +19,10 @@ function page(props) {
     const imageUrl = `/v2/${site}/${pageName}`
 
     return (
-        <MainPageV2Comp path={imageUrl}/>
+        <>
+            <MainPageV2Comp path={imageUrl}/>
+            <DynamicComponentWithNoSSR />
+        </>
     );
 }
 
