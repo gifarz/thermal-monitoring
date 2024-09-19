@@ -1,14 +1,11 @@
 'use client'
 
-import MainPageV2Comp from '@/components/MainPageV2Comp';
+// import MainPageV2Comp from '@/components/MainPageV2Comp';
 import React from 'react';
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
  
-const DynamicComponentWithNoSSR = dynamic(
-  () => import('@/components/MainPageV2Comp'),
-  { ssr: false }
-)
+const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ssr: false });
 
 function page(props) {
 
@@ -21,7 +18,6 @@ function page(props) {
     return (
         <>
             <MainPageV2Comp path={imageUrl}/>
-            <DynamicComponentWithNoSSR />
         </>
     );
 }
