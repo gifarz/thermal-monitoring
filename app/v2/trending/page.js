@@ -34,9 +34,9 @@ function page(props) {
     }, []);
 
     if (error) return <p>Error when loading page</p>
-    if (isLoading || !imageUrl) return
+    if (isLoading || !imageUrl) return <p>Loading Page</p>
 
-    console.log('data', data)
+    console.log('data trending', data)
 
     return (
         <>
