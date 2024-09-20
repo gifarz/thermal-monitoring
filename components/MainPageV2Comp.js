@@ -35,7 +35,7 @@ export default function MainPageV2Comp(param) {
         return () => {
             window.removeEventListener('resize', resizeCanvas);
         };
-    }, [image]);
+    }, [image, bodyTable]);
 
     const handleButtonClick = (button) => {
         router.push(button.href);
@@ -171,7 +171,7 @@ export default function MainPageV2Comp(param) {
                     }
 
                     {
-                        pageName == 'trending' ?
+                        pageName == 'alarm' ?
                             <>
                                 {/* Button to export table data to CSV */}
                                 <React.Fragment>
@@ -295,7 +295,7 @@ export default function MainPageV2Comp(param) {
 
                                 {/* Render table body */}
                                 {
-                                    bodyTable.map((rowData, rowIndex) =>
+                                    bodyTable?.map((rowData, rowIndex) =>
                                         Object.values(rowData).map((value, colIndex) => {
                                             const x = tableX + colIndex * cellWidth;
                                             const y = tableY + (rowIndex + 1) * cellHeight; // +1 for the header row

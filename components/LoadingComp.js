@@ -4,12 +4,12 @@ import { Progress, Image } from "@nextui-org/react";
 function LoadingComp(props) {
     return (
         <div className="w-screen h-screen overflow-y-hidden">
-            <Progress
+            {/* <Progress
                 size="sm"
                 isIndeterminate
                 aria-label="Loading..."
                 className="w-screen"
-            />
+            /> */}
             <div className="w-full h-5/6 flex flex-col justify-center items-center">
                 <Image
                     width={80}

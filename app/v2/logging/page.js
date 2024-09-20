@@ -4,6 +4,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import LoadingComp from '@/components/LoadingComp';
  
 const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ssr: false });
 
@@ -22,7 +23,7 @@ function page(props) {
         }
     }, []);
 
-    if (!imageUrl) return
+    if (imageUrl === undefined) return <LoadingComp />
     
     return (
         <>

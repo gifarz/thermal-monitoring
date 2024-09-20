@@ -9,6 +9,7 @@ import {
     Progress
 } from "@nextui-org/react";
 import dynamic from 'next/dynamic'
+import LoadingComp from '@/components/LoadingComp';
 
 const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ssr: false });
 
@@ -31,10 +32,11 @@ function page(props) {
 
             setImageUrl(url)
         }
+
     }, []);
 
     if (error) return <p>Error when loading page</p>
-    if (isLoading || !imageUrl) return <p>Loading Page</p>
+    if (isLoading && imageUrl === undefined) return <LoadingComp />
 
     console.log('data trending', data)
 
