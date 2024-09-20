@@ -32,7 +32,7 @@ function page(props) {
 
     React.useEffect(() => {
         if (typeof window !== 'undefined') {
-            const site = localStorage.getItem('site').toLowerCase()
+            const site = localStorage.getItem('site') ? localStorage.getItem('site').toLowerCase() : 'donggi'
             const pageName = pathname.split('/')[2]
 
             const url = `/v2/${site}/${pageName}`
