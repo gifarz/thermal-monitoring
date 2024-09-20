@@ -77,7 +77,7 @@ export default function MainPageV2Comp(param) {
         const a = document.createElement('a');
         a.setAttribute('hidden', '');
         a.setAttribute('href', url);
-        a.setAttribute('download', 'table_data.csv');
+        a.setAttribute('download', 'Data Alarm.csv');
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -171,7 +171,7 @@ export default function MainPageV2Comp(param) {
                     }
 
                     {
-                        pageName == 'alarm' ?
+                        pageName == 'trending' ?
                             <>
                                 {/* Button to export table data to CSV */}
                                 <React.Fragment>
@@ -195,6 +195,7 @@ export default function MainPageV2Comp(param) {
                                         fontSize={14}
                                         fill="black"
                                         fontStyle="bold" // Make the text bold
+                                        onClick={handleStartDateClick} // Simulate date selection on click
                                         onMouseEnter={(e) => e.target.getStage().container().style.cursor = 'pointer'}
                                         onMouseLeave={(e) => e.target.getStage().container().style.cursor = 'default'}
                                     />
@@ -219,6 +220,7 @@ export default function MainPageV2Comp(param) {
                                         fontSize={14}
                                         fill="black"
                                         fontStyle="bold" // Make the text bold
+                                        onClick={handleEndDateClick} // Simulate date selection on click
                                         onMouseEnter={(e) => e.target.getStage().container().style.cursor = 'pointer'}
                                         onMouseLeave={(e) => e.target.getStage().container().style.cursor = 'default'}
                                     />

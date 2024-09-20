@@ -13,7 +13,6 @@ import LoadingComp from '@/components/LoadingComp';
 
 const MainPageV2Comp = dynamic(() => import('@/components/MainPageV2Comp'), { ssr: false });
 
-
 function page(props) {
     const [ imageUrl, setImageUrl ] = React.useState()
     const pathname = usePathname()
