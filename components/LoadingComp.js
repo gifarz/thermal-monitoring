@@ -19,7 +19,7 @@ function LoadingComp(props) {
                 />
                 {
                     props.flag == 'canvas' ?
-                    <p className="pt-2">Generate Canvas Size...</p>
+                    <p className="pt-2">Processing Image...</p>
                     :
                     props.flag == 'page' ?
                     <p className="pt-2">Processing Page...</p>

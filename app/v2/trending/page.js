@@ -16,9 +16,8 @@ import { Stage, Layer, Image, Rect, Text } from 'react-konva';
 import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 
 function page(props) {
-    const [ imageUrl, setImageUrl ] = React.useState()
-    const [ image ] = useImage(`${imageUrl}.png`);
-    const router = useRouter();
+    const [imageUrl, setImageUrl] = React.useState()
+    const [image] = useImage(`${imageUrl}.png`);
     const [canvasSize, setCanvasSize] = React.useState();
     const [imgAspectRatio, setImgAspectRatio] = React.useState(1); // Default aspect ratio
     const [startDate, setStartDate] = React.useState('Start Date');
@@ -28,6 +27,7 @@ function page(props) {
         selectAlgDonggi,
         { refreshInterval: 1000 }
     )
+    const router = useRouter();
     const pathname = usePathname()
 
     React.useEffect(() => {
@@ -129,8 +129,6 @@ function page(props) {
 
     if (error) return <p>Error when loading page</p>
     if (isLoading) return <LoadingComp />
-
-    console.log('data trending', data)
 
     return (
         <>
