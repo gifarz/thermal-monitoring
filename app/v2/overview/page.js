@@ -19,6 +19,7 @@ import {
 } from '@/utils/coordinates';
 import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
+import LoadingComp from '@/components/LoadingComp';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
@@ -34,178 +35,181 @@ export default function page() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let imgAspectRatio = 1; // Default aspect ratio
 
-    const bgImage = new Image();
-    bgImage.src = `/v2/donggi/overview.png`;
-
-    const resizeCanvas = () => {
-      // Ensure the image is loaded before calculating dimensions
-      if (!bgImage.complete) return;
-
-      const canvasWidth = window.innerWidth;
-      imgAspectRatio = bgImage.width / bgImage.height;
-      const canvasHeight = canvasWidth / imgAspectRatio;
-
-      // Set canvas style dimensions (for display in the DOM)
-      canvas.style.width = `${canvasWidth}px`;
-      canvas.style.height = `${canvasHeight}px`;
-
-      // Handle high-DPI screens
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = canvasWidth * dpr;
-      canvas.height = canvasHeight * dpr;
-      ctx.scale(dpr, dpr);
-
-      drawCanvas(canvasWidth, canvasHeight);
-    };
-
-    const drawCanvas = (canvasWidth, canvasHeight) => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-      // Draw the background image to fill the canvas
-      ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
-
-      // Draw buttons
-      menuButton.forEach(button => {
-        const btnX = button.x * canvasWidth;
-        const btnY = button.y * canvasHeight;
-        const btnWidth = button.width * canvasWidth;
-        const btnHeight = button.height * canvasHeight;
-
-        // Draw button background
-        ctx.fillStyle = 'transparent';
-        ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-        // Draw button background
-        // ctx.fillStyle = 'black';
-        // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-        // Optionally draw button visuals here
-
-        button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-      });
-
-      // Draw Panel
-      panelButtonDonggi.forEach(panel => {
-        const panelX = panel.x * canvasWidth;
-        const panelY = panel.y * canvasHeight;
-        const panelWidth = panel.width * canvasWidth;
-        const panelHeight = panel.height * canvasHeight;
-
-        // Draw panel background
-        // ctx.fillStyle = 'black';
-        // ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
-
-        // Draw panel label
-        // ctx.fillStyle = 'black';
-        // ctx.font = `${panelHeight * 0.1}px Arial`;
-        // ctx.textAlign = 'center';
-        // ctx.textBaseline = 'middle';
-        // ctx.fillText(panel.label, panelX + panelWidth / 2, panelY + panelHeight / 2);
-
-        panel.bounds = { x: panelX, y: panelY, width: panelWidth, height: panelHeight };
-      });
-
-      // Draw Min Max Avg
-      panelValue?.forEach(value => {
-        const valueWidth = value.width * canvasWidth;
-        const valueHeight = value.height * canvasHeight;
-
-        value.data.forEach(item => {
-          const valueX = value.x * canvasWidth;
-          const valueY = item.y * canvasHeight;
-
-          // Draw value background
+    if(canvas){
+      const ctx = canvas.getContext('2d');
+      let imgAspectRatio = 1; // Default aspect ratio
+  
+      const bgImage = new Image();
+      bgImage.src = `/v2/donggi/overview.png`;
+  
+      const resizeCanvas = () => {
+        // Ensure the image is loaded before calculating dimensions
+        if (!bgImage.complete) return;
+  
+        const canvasWidth = window.innerWidth;
+        imgAspectRatio = bgImage.width / bgImage.height;
+        const canvasHeight = canvasWidth / imgAspectRatio;
+  
+        // Set canvas style dimensions (for display in the DOM)
+        canvas.style.width = `${canvasWidth}px`;
+        canvas.style.height = `${canvasHeight}px`;
+  
+        // Handle high-DPI screens
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvasWidth * dpr;
+        canvas.height = canvasHeight * dpr;
+        ctx.scale(dpr, dpr);
+  
+        drawCanvas(canvasWidth, canvasHeight);
+      };
+  
+      const drawCanvas = (canvasWidth, canvasHeight) => {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  
+        // Draw the background image to fill the canvas
+        ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
+  
+        // Draw buttons
+        menuButton.forEach(button => {
+          const btnX = button.x * canvasWidth;
+          const btnY = button.y * canvasHeight;
+          const btnWidth = button.width * canvasWidth;
+          const btnHeight = button.height * canvasHeight;
+  
+          // Draw button background
           ctx.fillStyle = 'transparent';
-          ctx.fillRect(valueX, valueY, valueWidth, valueHeight);
-
-          // Draw value label
-          ctx.fillStyle = 'black';
-          ctx.font = `${valueHeight * 0.5}px Arial`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(item.tvalue, valueX + valueWidth / 2, valueY + valueHeight / 2);
-
-          item.bounds = { x: valueX, y: valueY, width: valueWidth, height: valueHeight };
-        })
-      });
-    };
-
-    const handleClick = event => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      menuButton.forEach(button => {
-        if (
-          x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-          y > button.bounds.y && y < button.bounds.y + button.bounds.height
-        ) {
-          // Navigate to the respective page without a full page refresh
-          router.push(button.href);
+          ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+  
+          // Draw button background
+          // ctx.fillStyle = 'black';
+          // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+  
+          // Optionally draw button visuals here
+  
+          button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
+        });
+  
+        // Draw Panel
+        panelButtonDonggi.forEach(panel => {
+          const panelX = panel.x * canvasWidth;
+          const panelY = panel.y * canvasHeight;
+          const panelWidth = panel.width * canvasWidth;
+          const panelHeight = panel.height * canvasHeight;
+  
+          // Draw panel background
+          // ctx.fillStyle = 'black';
+          // ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+  
+          // Draw panel label
+          // ctx.fillStyle = 'black';
+          // ctx.font = `${panelHeight * 0.1}px Arial`;
+          // ctx.textAlign = 'center';
+          // ctx.textBaseline = 'middle';
+          // ctx.fillText(panel.label, panelX + panelWidth / 2, panelY + panelHeight / 2);
+  
+          panel.bounds = { x: panelX, y: panelY, width: panelWidth, height: panelHeight };
+        });
+  
+        // Draw Min Max Avg
+        panelValue?.forEach(value => {
+          const valueWidth = value.width * canvasWidth;
+          const valueHeight = value.height * canvasHeight;
+  
+          value.data.forEach(item => {
+            const valueX = value.x * canvasWidth;
+            const valueY = item.y * canvasHeight;
+  
+            // Draw value background
+            ctx.fillStyle = 'transparent';
+            ctx.fillRect(valueX, valueY, valueWidth, valueHeight);
+  
+            // Draw value label
+            ctx.fillStyle = 'black';
+            ctx.font = `${valueHeight * 0.5}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.tvalue, valueX + valueWidth / 2, valueY + valueHeight / 2);
+  
+            item.bounds = { x: valueX, y: valueY, width: valueWidth, height: valueHeight };
+          })
+        });
+      };
+  
+      const handleClick = event => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+  
+        menuButton.forEach(button => {
+          if (
+            x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+            y > button.bounds.y && y < button.bounds.y + button.bounds.height
+          ) {
+            // Navigate to the respective page without a full page refresh
+            router.push(button.href);
+          }
+        });
+  
+        panelButtonDonggi.forEach(panel => {
+          if (
+            x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
+            y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
+          ) {
+            // Navigate to the respective page without a full page refresh
+            router.push(panel.href);
+          }
+        });
+      };
+  
+      const handleMouseMove = event => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        let hovering = false;
+  
+        menuButton.forEach(button => {
+          if (
+            x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+            y > button.bounds.y && y < button.bounds.y + button.bounds.height
+          ) {
+            hovering = true;
+          }
+        });
+  
+        panelButtonDonggi.forEach(panel => {
+          if (
+            x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
+            y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
+          ) {
+            hovering = true;
+          }
+        });
+  
+        if (hovering) {
+          canvas.style.cursor = 'pointer';
+        } else {
+          canvas.style.cursor = 'default';
         }
-      });
-
-      panelButtonDonggi.forEach(panel => {
-        if (
-          x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
-          y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
-        ) {
-          // Navigate to the respective page without a full page refresh
-          router.push(panel.href);
-        }
-      });
-    };
-
-    const handleMouseMove = event => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      let hovering = false;
-
-      menuButton.forEach(button => {
-        if (
-          x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-          y > button.bounds.y && y < button.bounds.y + button.bounds.height
-        ) {
-          hovering = true;
-        }
-      });
-
-      panelButtonDonggi.forEach(panel => {
-        if (
-          x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
-          y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
-        ) {
-          hovering = true;
-        }
-      });
-
-      if (hovering) {
-        canvas.style.cursor = 'pointer';
-      } else {
-        canvas.style.cursor = 'default';
-      }
-    };
-
-    bgImage.onload = resizeCanvas;
-    window.addEventListener('resize', resizeCanvas);
-    canvas.addEventListener('click', handleClick);
-    canvas.addEventListener('mousemove', handleMouseMove);
-
-    const intervalId = setInterval(() => {
-      updatePanelValue(data)
-      // console.log('panelValue', panelValue)
-    }, 1000);
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      canvas.removeEventListener('click', handleClick);
-      canvas.removeEventListener('mousemove', handleMouseMove);
-      clearInterval(intervalId);
-    };
+      };
+  
+      bgImage.onload = resizeCanvas;
+      window.addEventListener('resize', resizeCanvas);
+      canvas.addEventListener('click', handleClick);
+      canvas.addEventListener('mousemove', handleMouseMove);
+  
+      const intervalId = setInterval(() => {
+        updatePanelValue(data)
+        // console.log('panelValue', panelValue)
+      }, 1000);
+  
+      return () => {
+        window.removeEventListener('resize', resizeCanvas);
+        canvas.removeEventListener('click', handleClick);
+        canvas.removeEventListener('mousemove', handleMouseMove);
+        clearInterval(intervalId);
+      };
+    }
   }, [menuButton, panelValue, data]);
 
   const updatePanelValue = (data) => {
@@ -297,9 +301,14 @@ export default function page() {
     // console.log('newData', newData)
   };
 
+  // if (error) return <p>Error when loading page</p>
+  // if (isLoading) return <LoadingComp flag={'page'} />
+  // if (panelValue == undefined) return <LoadingComp flag={'panel'} />
+
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
     </div>
   );
 }
+

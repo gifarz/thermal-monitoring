@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Stage, Layer, Image, Rect, Text } from 'react-konva';
+// import { Stage, Layer, Image, Rect, Text } from 'react-konva';
 import useImage from 'use-image';
 import { menuButtonV2 as menuButton, panelButtonDonggiV2 as panelButtonDonggi } from '@/utils/coordinates';
+import dynamic from 'next/dynamic';
+
+const Stage = dynamic(() => import('react-konva').then(mod => mod.Stage), { ssr: false });
+const Layer = dynamic(() => import('react-konva').then(mod => mod.Layer), { ssr: false });
+const Rect = dynamic(() => import('react-konva').then(mod => mod.Rect), { ssr: false });
+const Text = dynamic(() => import('react-konva').then(mod => mod.Text), { ssr: false });
 
 export default function MainPageV2Comp(param) {
 
