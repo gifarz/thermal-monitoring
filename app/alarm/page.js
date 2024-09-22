@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
-import { useTable } from 'react-table';
 
 const columns = [
     {
@@ -29,7 +28,6 @@ const data = [
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    const tableInstance = useTable({ columns, data });
 
     useEffect(() => {
 
@@ -157,25 +155,6 @@ export default function page() {
             ctx.textBaseline = 'middle';
             ctx.strokeStyle = 'black';
 
-            // Draw headers
-            tableInstance.headerGroups.forEach(headerGroup => {
-                headerGroup.headers.forEach((column, colIndex) => {
-                    const x = startX + colIndex * cellWidth;
-                    ctx.strokeRect(x, startY, cellWidth, cellHeight);
-                    ctx.fillText(column.render('Header'), x + cellWidth / 2, startY + cellHeight / 2);
-                });
-            });
-
-            // Draw rows
-            tableInstance.rows.forEach((row, rowIndex) => {
-                tableInstance.prepareRow(row);
-                row.cells.forEach((cell, colIndex) => {
-                    const x = startX + colIndex * cellWidth;
-                    const y = startY + (rowIndex + 1) * cellHeight;
-                    ctx.strokeRect(x, y, cellWidth, cellHeight);
-                    ctx.fillText(cell.render('Cell'), x + cellWidth / 2, y + cellHeight / 2);
-                });
-            });
         }
 
         bgImage.onload = resizeCanvas;
