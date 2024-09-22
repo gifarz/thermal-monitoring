@@ -25,10 +25,6 @@ export async function selectTlgDonggi(req, res) {
         let gte = req.split('+')[1]
         let lte = req.split('+')[2]
 
-        console.log('tlg', tlg)
-        console.log('gte', gte)
-        console.log('lte', lte)
-
         let data = []
         let condition = {
             orderBy: {
@@ -104,7 +100,7 @@ export async function selectTlgDonggi(req, res) {
             data = await prisma.tlg_l224_24.findMany(condition)
         }
 
-        console.log('data prisma direct', data)
+        // console.log('data prisma direct', data)
 
         return data
     } catch (error) {
@@ -115,18 +111,17 @@ export async function selectTlgDonggi(req, res) {
 export async function selectAlgDonggi(req, res) {
     try {
         let status = req.split('+')[0]
-
-        const data = await prisma.alg_2409.findMany({
+        let condition = {
             orderBy: {
                 id: 'asc'
             },
-            where: {
-                status: status
-            },
+            where: status !== 'All' ? { status: status } : undefined,
             take: 10
-        })
+        }
 
-        console.log('data prisma direct', data)
+        const data = await prisma.alg_2409.findMany(condition)
+
+        // console.log('data prisma direct', data)
 
         return data
     } catch (error) {

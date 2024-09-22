@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { menuButton } from '@/utils/coordinates';
+import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 
 export default function page() {
     const canvasRef = useRef(null);
@@ -12,78 +12,60 @@ export default function page() {
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+        let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
-
-        bgImage.src = `/v2/donggi/logger.png`;
+        bgImage.src = `/donggi/trending.png`;
 
         const resizeCanvas = () => {
-            const canvasWidth = window.innerWidth;
-            const canvasHeight = window.innerHeight;
+            // Ensure the image is loaded before calculating dimensions
+            if (!bgImage.complete) return;
 
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
+            const canvasWidth = window.innerWidth;
+            imgAspectRatio = bgImage.width / bgImage.height;
+            const canvasHeight = canvasWidth / imgAspectRatio;
+
+            // Set canvas style dimensions (for display in the DOM)
+            canvas.style.width = `${canvasWidth}px`;
+            canvas.style.height = `${canvasHeight}px`;
+
+            // Handle high-DPI screens
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+
             drawCanvas(canvasWidth, canvasHeight);
         };
 
         const drawCanvas = (canvasWidth, canvasHeight) => {
-            // Get device pixel ratio (for handling high-DPI screens)
-            const dpr = window.devicePixelRatio || 1;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-            // Set canvas dimensions based on the device pixel ratio
-            canvas.width = canvasWidth * dpr;
-            canvas.height = canvasHeight * dpr;
-
-            // Scale the context to handle high-DPI
-            ctx.scale(dpr, dpr);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const imgAspectRatio = bgImage.width / bgImage.height;
-            const canvasAspectRatio = canvasWidth / canvasHeight;
-
-            let imgWidth, imgHeight;
-            if (canvasAspectRatio > imgAspectRatio) {
-                imgHeight = canvasHeight;
-                imgWidth = imgHeight * imgAspectRatio;
-            } else {
-                imgWidth = canvasWidth;
-                imgHeight = imgWidth / imgAspectRatio;
-            }
-
-            const xOffset = (canvasWidth - imgWidth) / 2;
-            const yOffset = (canvasHeight - imgHeight) / 2;
-
-            // Draw the background image
-            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
-
-            // Draw the image to fill the entire canvas
-            // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            // Draw the background image to fill the canvas
+            ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
 
             // Draw buttons
             menuButton.forEach(button => {
-                const btnX = xOffset + button.x * imgWidth;
-                const btnY = yOffset + button.y * imgHeight;
-                const btnWidth = button.width * imgWidth;
-                const btnHeight = button.height * imgHeight;
+                const btnX = button.x * canvasWidth;
+                const btnY = button.y * canvasHeight;
+                const btnWidth = button.width * canvasWidth;
+                const btnHeight = button.height * canvasHeight;
 
                 // Draw button background
                 ctx.fillStyle = 'transparent';
                 ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
 
-                // Draw button label
-                // ctx.fillStyle = 'white';
-                // ctx.font = `${btnHeight * 0.5}px Arial`;
-                // ctx.textAlign = 'center';
-                // ctx.textBaseline = 'middle';
-                ctx.fillText(button.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
+                // Draw button background
+                // ctx.fillStyle = 'black';
+                // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+
+                // Optionally draw button visuals here
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
+        };
 
-      };
-
-        const handleClick = (event) => {
+        const handleClick = event => {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
@@ -93,13 +75,13 @@ export default function page() {
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
-                    // Navigate to the respective page without a full page refresh
                     router.push(button.href);
                 }
             });
+
         };
 
-        const handleMouseMove = (event) => {
+        const handleMouseMove = event => {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
@@ -125,17 +107,17 @@ export default function page() {
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
         canvas.addEventListener('mousemove', handleMouseMove);
-        
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);
-            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.removeEventListener('mousemove', handleMouseMove);
         };
     }, [menuButton]);
 
     return (
-        <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-            <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
+        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
         </div>
     );
-};
+}

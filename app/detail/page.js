@@ -2,7 +2,12 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { menuButton, detailValues } from '@/utils/coordinates';
+import { 
+    menuButtonV2 as menuButton, 
+    detailValuesV2 as detailValues, 
+    exportChartToImage 
+} from '@/utils/coordinates';
+// import selectDonggiData from '@/pages/api/selectDonggiData';
 import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 import Chart from 'chart.js/auto';
@@ -27,80 +32,73 @@ export default function page() {
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+        let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
 
-        bgImage.src = `/v2/donggi/detail.png`;
+        bgImage.src = `/donggi/detail.png`;
 
         const resizeCanvas = () => {
-            const canvasWidth = window.innerWidth;
-            const canvasHeight = window.innerHeight;
+            // Ensure the image is loaded before calculating dimensions
+            if (!bgImage.complete) return;
 
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-            
+            const canvasWidth = window.innerWidth;
+            imgAspectRatio = bgImage.width / bgImage.height;
+            const canvasHeight = canvasWidth / imgAspectRatio;
+
+            // Set canvas style dimensions (for display in the DOM)
+            canvas.style.width = `${canvasWidth}px`;
+            canvas.style.height = `${canvasHeight}px`;
+
+            // Handle high-DPI screens
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+
             drawCanvas(canvasWidth, canvasHeight);
         };
 
         const drawCanvas = (canvasWidth, canvasHeight) => {
-            // Get device pixel ratio (for handling high-DPI screens)
-            const dpr = window.devicePixelRatio || 1;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-            // Set canvas dimensions based on the device pixel ratio
-            canvas.width = canvasWidth * dpr;
-            canvas.height = canvasHeight * dpr;
+            // Draw the background image to fill the canvas
+            ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
 
-            // Scale the context to handle high-DPI
-            ctx.scale(dpr, dpr);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const imgAspectRatio = bgImage.width / bgImage.height;
-            const canvasAspectRatio = canvasWidth / canvasHeight;
-
-            let imgWidth, imgHeight;
-            if (canvasAspectRatio > imgAspectRatio) {
-                imgHeight = canvasHeight;
-                imgWidth = imgHeight * imgAspectRatio;
-            } else {
-                imgWidth = canvasWidth;
-                imgHeight = imgWidth / imgAspectRatio;
-            }
-
-            const xOffset = (canvasWidth - imgWidth) / 2;
-            const yOffset = (canvasHeight - imgHeight) / 2;
-
-            // Draw the background image
-            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
-            lineChart(xOffset, yOffset, imgWidth, imgHeight);
+            // Draw the line chart 
+            lineChart(canvasWidth, canvasHeight);
 
             // Draw buttons
             menuButton.forEach(button => {
-                const btnX = xOffset + button.x * imgWidth;
-                const btnY = yOffset + button.y * imgHeight;
-                const btnWidth = button.width * imgWidth;
-                const btnHeight = button.height * imgHeight;
+                const btnX = button.x * canvasWidth;
+                const btnY = button.y * canvasHeight;
+                const btnWidth = button.width * canvasWidth;
+                const btnHeight = button.height * canvasHeight;
 
                 // Draw button background
                 ctx.fillStyle = 'transparent';
                 ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
 
                 // Draw button label
-                // ctx.fillStyle = 'white';
-                // ctx.font = `${btnHeight * 0.5}px Arial`;
+                ctx.fillStyle = 'white';
+                ctx.font = `${btnHeight * 0.2}px Arial`;
                 // ctx.textAlign = 'center';
                 // ctx.textBaseline = 'middle';
-                ctx.fillText(button.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
+                // ctx.fillText(button.label, btnX, btnY);
 
                 button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
             });
 
-            // Draw each label on the canvas
+            // Draw detail value on the canvas
             detailValue.forEach(label => {
-                const labelX = xOffset + label.x * imgWidth;
-                const labelY = yOffset + label.y * imgHeight;
-                const labelWidth = label.width * imgWidth;
-                const labelHeight = label.height * imgHeight;
+                const labelX = label.x * canvasWidth;
+                const labelY = label.y * canvasHeight;
+                const labelWidth = label.width * canvasWidth;
+                const labelHeight = label.height * canvasHeight;
+
+                // Draw button background
+                ctx.fillStyle = 'transparent';
+                ctx.fillRect(labelX, labelY, labelWidth, labelHeight);
 
                 // Set font and style for text
                 ctx.fillStyle = 'black'; // Text color
@@ -108,9 +106,32 @@ export default function page() {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
-                ctx.fillText(label.value, labelX + labelWidth / 2, labelY + labelHeight / 2);
+                ctx.fillText(label.value, labelX, labelY);
 
                 label.bounds = { x: labelX, y: labelY, width: labelWidth, height: labelHeight };
+            });
+
+            // Draw button export chart on the canvas
+            exportChartToImage.forEach(button => {
+                const buttonX = button.x * canvasWidth;
+                const buttonY = button.y * canvasHeight;
+                const buttonWidth = button.width * canvasWidth;
+                const buttonHeight = button.height * canvasHeight;
+
+                // Draw button background
+                ctx.fillStyle = '#303236';
+                ctx.roundRect(buttonX, buttonY, buttonWidth, buttonHeight, 5);
+                ctx.fill();
+
+                // Set font and style for text
+                ctx.fillStyle = 'white'; // Text color
+                ctx.font = `${buttonHeight * 0.35}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                ctx.fillText(button.label, buttonX * 1.04, buttonY * 1.09);
+
+                button.bounds = { x: buttonX, y: buttonY, width: buttonWidth, height: buttonHeight };
             });
 
         }
@@ -127,6 +148,16 @@ export default function page() {
                 ) {
                     // Navigate to the respective page without a full page refresh
                     router.push(button.href);
+                }
+            });
+
+            exportChartToImage.forEach(button => {
+                if (
+                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
+                ) {
+                    // Navigate to the respective page without a full page refresh
+                    handleExport()
                 }
             });
         };
@@ -146,6 +177,15 @@ export default function page() {
                 }
             });
 
+            exportChartToImage.forEach(button => {
+                if (
+                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
+                ) {
+                    hovering = true;
+                }
+            });
+
             if (hovering) {
                 canvas.style.cursor = 'pointer';
             } else {
@@ -153,7 +193,7 @@ export default function page() {
             }
         };
 
-        const lineChart = (xOffset, yOffset, imgWidth, imgHeight) => {
+        const lineChart = (imgWidth, imgHeight) => {
             if (chartInstanceRef.current) {
                 chartInstanceRef.current.destroy();
             }
@@ -191,7 +231,7 @@ export default function page() {
                             }
                         },
                         title: {
-                            display: true,
+                            display: false,
                             text: 'Line Chart Example',
                             font: {
                                 size: 16 * fontScale  // Scale title size
@@ -218,7 +258,7 @@ export default function page() {
             });
 
             // Draw the chart from the offscreen canvas onto the main canvas
-            ctx.drawImage(offscreenCanvas, xOffset + 0.65 * imgWidth, yOffset + 0.3 * imgHeight, offscreenCanvas.width, offscreenCanvas.height);
+            ctx.drawImage(offscreenCanvas, 0.65 * imgWidth, 0.28 * imgHeight, offscreenCanvas.width, offscreenCanvas.height);
         }
 
         bgImage.onload = resizeCanvas;
@@ -268,9 +308,22 @@ export default function page() {
 
     }, [data, refPrefix])
 
+    const handleExport = () => {
+        const chart = chartInstanceRef.current;
+
+        // Convert chart to Base64 Image
+        const image = chart.toBase64Image();
+
+        // Create a link element to download the image
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `Chart_${ref}.png`; // Name the file as 'chart.png'
+        link.click(); // Programmatically click the link to trigger download
+    };
+
     return (
-        <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-            <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
+        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
         </div>
     );
 };

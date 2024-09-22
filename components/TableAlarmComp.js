@@ -7,17 +7,13 @@ import {
     DropdownItem,
     DateRangePicker
 } from "@nextui-org/react";
-import { useAsyncList } from "@react-stately/data";
 import { ChevronDownIcon } from "./ChevronDownIcon";
-import { parseAbsoluteToLocal } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
 import { listStatus, headerAlarm } from "@/utils/coordinates";
 import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-import LoadingComp from '@/components/LoadingComp';
 
 export default function TableAlarmComp(props) {
-    const [status, setStatus] = React.useState("Active");
+    const [status, setStatus] = React.useState("All");
 
     const { data, error, isLoading } = useSWR(
         status ? `/api/selectDonggiData` : null,
@@ -28,8 +24,6 @@ export default function TableAlarmComp(props) {
     if (error) return <p>Error when loading page</p>
     // if (isLoading) return <LoadingComp flag={'page'} />
     // if (data) return <LoadingComp flag={'page'} />
-
-    console.log('body list', data)
 
     const handleSetStatus = (e) => {
         setStatus(e.currentKey)

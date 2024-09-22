@@ -2,140 +2,122 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { menuButton } from '@/utils/coordinates';
+import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 
 export default function page() {
-    const canvasRef = useRef(null);
-    const router = useRouter(); // Initialize the router
+  const canvasRef = useRef(null);
+  const router = useRouter(); // Initialize the router
 
-    useEffect(() => {
+  useEffect(() => {
 
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let imgAspectRatio = 1; // Default aspect ratio
 
-        const bgImage = new Image();
+    const bgImage = new Image();
+    bgImage.src = `/donggi/setting.png`;
 
-        bgImage.src = `/v2/donggi/setting.png`;
+    const resizeCanvas = () => {
+      // Ensure the image is loaded before calculating dimensions
+      if (!bgImage.complete) return;
 
-        const resizeCanvas = () => {
-            const canvasWidth = window.innerWidth;
-            const canvasHeight = window.innerHeight;
+      const canvasWidth = window.innerWidth;
+      imgAspectRatio = bgImage.width / bgImage.height;
+      const canvasHeight = canvasWidth / imgAspectRatio;
 
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-            drawCanvas(canvasWidth, canvasHeight);
-        };
+      // Set canvas style dimensions (for display in the DOM)
+      canvas.style.width = `${canvasWidth}px`;
+      canvas.style.height = `${canvasHeight}px`;
 
-        const drawCanvas = (canvasWidth, canvasHeight) => {
-            // Get device pixel ratio (for handling high-DPI screens)
-            const dpr = window.devicePixelRatio || 1;
+      // Handle high-DPI screens
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvasWidth * dpr;
+      canvas.height = canvasHeight * dpr;
+      ctx.scale(dpr, dpr);
 
-            // Set canvas dimensions based on the device pixel ratio
-            canvas.width = canvasWidth * dpr;
-            canvas.height = canvasHeight * dpr;
+      drawCanvas(canvasWidth, canvasHeight);
+    };
 
-            // Scale the context to handle high-DPI
-            ctx.scale(dpr, dpr);
+    const drawCanvas = (canvasWidth, canvasHeight) => {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Draw the background image to fill the canvas
+      ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
 
-            const imgAspectRatio = bgImage.width / bgImage.height;
-            const canvasAspectRatio = canvasWidth / canvasHeight;
+      // Draw buttons
+      menuButton.forEach(button => {
+        const btnX = button.x * canvasWidth;
+        const btnY = button.y * canvasHeight;
+        const btnWidth = button.width * canvasWidth;
+        const btnHeight = button.height * canvasHeight;
 
-            let imgWidth, imgHeight;
-            if (canvasAspectRatio > imgAspectRatio) {
-                imgHeight = canvasHeight;
-                imgWidth = imgHeight * imgAspectRatio;
-            } else {
-                imgWidth = canvasWidth;
-                imgHeight = imgWidth / imgAspectRatio;
-            }
+        // Draw button background
+        ctx.fillStyle = 'transparent';
+        ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
 
-            const xOffset = (canvasWidth - imgWidth) / 2;
-            const yOffset = (canvasHeight - imgHeight) / 2;
+        // Draw button background
+        // ctx.fillStyle = 'black';
+        // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
 
-            // Draw the background image
-            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight);
+        // Optionally draw button visuals here
 
-            // Draw the image to fill the entire canvas
-            // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+        button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
+      });
+    };
 
-            // Draw buttons
-            menuButton.forEach(button => {
-                const btnX = xOffset + button.x * imgWidth;
-                const btnY = yOffset + button.y * imgHeight;
-                const btnWidth = button.width * imgWidth;
-                const btnHeight = button.height * imgHeight;
+    const handleClick = event => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-                // Draw button background
-                ctx.fillStyle = 'transparent';
-                ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+      menuButton.forEach(button => {
+        if (
+          x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+          y > button.bounds.y && y < button.bounds.y + button.bounds.height
+        ) {
+          router.push(button.href);
+        }
+      });
 
-                // Draw button label
-                // ctx.fillStyle = 'white';
-                // ctx.font = `${btnHeight * 0.5}px Arial`;
-                // ctx.textAlign = 'center';
-                // ctx.textBaseline = 'middle';
-                ctx.fillText(button.label, btnX + btnWidth / 2, btnY + btnHeight / 2);
+    };
 
-                button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-            });
+    const handleMouseMove = event => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      let hovering = false;
 
-      };
+      menuButton.forEach(button => {
+        if (
+          x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
+          y > button.bounds.y && y < button.bounds.y + button.bounds.height
+        ) {
+          hovering = true;
+        }
+      });
 
-        const handleClick = (event) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+      if (hovering) {
+        canvas.style.cursor = 'pointer';
+      } else {
+        canvas.style.cursor = 'default';
+      }
+    };
 
-            menuButton.forEach(button => {
-                if (
-                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
-                ) {
-                    // Navigate to the respective page without a full page refresh
-                    router.push(button.href);
-                }
-            });
-        };
+    bgImage.onload = resizeCanvas;
+    window.addEventListener('resize', resizeCanvas);
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('mousemove', handleMouseMove);
 
-        const handleMouseMove = (event) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            let hovering = false;
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      canvas.removeEventListener('click', handleClick);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [menuButton]);
 
-            menuButton.forEach(button => {
-                if (
-                    x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-                    y > button.bounds.y && y < button.bounds.y + button.bounds.height
-                ) {
-                    hovering = true;
-                }
-            });
-
-            if (hovering) {
-                canvas.style.cursor = 'pointer';
-            } else {
-                canvas.style.cursor = 'default';
-            }
-        };
-
-        bgImage.onload = resizeCanvas;
-        window.addEventListener('resize', resizeCanvas);
-        canvas.addEventListener('click', handleClick);
-        canvas.addEventListener('mousemove', handleMouseMove);
-        
-        return () => {
-            window.removeEventListener('resize', resizeCanvas);
-            canvas.removeEventListener('click', handleClick);
-            canvas.addEventListener('mousemove', handleMouseMove);
-        };
-    }, [menuButton]);
-
-    return (
-        <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-            <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
-        </div>
-    );
-};
+  return (
+    <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+      <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
+    </div>
+  );
+}

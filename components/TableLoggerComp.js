@@ -7,12 +7,11 @@ import {
     DropdownItem,
     DateRangePicker
 } from "@nextui-org/react";
-import { useAsyncList } from "@react-stately/data";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { listTags, headerLogger } from "@/utils/coordinates";
-import { selectAlgDonggi, selectTlgDonggi } from '@/pages/api/selectDonggiData';
+import { selectTlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 import LoadingComp from '@/components/LoadingComp';
 
@@ -58,7 +57,7 @@ export default function TableLoggerComp(props) {
     }, [date]); // This will only trigger when `date` changes
 
     if (error) return <p>Error when loading page</p>
-    // if (isLoading) return <LoadingComp flag={'page'} />
+    if (isLoading) return <LoadingComp flag={'page'} />
     // if (bodyList) return <LoadingComp flag={'page'} />
 
     let headerList = headerLogger.map(header => {
@@ -81,7 +80,7 @@ export default function TableLoggerComp(props) {
         }
     });
 
-    console.log('body list', bodyList)
+    // console.log('body list', bodyList)
 
     const handleSetTag = (e) => {
         setTagValue(e.currentKey)

@@ -3,19 +3,20 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButtonV2 as menuButton } from '@/utils/coordinates';
+import TableLoggerComp from '@/components/TableLoggerComp';
 
 export default function page() {
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
-  const [locStorage, setLocStorage] = React.useState('DONGGI');
 
   useEffect(() => {
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/v2/donggi/alarm.png`;
+    bgImage.src = `/donggi/logging.png`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions
@@ -66,23 +67,6 @@ export default function page() {
     };
 
     const handleClick = event => {
-      // const rect = canvas.getBoundingClientRect();
-      // const scaleX = canvas.width / rect.width;
-      // const scaleY = canvas.height / rect.height;
-      // const x = (event.clientX - rect.left) * scaleX;
-      // const y = (event.clientY - rect.top) * scaleY;
-
-      // menuButton.forEach(button => {
-      //   if (
-      //     x > button.bounds.x &&
-      //     x < button.bounds.x + button.bounds.width &&
-      //     y > button.bounds.y &&
-      //     y < button.bounds.y + button.bounds.height
-      //   ) {
-      //     router.push(button.href);
-      //   }
-      // });
-
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -92,7 +76,6 @@ export default function page() {
           x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
           y > button.bounds.y && y < button.bounds.y + button.bounds.height
         ) {
-          // Navigate to the respective page without a full page refresh
           router.push(button.href);
         }
       });
@@ -101,35 +84,6 @@ export default function page() {
 
     const handleMouseMove = event => {
       const rect = canvas.getBoundingClientRect();
-      // const scaleX = canvas.width / rect.width;
-      // const scaleY = canvas.height / rect.height;
-      // const x = (event.clientX - rect.left) * scaleX;
-      // const y = (event.clientY - rect.top) * scaleY;
-      // let hovering = false;
-
-      // menuButton.forEach(button => {
-      //   if (
-      //     x > button.bounds.x &&
-      //     x < button.bounds.x + button.bounds.width &&
-      //     y > button.bounds.y &&
-      //     y < button.bounds.y + button.bounds.height
-      //   ) {
-      //     hovering = true;
-      //   }
-      // });
-
-      // sites.forEach(button => {
-      //   if (
-      //     x > button.bounds.x &&
-      //     x < button.bounds.x + button.bounds.width &&
-      //     y > button.bounds.y &&
-      //     y < button.bounds.y + button.bounds.height
-      //   ) {
-      //     hovering = true;
-      //   }
-      // });
-
-      // canvas.style.cursor = hovering ? 'pointer' : 'default';
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       let hovering = false;
@@ -164,6 +118,19 @@ export default function page() {
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+      <div
+        className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
+        style={{
+          overflow: '-moz-hidden-unscrollable',
+          transform: 'translate(-50%, 0)',
+          maxHeight: '90%',
+          maxWidth: '95%',
+          minWidth: '90%',
+          top: '150px'
+        }}
+      >
+        <TableLoggerComp />
+      </div>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
     </div>
   );

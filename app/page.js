@@ -11,10 +11,10 @@ export default function page() {
 
     const menuButton = [
         { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/arch/`+locStorage.toLowerCase() },
+        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/architecture/` + locStorage.toLowerCase() },
         { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
-        { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trend' },
-        { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/log' },
+        { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
+        { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/loging' },
         { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
     ];
 
@@ -25,68 +25,45 @@ export default function page() {
 
     useEffect(() => {
 
-        router.push('/v2/architecture');
-
         setLocStorage(localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI')
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
         const bgImage = new Image();
 
-        bgImage.src = `/v1/arsitektur.png`;
+        bgImage.src = `/donggi/arsitektur.png`;
 
         const resizeCanvas = () => {
-            const canvasWidth = window.innerWidth;
-            const canvasHeight = window.innerHeight;
+            // Ensure the image is loaded before calculating dimensions
+            if (!bgImage.complete) return;
 
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
+            const canvasWidth = window.innerWidth;
+            imgAspectRatio = bgImage.width / bgImage.height;
+            const canvasHeight = canvasWidth / imgAspectRatio;
+
+            // Set canvas style dimensions (for display in the DOM)
+            canvas.style.width = `${canvasWidth}px`;
+            canvas.style.height = `${canvasHeight}px`;
+
+            // Handle high-DPI screens
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+
             drawCanvas(canvasWidth, canvasHeight);
         };
 
         const drawCanvas = (canvasWidth, canvasHeight) => {
-            // Get device pixel ratio (for handling high-DPI screens)
-            const dpr = window.devicePixelRatio || 1;
-
-            // Set canvas dimensions based on the device pixel ratio
-            canvas.width = canvasWidth * dpr;
-            canvas.height = canvasHeight * dpr;
-
-            // Scale the context to handle high-DPI
-            ctx.scale(dpr, dpr);
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const imgAspectRatio = bgImage.width / bgImage.height;
-            const canvasAspectRatio = canvasWidth / canvasHeight;
-
-            let imgWidth, imgHeight;
-            if (canvasAspectRatio > imgAspectRatio) {
-                imgHeight = canvasHeight;
-                imgWidth = imgHeight * imgAspectRatio;
-            } else {
-                imgWidth = canvasWidth;
-                imgHeight = imgWidth / imgAspectRatio;
-            }
-
-            const xOffset = (canvasWidth - imgWidth) / 2;
-            const yOffset = (canvasHeight - imgHeight) / 2;
-
-            // Using image resolution for width and height
-            // const imgWidth2 = bgImage.width;
-            // const imgHeight2 = bgImage.height;
-
             // Draw the background image
-            ctx.drawImage(bgImage, xOffset, yOffset, imgWidth, imgHeight); // Responsive
-            // ctx.drawImage(bgImage, 0, 0, imgWidth, imgHeight);
-
-            // Draw the image to fill the entire canvas
-            // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bgImage, 0, 0, imgWidth, imgHeight); // Responsive
 
             // Draw buttons
             menuButton.forEach(button => {
-                const btnX = xOffset + button.x * imgWidth;
-                const btnY = yOffset + button.y * imgHeight;
+                const btnX = button.x * imgWidth;
+                const btnY = button.y * imgHeight;
                 const btnWidth = button.width * imgWidth;
                 const btnHeight = button.height * imgHeight;
 
@@ -106,8 +83,8 @@ export default function page() {
 
             // Draw sites
             sites.forEach(site => {
-                const btnX = xOffset + site.x * imgWidth;
-                const btnY = yOffset + site.y * imgHeight;
+                const btnX = site.x * imgWidth;
+                const btnY = site.y * imgHeight;
                 const btnWidth = site.width * imgWidth;
                 const btnHeight = site.height * imgHeight;
 
@@ -196,9 +173,6 @@ export default function page() {
     }, [menuButton, router]);
 
     return (
-        // <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-        //     <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }} />
-        // </div>
         <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto' }}>
             <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: 'auto' }} />
         </div>

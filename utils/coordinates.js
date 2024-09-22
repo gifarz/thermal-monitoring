@@ -8,12 +8,12 @@ export const menuButton = [
 ];
 
 export const menuButtonV2 = [
-    { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/v2/architecture' },
-    { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/v2/overview' },
-    { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/v2/alarm' },
-    { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/v2/trending' },
-    { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/v2/logging' },
-    { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/v2/setting' },
+    { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/architecture' },
+    { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/overview' },
+    { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
+    { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trending' },
+    { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/logging' },
+    { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
 ];
 
 export const panelButtonDonggi = [
@@ -44,28 +44,28 @@ export const panelButtonDonggi = [
 
 export const panelButtonDonggiV2 = [
     //LINE 1
-    { label: '1', x: 0.22, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L102' },
-    { label: '2', x: 0.287, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L103' },
-    { label: '3', x: 0.354, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L104' },
-    { label: '4', x: 0.421, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L105' },
-    { label: '5', x: 0.488, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L202' },
-    { label: '6', x: 0.555, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L203' },
-    { label: '7', x: 0.622, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L204' },
-    { label: '8', x: 0.689, y: 0.25, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L205' },
+    { label: '1', x: 0.22, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L102' },
+    { label: '2', x: 0.287, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L103' },
+    { label: '3', x: 0.354, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L104' },
+    { label: '4', x: 0.421, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L105' },
+    { label: '5', x: 0.488, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L202' },
+    { label: '6', x: 0.555, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L203' },
+    { label: '7', x: 0.622, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L204' },
+    { label: '8', x: 0.689, y: 0.25, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L205' },
 
     // LINE 2
-    { label: '1', x: 0.1, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L209' },
-    { label: '2', x: 0.167, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L210' },
-    { label: '3', x: 0.234, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L212' },
-    { label: '4', x: 0.301, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L213' },
-    { label: '5', x: 0.368, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L215' },
-    { label: '6', x: 0.435, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L216' },
-    { label: '7', x: 0.502, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L217' },
-    { label: '8', x: 0.569, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L219' },
-    { label: '9', x: 0.636, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L220' },
-    { label: '10', x: 0.703, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L221' },
-    { label: '11', x: 0.77, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L222' },
-    { label: '12', x: 0.837, y: 0.59, width: 0.065, height: 0.3, href: '/v2/detail?ref=donggi-L223' }
+    { label: '1', x: 0.1, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L209' },
+    { label: '2', x: 0.167, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L210' },
+    { label: '3', x: 0.234, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L212' },
+    { label: '4', x: 0.301, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L213' },
+    { label: '5', x: 0.368, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L215' },
+    { label: '6', x: 0.435, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L216' },
+    { label: '7', x: 0.502, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L217' },
+    { label: '8', x: 0.569, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L219' },
+    { label: '9', x: 0.636, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L220' },
+    { label: '10', x: 0.703, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L221' },
+    { label: '11', x: 0.77, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L222' },
+    { label: '12', x: 0.837, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L223' }
 ]
 
 // Define positions for each label (T01 - T12)
@@ -130,6 +130,6 @@ export const listTags = ["L102","L103","L104","L105","L202","L203","L204","L205"
 
 export const headerLogger = ["id","T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11","T12","timestamp"]
 
-export const listStatus = ["Ack","Active","Normal"]
+export const listStatus = ["All","Ack","Active","Normal"]
 
-export const headerAlarm = ["id",,"timestamp","alarmid","status"]
+export const headerAlarm = ["timestamp","alarmid","status"]

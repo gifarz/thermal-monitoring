@@ -10,17 +10,17 @@ export default function page() {
   const [locStorage, setLocStorage] = React.useState('DONGGI');
 
   const menuButton = [
-    { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/v2/overview' },
-    { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/v2/architecture/` + locStorage.toLowerCase() },
-    { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/v2/alarm' },
-    { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/v2/trending' },
-    { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/v2/logging' },
-    { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/v2/setting' },
+    { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/overview' },
+    { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/architecture/` + locStorage.toLowerCase() },
+    { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
+    { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
+    { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/logging' },
+    { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
   ];
 
   const sites = [
-    { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/v2/overview' },
-    { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/v2/overview' },
+    { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+    { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
   ];
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/v1/arsitektur.png`;
+    bgImage.src = `/donggi/arsitektur.png`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions
