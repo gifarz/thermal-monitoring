@@ -247,7 +247,7 @@ export default function page() {
 
         if(data){
             // Iterate over each data object
-            data.forEach(dataItem => {
+            data?.forEach(dataItem => {
                 const [label, tag] = dataItem.tname.split('_');  // Split tname into label and tag
 
                 const containsMax = tag.includes('Max')

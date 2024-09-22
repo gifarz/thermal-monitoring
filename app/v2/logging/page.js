@@ -10,6 +10,12 @@ import useImage from 'use-image';
 import LoadingComp from '@/components/LoadingComp';
 import TableLoggerComp from '@/components/TableLoggerComp';
 import { selectAlgDonggi, selectTlgL10224 } from '@/pages/api/selectDonggiData';
+import dynamic from 'next/dynamic';
+
+// const Stage = dynamic(() => import('react-konva').then(mod => mod.Stage), { ssr: false });
+// const Layer = dynamic(() => import('react-konva').then(mod => mod.Layer), { ssr: false });
+// const Rect = dynamic(() => import('react-konva').then(mod => mod.Rect), { ssr: false });
+// const Text = dynamic(() => import('react-konva').then(mod => mod.Text), { ssr: false });
 
 function page(props) {
     const [imageUrl, setImageUrl] = React.useState()

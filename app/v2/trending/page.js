@@ -9,6 +9,12 @@ import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 import useSWR from 'swr';
 import useImage from 'use-image';
 import LoadingComp from '@/components/LoadingComp';
+import dynamic from 'next/dynamic';
+
+// const Stage = dynamic(() => import('react-konva').then(mod => mod.Stage), { ssr: false });
+// const Layer = dynamic(() => import('react-konva').then(mod => mod.Layer), { ssr: false });
+// const Rect = dynamic(() => import('react-konva').then(mod => mod.Rect), { ssr: false });
+// const Text = dynamic(() => import('react-konva').then(mod => mod.Text), { ssr: false });
 
 function page(props) {
     const [imageUrl, setImageUrl] = React.useState()
