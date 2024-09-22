@@ -223,10 +223,12 @@ export default function page() {
       // Iterate over each data object
       data.forEach(dataItem => {
         const [label, tag] = dataItem?.tname?.split('_');  // Split tname into label and tag
+        // console.log('label', label)
+        // console.log('tag', tag)
 
-        const containsMax = tag.includes('Max')
-        const containsMin = tag.includes('Min')
-        const containsAvg = tag.includes('Avg')
+        const containsMax = tag?.includes('Max')
+        const containsMin = tag?.includes('Min')
+        const containsAvg = tag?.includes('Avg')
 
         if (containsMax || containsMin || containsAvg) {
 

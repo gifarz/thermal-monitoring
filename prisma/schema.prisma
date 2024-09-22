@@ -19,3 +19,359 @@ model alg_24 {
   alarmid   Int
   status    String? @db.VarChar(45)
 }
+
+model alg_2409 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
+}
+
+model tlg_l102_24 {
+  id        BigInt   @id
+  L102_T01  Float?
+  L102_T02  Float?
+  L102_T03  Float?
+  L102_T04  Float?
+  L102_T05  Float?
+  L102_T06  Float?
+  L102_T07  Float?
+  L102_T08  Float?
+  L102_T09  Float?
+  L102_T10  Float?
+  L102_T11  Float?
+  L102_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l103_24 {
+  id        BigInt   @id
+  L103_T01  Float?
+  L103_T02  Float?
+  L103_T03  Float?
+  L103_T04  Float?
+  L103_T05  Float?
+  L103_T06  Float?
+  L103_T07  Float?
+  L103_T08  Float?
+  L103_T09  Float?
+  L103_T10  Float?
+  L103_T11  Float?
+  L103_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l104_24 {
+  id        BigInt   @id
+  L104_T01  Float?
+  L104_T02  Float?
+  L104_T03  Float?
+  L104_T04  Float?
+  L104_T05  Float?
+  L104_T06  Float?
+  L104_T07  Float?
+  L104_T08  Float?
+  L104_T09  Float?
+  L104_T10  Float?
+  L104_T11  Float?
+  L104_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l105_24 {
+  id        BigInt   @id
+  L105_T01  Float?
+  L105_T02  Float?
+  L105_T03  Float?
+  L105_T04  Float?
+  L105_T05  Float?
+  L105_T06  Float?
+  L105_T07  Float?
+  L105_T08  Float?
+  L105_T09  Float?
+  L105_T10  Float?
+  L105_T11  Float?
+  L105_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l202_24 {
+  id        BigInt   @id
+  L202_T01  Float?
+  L202_T02  Float?
+  L202_T03  Float?
+  L202_T04  Float?
+  L202_T05  Float?
+  L202_T06  Float?
+  L202_T07  Float?
+  L202_T08  Float?
+  L202_T09  Float?
+  L202_T10  Float?
+  L202_T11  Float?
+  L202_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l203_24 {
+  id        BigInt   @id
+  L203_T01  Float?
+  L203_T02  Float?
+  L203_T03  Float?
+  L203_T04  Float?
+  L203_T05  Float?
+  L203_T06  Float?
+  L203_T07  Float?
+  L203_T08  Float?
+  L203_T09  Float?
+  L203_T10  Float?
+  L203_T11  Float?
+  L203_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l204_24 {
+  id        BigInt   @id
+  L204_T01  Float?
+  L204_T02  Float?
+  L204_T03  Float?
+  L204_T04  Float?
+  L204_T05  Float?
+  L204_T06  Float?
+  L204_T07  Float?
+  L204_T08  Float?
+  L204_T09  Float?
+  L204_T10  Float?
+  L204_T11  Float?
+  L204_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l205_24 {
+  id        BigInt   @id
+  L205_T01  Float?
+  L205_T02  Float?
+  L205_T03  Float?
+  L205_T04  Float?
+  L205_T05  Float?
+  L205_T06  Float?
+  L205_T07  Float?
+  L205_T08  Float?
+  L205_T09  Float?
+  L205_T10  Float?
+  L205_T11  Float?
+  L205_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l209_24 {
+  id        BigInt   @id
+  L209_T01  Float?
+  L209_T02  Float?
+  L209_T03  Float?
+  L209_T04  Float?
+  L209_T05  Float?
+  L209_T06  Float?
+  L209_T07  Float?
+  L209_T08  Float?
+  L209_T09  Float?
+  L209_T10  Float?
+  L209_T11  Float?
+  L209_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l210_24 {
+  id        BigInt   @id
+  L210_T01  Float?
+  L210_T02  Float?
+  L210_T03  Float?
+  L210_T04  Float?
+  L210_T05  Float?
+  L210_T06  Float?
+  L210_T07  Float?
+  L210_T08  Float?
+  L210_T09  Float?
+  L210_T10  Float?
+  L210_T11  Float?
+  L210_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l212_24 {
+  id        BigInt   @id
+  L212_T01  Float?
+  L212_T02  Float?
+  L212_T03  Float?
+  L212_T04  Float?
+  L212_T05  Float?
+  L212_T06  Float?
+  L212_T07  Float?
+  L212_T08  Float?
+  L212_T09  Float?
+  L212_T10  Float?
+  L212_T11  Float?
+  L212_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l213_24 {
+  id        BigInt   @id
+  L213_T01  Float?
+  L213_T02  Float?
+  L213_T03  Float?
+  L213_T04  Float?
+  L213_T05  Float?
+  L213_T06  Float?
+  L213_T07  Float?
+  L213_T08  Float?
+  L213_T09  Float?
+  L213_T10  Float?
+  L213_T11  Float?
+  L213_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l215_24 {
+  id        BigInt   @id
+  L215_T01  Float?
+  L215_T02  Float?
+  L215_T03  Float?
+  L215_T04  Float?
+  L215_T05  Float?
+  L215_T06  Float?
+  L215_T07  Float?
+  L215_T08  Float?
+  L215_T09  Float?
+  L215_T10  Float?
+  L215_T11  Float?
+  L215_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l216_24 {
+  id        BigInt   @id
+  L216_T01  Float?
+  L216_T02  Float?
+  L216_T03  Float?
+  L216_T04  Float?
+  L216_T05  Float?
+  L216_T06  Float?
+  L216_T07  Float?
+  L216_T08  Float?
+  L216_T09  Float?
+  L216_T10  Float?
+  L216_T11  Float?
+  L216_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l217_24 {
+  id        BigInt   @id
+  L217_T01  Float?
+  L217_T02  Float?
+  L217_T03  Float?
+  L217_T04  Float?
+  L217_T05  Float?
+  L217_T06  Float?
+  L217_T07  Float?
+  L217_T08  Float?
+  L217_T09  Float?
+  L217_T10  Float?
+  L217_T11  Float?
+  L217_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l219_24 {
+  id        BigInt   @id
+  L219_T01  Float?
+  L219_T02  Float?
+  L219_T03  Float?
+  L219_T04  Float?
+  L219_T05  Float?
+  L219_T06  Float?
+  L219_T07  Float?
+  L219_T08  Float?
+  L219_T09  Float?
+  L219_T10  Float?
+  L219_T11  Float?
+  L219_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l220_24 {
+  id        BigInt   @id
+  L220_T01  Float?
+  L220_T02  Float?
+  L220_T03  Float?
+  L220_T04  Float?
+  L220_T05  Float?
+  L220_T06  Float?
+  L220_T07  Float?
+  L220_T08  Float?
+  L220_T09  Float?
+  L220_T10  Float?
+  L220_T11  Float?
+  L220_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l221_24 {
+  id        BigInt   @id
+  L221_T01  Float?
+  L221_T02  Float?
+  L221_T03  Float?
+  L221_T04  Float?
+  L221_T05  Float?
+  L221_T06  Float?
+  L221_T07  Float?
+  L221_T08  Float?
+  L221_T09  Float?
+  L221_T10  Float?
+  L221_T11  Float?
+  L221_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l223_24 {
+  id        BigInt   @id
+  L223_T01  Float?
+  L223_T02  Float?
+  L223_T03  Float?
+  L223_T04  Float?
+  L223_T05  Float?
+  L223_T06  Float?
+  L223_T07  Float?
+  L223_T08  Float?
+  L223_T09  Float?
+  L223_T10  Float?
+  L223_T11  Float?
+  L223_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_l224_24 {
+  id        BigInt   @id
+  L224_T01  Float?
+  L224_T02  Float?
+  L224_T03  Float?
+  L224_T04  Float?
+  L224_T05  Float?
+  L224_T06  Float?
+  L224_T07  Float?
+  L224_T08  Float?
+  L224_T09  Float?
+  L224_T10  Float?
+  L224_T11  Float?
+  L224_T12  Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tlg_thd_24 {
+  id        BigInt   @id
+  THDA_T    Float?
+  THDA_H    Float?
+  THDB_T    Float?
+  THDB_H    Float?
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}

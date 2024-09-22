@@ -9,6 +9,7 @@ import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 import useSWR from 'swr';
 import useImage from 'use-image';
 import LoadingComp from '@/components/LoadingComp';
+import TableAlarmComp from '@/components/TableAlarmComp';
 
 function page(props) {
     const [imageUrl, setImageUrl] = React.useState()
@@ -60,6 +61,19 @@ function page(props) {
 
     return (
         <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'auto' }}>
+            <div 
+            className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
+            style={{
+                overflow: '-moz-hidden-unscrollable',
+                transform: 'translate(-50%, 0)', 
+                maxHeight: '90%',
+                maxWidth: '95%',
+                minWidth: '90%',
+                top: '150px'
+            }}
+            >
+                <TableAlarmComp/>
+            </div>
             <Stage width={canvasSize.width} height={canvasSize.height}>
                 <Layer>
                     {/* Render the background image */}

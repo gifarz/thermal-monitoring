@@ -125,3 +125,11 @@ export const avgYValue = 0.521
 export const minYValue2 = 0.829
 export const maxYValue2 = 0.847
 export const avgYValue2 = 0.865
+
+export const listTags = ["L102","L103","L104","L105","L202","L203","L204","L205","L209","L210","L212","L213","L215","L216","L217","L219","L220","L221","L223","L224"]
+
+export const headerLogger = ["id","T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11","T12","timestamp"]
+
+export const listStatus = ["Ack","Active","Normal"]
+
+export const headerAlarm = ["id",,"timestamp","alarmid","status"]

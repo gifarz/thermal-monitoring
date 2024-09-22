@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation'
-import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import { useRouter } from 'next/navigation';
 import { Stage, Layer, Image, Rect, Text } from 'react-konva';
 import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 import useSWR from 'swr';
 import useImage from 'use-image';
 import LoadingComp from '@/components/LoadingComp';
+import TableLoggerComp from '@/components/TableLoggerComp';
+import { selectAlgDonggi, selectTlgL10224 } from '@/pages/api/selectDonggiData';
 
 function page(props) {
     const [imageUrl, setImageUrl] = React.useState()
@@ -17,12 +18,13 @@ function page(props) {
     const [imgAspectRatio, setImgAspectRatio] = React.useState(1); // Default aspect ratio
     const router = useRouter();
     const pathname = usePathname()
+
     // const { data, error, isLoading } = useSWR(
     //     '/api/selectDonggiData',
-    //     selectAlgDonggi,
+    //     selectTlgL10224(tagValue),
     //     { refreshInterval: 1000 }
     // )
-
+    
     React.useEffect(() => {
         if (typeof window !== 'undefined') {
             const site = localStorage.getItem('site') ? localStorage.getItem('site').toLowerCase() : 'donggi'
@@ -57,9 +59,24 @@ function page(props) {
     };
 
     if (canvasSize == undefined) return <LoadingComp flag={'canvas'}/>
+    // if (error) return <p>Error when loading page</p>
+    // if (isLoading) return <LoadingComp flag={'page'} />
 
     return (
-        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'auto' }}>
+        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'hidden', overflowX: 'hidden' }}>
+            <div 
+            className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
+            style={{
+                overflow: '-moz-hidden-unscrollable',
+                transform: 'translate(-50%, 0)', 
+                maxHeight: '90%',
+                maxWidth: '95%',
+                minWidth: '90%',
+                top: '150px'
+            }}
+            >
+                <TableLoggerComp/>
+            </div>
             <Stage width={canvasSize.width} height={canvasSize.height}>
                 <Layer>
                     {/* Render the background image */}
