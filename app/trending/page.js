@@ -15,7 +15,7 @@ export default function page() {
         let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
-        bgImage.src = `/donggi/trending.png`;
+        bgImage.src = `/donggi/trending.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions

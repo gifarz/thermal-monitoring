@@ -6,7 +6,10 @@ import { menuButtonV2 as menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import { selectTlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-import TableLoggerComp from '@/components/TableLoggerComp';
+// import TableLoggerComp from '@/components/TableLoggerComp';
+import dynamic from 'next/dynamic';
+
+const TableLoggerComp = dynamic(() => import('@/components/TableLoggerComp'))
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -71,7 +74,7 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/logging.png`;
+    bgImage.src = `/donggi/logging.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions

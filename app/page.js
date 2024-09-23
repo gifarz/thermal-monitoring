@@ -32,7 +32,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/donggi/arsitektur.png`;
+        bgImage.src = `/donggi/arsitektur.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
