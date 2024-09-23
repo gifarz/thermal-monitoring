@@ -8,13 +8,39 @@ export const menuButton = [
 ];
 
 export const menuButtonV2 = [
-    { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/architecture' },
+    { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/' },
     { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/overview' },
     { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
     { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trending' },
     { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/logging' },
     { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
 ];
+
+export const indicatorLamp = [
+    //LINE 1
+    { label: '1', x: 0.262, y: 0.305, },
+    { label: '2', x: 0.329, y: 0.305, },
+    { label: '3', x: 0.396, y: 0.305, },
+    { label: '4', x: 0.463, y: 0.305, },
+    { label: '5', x: 0.530, y: 0.305, },
+    { label: '6', x: 0.597, y: 0.305, },
+    { label: '7', x: 0.664, y: 0.305, },
+    { label: '8', x: 0.731, y: 0.305, },
+
+    // LINE 2
+    { label: '1', x: 0.141, y: 0.645, },
+    { label: '2', x: 0.208, y: 0.645, },
+    { label: '3', x: 0.275, y: 0.645, },
+    { label: '4', x: 0.342, y: 0.645, },
+    { label: '5', x: 0.409, y: 0.645, },
+    { label: '6', x: 0.476, y: 0.645, },
+    { label: '7', x: 0.543, y: 0.645, },
+    { label: '8', x: 0.610, y: 0.645, },
+    { label: '9', x: 0.677, y: 0.645, },
+    { label: '10', x: 0.744, y: 0.645, },
+    { label: '11', x: 0.811, y: 0.645, },
+    { label: '12', x: 0.878, y: 0.645, }
+]
 
 export const panelButtonDonggi = [
     //LINE 1
@@ -115,6 +141,10 @@ export const fixHeight = 0.02
 export const initXValue = 0.24
 export const initXValue2 = 0.051
 export const fibbXValue = 0.067
+
+export const radiusIndicator = 100
+export const startAngleIndicator = 0
+export const endAngleIndicator = 2 * Math.PI;  // End angle (2π is a full circle)
 
 // TOP PANEL Y VALUE
 export const minYValue = 0.487

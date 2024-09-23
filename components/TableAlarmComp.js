@@ -15,18 +15,22 @@ import useSWR from 'swr';
 export default function TableAlarmComp(props) {
     const [status, setStatus] = React.useState("All");
 
-    const { data, error, isLoading } = useSWR(
-        status ? `/api/selectDonggiData` : null,
-        () => selectAlgDonggi(status),
-        { refreshInterval: 1000 }
-    );
+    // const { data, error, isLoading } = useSWR(
+    //     status ? `/api/selectDonggiData` : null,
+    //     () => selectAlgDonggi(status),
+    //     { refreshInterval: 1000 }
+    // );
 
-    if (error) return <p>Error when loading page</p>
+    // if (error) return <p>Error when loading page</p>
     // if (isLoading) return <LoadingComp flag={'page'} />
     // if (data) return <LoadingComp flag={'page'} />
 
     const handleSetStatus = (e) => {
-        setStatus(e.currentKey)
+        setStatus(() => {
+            const newStatus = e.currentKey
+            props.sendStatus(e.currentKey)
+            return newStatus
+        })
     }
 
     // Function to convert table data to CSV and trigger a download
@@ -37,7 +41,7 @@ export default function TableAlarmComp(props) {
         csvRows.push(headerAlarm.join(','));
 
         // Add table body data
-        data.forEach(row => {
+        props.data.forEach(row => {
             const values = Object.values(row).map(value => String(value)); // Convert BigInt to string
             csvRows.push(values.join(','));
         });
@@ -111,7 +115,7 @@ export default function TableAlarmComp(props) {
                     </thead>
                     <tbody>
                         {
-                            isLoading ?
+                            props.isLoading ?
                             <tr>
                                 <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500">
                                     Fetching Data
@@ -119,8 +123,8 @@ export default function TableAlarmComp(props) {
                             </tr>
                             :
                             <>
-                                {data?.length > 0 ? (
-                                    data.map((row, rowIndex) => (
+                                {props.data?.length > 0 ? (
+                                    props.data.map((row, rowIndex) => (
                                         <tr
                                             key={row.id}
                                             className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}

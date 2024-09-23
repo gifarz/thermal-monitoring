@@ -8,57 +8,15 @@ import {
     DateRangePicker
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
-import { parseAbsoluteToLocal } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { listTags, headerLogger } from "@/utils/coordinates";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import { selectTlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 import LoadingComp from '@/components/LoadingComp';
 
 export default function TableLoggerComp(props) {
-    const [page, setPage] = React.useState(1);
     const [tagValue, setTagValue] = React.useState("L102");
-    const [fromDate, setFromDate] = React.useState();
-    const [toDate, setToDate] = React.useState();
-
-    const { data, error, isLoading } = useSWR(
-        tagValue && fromDate && toDate ? `/api/selectDonggiData` : null,
-        () => selectTlgDonggi(tagValue + '+' + fromDate + '+' + toDate),
-        { refreshInterval: 1000 }
-    );
-
-    const currentDateISO = new Date().toISOString();
-
-    // Add a specific end date or duration (e.g., 7 days after the start date)
-    const backDate = new Date();
-    backDate.setDate(backDate.getDate() - 1); // Example: past 1 day
-    const backDateISO = backDate.toISOString();
-
-    let [date, setDate] = React.useState({
-        start: parseAbsoluteToLocal(backDateISO),
-        end: parseAbsoluteToLocal(currentDateISO)
-    });
-
-    // Helper function to pad single digits with leading zeros
-    const padZero = (num) => String(num).padStart(2, '0');
-
-    React.useEffect(() => {
-        // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
-        const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
-            `${padZero(date.start.hour)}:${padZero(date.start.minute)}:${padZero(date.start.second)}`;
-    
-        const to = `${date.end.year}-${padZero(date.end.month)}-${padZero(date.end.day)} ` +
-            `${padZero(date.end.hour)}:${padZero(date.end.minute)}:${padZero(date.end.second)}`;
-
-        // Convert to ISO String and set state
-        setFromDate(new Date(`${from}`).toISOString());
-        setToDate(new Date(`${to}`).toISOString());
-
-    }, [date]); // This will only trigger when `date` changes
-
-    if (error) return <p>Error when loading page</p>
-    if (isLoading) return <LoadingComp flag={'page'} />
-    // if (bodyList) return <LoadingComp flag={'page'} />
 
     let headerList = headerLogger.map(header => {
         if (header.includes('T')) {
@@ -68,22 +26,16 @@ export default function TableLoggerComp(props) {
         return header
     })
 
-    // console.log('headerList', headerList)
-
-    let bodyList = data?.map(item => {
-        const dateObject = new Date(item.timestamp);
-        const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
-
-        return {
-            ...item,
-            timestamp: formattedDate
-        }
-    });
-
-    // console.log('body list', bodyList)
+    // console.log('props.isLoading', props.isLoading)
+    // console.log('props.isReady', props.isReady)
+    // console.log('props.bodyList', props.bodyList)
 
     const handleSetTag = (e) => {
-        setTagValue(e.currentKey)
+        setTagValue((prevValue) => { // The way to send realtime value to the parent
+            const newValue = e.currentKey
+            props.sendTagValue(newValue)
+            return newValue
+        })
     }
 
     // Function to convert table data to CSV and trigger a download
@@ -94,7 +46,7 @@ export default function TableLoggerComp(props) {
         csvRows.push(headerList.join(','));
 
         // Add table body data
-        bodyList.forEach(row => {
+        props.bodyList.forEach(row => {
             const values = Object.values(row).map(value => String(value)); // Convert BigInt to string
             csvRows.push(values.join(','));
         });
@@ -131,7 +83,7 @@ export default function TableLoggerComp(props) {
                         disallowEmptySelection
                         aria-label="Table Columns"
                         closeOnSelect={true}
-                        // selectedKeys={statusFilter}
+                        selectedKeys={tagValue}
                         selectionMode="single"
                         onSelectionChange={handleSetTag}
                     >
@@ -145,7 +97,7 @@ export default function TableLoggerComp(props) {
 
                 <div className="grow flex flex-col gap-4">
                     <I18nProvider locale="id-ID">
-                        <DateRangePicker label="Date Range Filter" value={date} onChange={setDate} />
+                        <DateRangePicker label="Date Range Filter" value={props.date} onChange={props.setDate} />
                     </I18nProvider>
                 </div>
 
@@ -174,16 +126,10 @@ export default function TableLoggerComp(props) {
                     </thead>
                     <tbody>
                         {
-                            isLoading ?
-                            <tr>
-                                <td colSpan={headerList.length} className="px-4 py-2 text-sm text-center text-gray-500">
-                                    Fetching Data
-                                </td>
-                            </tr>
-                            :
+                            props.isLoading === false && props.isReady === true ?
                             <>
-                                {bodyList?.length > 0 ? (
-                                    bodyList.map((row, rowIndex) => (
+                                {props.bodyList?.length > 0 ? (
+                                    props.bodyList.map((row, rowIndex) => (
                                         <tr
                                             key={row.id}
                                             className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
@@ -206,6 +152,13 @@ export default function TableLoggerComp(props) {
                                     </tr>
                                 )}
                             </>
+                            :
+                            <tr>
+                                <td colSpan={headerList.length} className="px-4 py-2 text-sm text-center text-gray-500">
+                                    Preparing Data
+                                </td>
+                            </tr>
+                            
                         }
             
                     </tbody>

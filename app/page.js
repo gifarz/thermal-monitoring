@@ -11,7 +11,7 @@ export default function page() {
 
     const menuButton = [
         { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/architecture/` + locStorage.toLowerCase() },
+        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/architecture` },
         { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
         { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
         { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/loging' },
@@ -28,6 +28,7 @@ export default function page() {
         setLocStorage(localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI')
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+        let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
 
@@ -58,14 +59,14 @@ export default function page() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw the background image
-            ctx.drawImage(bgImage, 0, 0, imgWidth, imgHeight); // Responsive
+            ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight); // Responsive
 
             // Draw buttons
             menuButton.forEach(button => {
-                const btnX = button.x * imgWidth;
-                const btnY = button.y * imgHeight;
-                const btnWidth = button.width * imgWidth;
-                const btnHeight = button.height * imgHeight;
+                const btnX = button.x * canvasWidth;
+                const btnY = button.y * canvasHeight;
+                const btnWidth = button.width * canvasWidth;
+                const btnHeight = button.height * canvasHeight;
 
                 // Draw button background
                 // ctx.fillStyle = 'black';
@@ -83,10 +84,10 @@ export default function page() {
 
             // Draw sites
             sites.forEach(site => {
-                const btnX = site.x * imgWidth;
-                const btnY = site.y * imgHeight;
-                const btnWidth = site.width * imgWidth;
-                const btnHeight = site.height * imgHeight;
+                const btnX = site.x * canvasWidth;
+                const btnY = site.y * canvasHeight;
+                const btnWidth = site.width * canvasWidth;
+                const btnHeight = site.height * canvasHeight;
 
                 // Draw site background
                 // ctx.fillStyle = 'black';

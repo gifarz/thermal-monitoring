@@ -21,6 +21,7 @@ export async function selectRealtimeDonggi(req, res) {
 
 export async function selectTlgDonggi(req, res) {
     try {
+        // console.log('req tlg', req)
         let tlg = req.split('+')[0]
         let gte = req.split('+')[1]
         let lte = req.split('+')[2]

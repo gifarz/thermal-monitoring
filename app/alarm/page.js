@@ -1,13 +1,30 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButtonV2 as menuButton } from '@/utils/coordinates';
+import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
+import useSWR from 'swr';
 import TableAlarmComp from '@/components/TableAlarmComp';
 
 export default function page() {
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
+  const [imageGenerated, setImageGenerated] = useState(false);
+  const [startSwr, setStartSwr] = useState(true);
+  const [childData, setChildData] = useState('All');
+
+  const { data, error, isLoading } = useSWR(
+    childData && startSwr ? `/api/selectDonggiData` : null,
+    () => selectAlgDonggi(childData),
+    { refreshInterval: 1000 }
+  );
+
+  // Callback function that will be passed to the child
+  const handleChildData = (data) => {
+    // console.log('Child Data in function', data)
+    setChildData(data); // Updating parent state with data from child
+  };
 
   useEffect(() => {
 
@@ -64,6 +81,8 @@ export default function page() {
 
         button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
       });
+
+      setImageGenerated(true)
     };
 
     const handleClick = event => {
@@ -76,6 +95,7 @@ export default function page() {
           x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
           y > button.bounds.y && y < button.bounds.y + button.bounds.height
         ) {
+          // setStartSwr(false)
           router.push(button.href);
         }
       });
@@ -129,7 +149,12 @@ export default function page() {
           top: '150px'
         }}
       >
-        <TableAlarmComp />
+        {
+          imageGenerated ?
+            <TableAlarmComp sendStatus={handleChildData} data={data} isLoading={isLoading}/>
+            :
+            undefined
+        }
       </div>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
     </div>
