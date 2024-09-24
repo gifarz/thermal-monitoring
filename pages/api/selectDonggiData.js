@@ -101,7 +101,7 @@ export async function selectTlgDonggi(req, res) {
             data = await prisma.tlg_l224_24.findMany(condition)
         }
 
-        console.log('data prisma direct', data)
+        // console.log('data prisma direct', data)
 
         return data
     } catch (error) {
