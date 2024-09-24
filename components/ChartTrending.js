@@ -235,7 +235,7 @@ const ChartTrending = (props) => {
                     Save as PNG
                 </Button>
             </div>
-            <Line ref={chartRef} data={data} options={options} />;
+            <Line ref={chartRef} data={data} options={options} />
         </>
     )
 }
