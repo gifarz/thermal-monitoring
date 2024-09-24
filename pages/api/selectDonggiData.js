@@ -51,57 +51,57 @@ export async function selectTlgDonggi(req, res) {
 
         } else if (tlg == "L105") {
             data = await prisma.tlg_l105_24.findMany(condition)
-            
+
         } else if (tlg == "L202") {
             data = await prisma.tlg_l202_24.findMany(condition)
-            
+
         } else if (tlg == "L203") {
             data = await prisma.tlg_l203_24.findMany(condition)
-            
+
         } else if (tlg == "L204") {
             data = await prisma.tlg_l204_24.findMany(condition)
-            
+
         } else if (tlg == "L205") {
             data = await prisma.tlg_l205_24.findMany(condition)
-            
+
         } else if (tlg == "L209") {
             data = await prisma.tlg_l209_24.findMany(condition)
-            
+
         } else if (tlg == "L210") {
             data = await prisma.tlg_l210_24.findMany(condition)
-            
+
         } else if (tlg == "L212") {
             data = await prisma.tlg_l212_24.findMany(condition)
-            
+
         } else if (tlg == "L213") {
             data = await prisma.tlg_l213_24.findMany(condition)
-            
+
         } else if (tlg == "L215") {
             data = await prisma.tlg_l215_24.findMany(condition)
-            
+
         } else if (tlg == "L216") {
             data = await prisma.tlg_l216_24.findMany(condition)
-            
+
         } else if (tlg == "L217") {
             data = await prisma.tlg_l217_24.findMany(condition)
-            
+
         } else if (tlg == "L219") {
             data = await prisma.tlg_l219_24.findMany(condition)
-            
+
         } else if (tlg == "L220") {
             data = await prisma.tlg_l220_24.findMany(condition)
-            
+
         } else if (tlg == "L221") {
             data = await prisma.tlg_l221_24.findMany(condition)
-            
+
         } else if (tlg == "L223") {
             data = await prisma.tlg_l223_24.findMany(condition)
-            
+
         } else if (tlg == "L224") {
             data = await prisma.tlg_l224_24.findMany(condition)
         }
 
-        // console.log('data prisma direct', data)
+        console.log('data prisma direct', data)
 
         return data
     } catch (error) {

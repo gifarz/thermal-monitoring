@@ -19,6 +19,7 @@ export default function page() {
   const [childData, setChildData] = useState('L102');
   const [imageGenerated, setImageGenerated] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
   const { data, error, isLoading } = useSWR(
     childData && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
@@ -95,6 +96,7 @@ export default function page() {
       ctx.scale(dpr, dpr);
 
       drawCanvas(canvasWidth, canvasHeight);
+      setCanvasSize({ width: canvasWidth, height: canvasHeight }); // Update canvas size
     };
 
     const drawCanvas = (canvasWidth, canvasHeight) => {
@@ -188,6 +190,11 @@ export default function page() {
     };
   }, [menuButton, date, fromDate, toDate, bodyList, childData]);
 
+  const tableMaxHeight = canvasSize.height * 0.6
+  const tableMaxWidth = canvasSize.width * 0.95
+  const tableMinWidth = canvasSize.width * 0.9
+  const tableMarginTop = canvasSize.height * 0.17
+
   console.log('data logging', data)
 
   return (
@@ -195,12 +202,12 @@ export default function page() {
       <div
         className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
         style={{
-          overflow: '-moz-hidden-unscrollable',
+          overflow: 'auto',
           transform: 'translate(-50%, 0)',
-          maxHeight: '90%',
-          maxWidth: '95%',
-          minWidth: '90%',
-          top: '150px'
+          maxHeight: tableMaxHeight,
+          maxWidth: tableMaxWidth,
+          minWidth: tableMinWidth,
+          top: tableMarginTop
         }}
       >
         {

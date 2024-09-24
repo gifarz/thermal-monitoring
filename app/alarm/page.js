@@ -14,11 +14,11 @@ export default function page() {
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
   const [imageGenerated, setImageGenerated] = useState(false);
-  const [startSwr, setStartSwr] = useState(true);
   const [childData, setChildData] = useState('All');
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
   const { data, error, isLoading } = useSWR(
-    childData && startSwr ? `/api/selectDonggiData` : null,
+    childData ? `/api/selectDonggiData` : null,
     () => selectAlgDonggi(childData),
     { refreshInterval: 1000 }
   );
@@ -57,6 +57,8 @@ export default function page() {
       ctx.scale(dpr, dpr);
 
       drawCanvas(canvasWidth, canvasHeight);
+      setCanvasSize({ width: canvasWidth, height: canvasHeight }); // Update canvas size
+
     };
 
     const drawCanvas = (canvasWidth, canvasHeight) => {
@@ -139,22 +141,36 @@ export default function page() {
     };
   }, [menuButton]);
 
+  const tableMaxHeight = canvasSize.height * 0.6
+  const tableMaxWidth = canvasSize.width * 0.95
+  const tableMinWidth = canvasSize.width * 0.9
+  const tableMarginTop = canvasSize.height * 0.17
+
+  console.log('tableMaxHeight',tableMaxHeight)
+  console.log('tableMaxWidth',tableMaxWidth)
+  console.log('tableMinWidth',tableMinWidth)
+  console.log('tableMarginTop',tableMarginTop)
+
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
       <div
-        className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
+        className='absolute w-1/2 z-10 left-1/2 mt-10'
         style={{
-          overflow: '-moz-hidden-unscrollable',
+          overflow: 'auto',
           transform: 'translate(-50%, 0)',
-          maxHeight: '90%',
-          maxWidth: '95%',
-          minWidth: '90%',
-          top: '150px'
+          maxHeight: tableMaxHeight,
+          maxWidth: tableMaxWidth,
+          minWidth: tableMinWidth,
+          top: tableMarginTop
         }}
       >
         {
           imageGenerated ?
-            <TableAlarmComp sendStatus={handleChildData} data={data} isLoading={isLoading}/>
+            <TableAlarmComp
+              sendStatus={handleChildData}
+              data={data}
+              isLoading={isLoading}
+            />
             :
             undefined
         }

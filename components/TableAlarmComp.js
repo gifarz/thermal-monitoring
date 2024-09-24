@@ -14,6 +14,8 @@ import useSWR from 'swr';
 
 export default function TableAlarmComp(props) {
     const [status, setStatus] = React.useState("All");
+    const [canvasWidth, setCanvasWidth] = React.useState("All");
+    const [canvasHeight, setCanvasHeight] = React.useState("All");
 
     // const { data, error, isLoading } = useSWR(
     //     status ? `/api/selectDonggiData` : null,
@@ -62,14 +64,20 @@ export default function TableAlarmComp(props) {
     };
 
     return (
-        <div className="p-0">
-            <div className="flex items-center gap-3 mb-4">
-                <Dropdown className="h-full">
+        <>
+            <div className="w-full flex items-center gap-3 mb-4">
+                <Dropdown
+                    className="h-full"
+                >
                     <DropdownTrigger className="hidden sm:flex">
                         <Button
                             endContent={<ChevronDownIcon className="text-small" />}
                             variant="flat"
                             className="bg-white min-h-full"
+                            style={{
+                                fontSize: "14px",
+                                maxHeight: "50px"
+                            }}
                         >
                             {status}
                         </Button>
@@ -78,9 +86,10 @@ export default function TableAlarmComp(props) {
                         disallowEmptySelection
                         aria-label="Table Columns"
                         closeOnSelect={true}
-                        // selectedKeys={statusFilter}
+                        selectedKeys={status}
                         selectionMode="single"
                         onSelectionChange={handleSetStatus}
+
                     >
                         {listStatus.map((status, index) => (
                             <DropdownItem key={status}>
@@ -94,6 +103,10 @@ export default function TableAlarmComp(props) {
                     variant="flat"
                     className="bg-white min-h-full"
                     onClick={handleExportToCSV}
+                    style={{
+                        fontSize: "14px",
+                        maxHeight: "50px"
+                    }}
                 >
                     Export to CSV
                 </Button>
@@ -107,6 +120,9 @@ export default function TableAlarmComp(props) {
                                 <th
                                     key={header}
                                     className="px-2 py-2 text-xs text-gray-700 border-b border-gray-200 text-center"
+                                    style={{
+                                        fontSize: "12px",
+                                    }}
                                 >
                                     {header}
                                 </th>
@@ -116,43 +132,54 @@ export default function TableAlarmComp(props) {
                     <tbody>
                         {
                             props.isLoading ?
-                            <tr>
-                                <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500">
-                                    Fetching Data
-                                </td>
-                            </tr>
-                            :
-                            <>
-                                {props.data?.length > 0 ? (
-                                    props.data.map((row, rowIndex) => (
-                                        <tr
-                                            key={row.id}
-                                            className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
-                                        >
-                                            {headerAlarm.map((columnKey) => (
-                                                <td
-                                                    key={columnKey}
-                                                    className="px-4 py-2 text-xs text-center text-gray-600 border-b border-gray-200"
-                                                >
-                                                    {row[columnKey] !== undefined ? row[columnKey].toString() : "N/A"}
-                                                </td>
-                                            ))}
+                                <tr>
+                                    <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500"
+                                    style={{
+                                        fontSize: "12px",
+                                    }}
+                                    >
+                                        Fetching Data
+                                    </td>
+                                </tr>
+                                :
+                                <>
+                                    {props.data?.length > 0 ? (
+                                        props.data.map((row, rowIndex) => (
+                                            <tr
+                                                key={row.id}
+                                                className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
+                                            >
+                                                {headerAlarm.map((columnKey) => (
+                                                    <td
+                                                        key={columnKey}
+                                                        className="px-4 py-2 text-xs text-center text-gray-600 border-b border-gray-200"
+                                                        style={{
+                                                            fontSize: "12px",
+                                                        }}
+                                                    >
+                                                        {row[columnKey] !== undefined ? row[columnKey].toString() : "N/A"}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500"
+                                            style={{
+                                                fontSize: "12px",
+                                            }}
+                                            >
+                                                No data available
+                                            </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500">
-                                            No data available
-                                        </td>
-                                    </tr>
-                                )}
-                            </>
+                                    )}
+                                </>
                         }
-            
+
                     </tbody>
                 </table>
 
             </div>
-        </div>
+        </>
     );
 }
