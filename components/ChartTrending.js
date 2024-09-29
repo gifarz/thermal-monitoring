@@ -11,24 +11,31 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { listTags, headerLogger } from "@/utils/coordinates";
+import { listGroupTags, listTags, headerLogger } from "@/utils/coordinates";
 
 // Register required components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const ChartTrending = (props) => {
     const chartRef = React.useRef(null);
-    const [tagValue, setTagValue] = React.useState("L102");
+    const [groupTagValue, setGroupTagValue] = React.useState(new Set(["L102"]));
+    const [tagValue, setTagValue] = React.useState(new Set(["T01"]));
 
-    const handleSetTag = (e) => {
-        setTagValue((prevValue) => { // The way to send realtime value to the parent
-            const newValue = e.currentKey
-            props.sendTagValue(newValue)
-            return newValue
-        })
-    }
+    const selectedGroupTag = React.useMemo(
+        () => Array.from(groupTagValue).join(", ").replaceAll("_", " "),
+        [groupTagValue]
+    );
 
-    // console.log(props.dataList)
+    const selectedTag = React.useMemo(
+        () => Array.from(tagValue).join(", ").replaceAll("_", " "),
+        [tagValue]
+    );
+
+    props.sendGroupTagValue(selectedGroupTag)
+
+    // console.log('selectedGroupTag', selectedGroupTag)
+    // console.log('selectedTag', selectedTag)
+    // console.log('props.dataList', props.dataList)
 
     let timestamp = []
 
@@ -42,15 +49,22 @@ const ChartTrending = (props) => {
 
         // Iterate over each key in the object
         Object.keys(entry).forEach(key => {
+            // console.log('key dataList', key)
             // Validate if the key matches the pattern 'LXXX_TYY' (e.g., L102_T01, L103_T01)
             if (key.match(/^L\d{3}_T\d{2}$/)) {
-                // If this is the first time encountering this key, initialize an array for it
+
                 const newKey = key.split('_')[1]
-                if (!sensorData[newKey]) {
-                    sensorData[newKey] = [];
-                }
-                // Push the corresponding value into the respective array
-                sensorData[newKey].push(entry[key]);
+                selectedTag.replaceAll(' ', '').split(',').map(tag => {
+
+                    if (newKey === tag) {
+                        // If this is the first time encountering this key, initialize an array for it
+                        if (!sensorData[key]) {
+                            sensorData[key] = [];
+                        }
+                        // Push the corresponding value into the respective array
+                        sensorData[key].push(entry[key]);
+                    }
+                })
             }
         });
     });
@@ -70,84 +84,45 @@ const ChartTrending = (props) => {
 
     // console.log('timestamp', timestamp)
     // console.log('sensorData', sensorData)
+    // console.log('Object.keys(sensorData)', Object.keys(sensorData))
+
+    const datasetArray = []
+    const borderColors = [
+        "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige",
+        "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown",
+        "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue",
+        "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod",
+        "DarkGray", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen",
+        "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen",
+        "DarkSlateBlue", "DarkSlateGray", "DarkTurquoise", "DarkViolet",
+        "DeepPink", "DeepSkyBlue", "DimGray", "DodgerBlue", "FireBrick",
+        "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite",
+        "Gold", "GoldenRod"
+    ]
+
+    for (const key in sensorData) {
+
+        const randomIndex = Math.floor(Math.random() * borderColors.length)
+        const pickedColor = borderColors[randomIndex]
+
+        const datasetObject = {
+            label: key,
+            data: sensorData[key],
+            borderColor: pickedColor,
+            tension: 0.4,
+        }
+
+        // Remove the picked color from the list
+        borderColors.splice(randomIndex, 1);
+
+        datasetArray.push(datasetObject)
+
+    }
 
     // Data configuration for the chart
     const data = {
         labels: timestamp,
-        datasets: [
-            {
-                label: `${tagValue}_T01`,
-                data: sensorData.T01,
-                borderColor: 'white',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T02`,
-                data: sensorData.T02,
-                borderColor: 'black',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T03`,
-                data: sensorData.T03,
-                borderColor: 'red',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T04`,
-                data: sensorData.T04,
-                borderColor: 'blue',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T05`,
-                data: sensorData.T05,
-                borderColor: 'yellow',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T06`,
-                data: sensorData.T06,
-                borderColor: 'grey',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T07`,
-                data: sensorData.T07,
-                borderColor: 'purple',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T08`,
-                data: sensorData.T08,
-                borderColor: 'cyan',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T09`,
-                data: sensorData.T09,
-                borderColor: 'green',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T10`,
-                data: sensorData.T10,
-                borderColor: 'orange',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T11`,
-                data: sensorData.T11,
-                borderColor: 'pink',
-                tension: 0.4,
-            },
-            {
-                label: `${tagValue}_T12`,
-                data: sensorData.T12,
-                borderColor: 'lime',
-                tension: 0.4,
-            },
-        ],
+        datasets: datasetArray
     };
 
     // Configuration options for the chart
@@ -181,33 +156,65 @@ const ChartTrending = (props) => {
 
     return (
         <>
-            <div className="flex items-center gap-3 mb-4 px-40">
-                <Dropdown className="h-full">
+            <div className="flex items-center gap-3 mb-4 px-10">
+                <Dropdown>
                     <DropdownTrigger className="hidden sm:flex">
                         <Button
                             endContent={<ChevronDownIcon className="text-small" />}
                             variant="flat"
                             className="bg-white min-h-full"
-                            style={{
-                                fontSize: "14px",
-                                maxHeight: "50px"
-                            }}
                         >
-                            {tagValue}
+                            {
+                                selectedGroupTag.split(',').length > 1 ?
+                                    selectedGroupTag.split(',').length + ' Groups'
+                                    :
+                                    selectedGroupTag.split(',')[0]
+                            }
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
                         disallowEmptySelection
                         aria-label="Table Columns"
-                        closeOnSelect={true}
+                        closeOnSelect={false}
+                        selectedKeys={groupTagValue}
+                        selectionMode="multiple"
+                        onSelectionChange={setGroupTagValue}
+                        className="max-h-40 overflow-y-auto"
+                    >
+                        {listGroupTags.map((groupTag, index) => (
+                            <DropdownItem key={groupTag}>
+                                {groupTag}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </Dropdown>
+
+                <Dropdown>
+                    <DropdownTrigger className="hidden sm:flex">
+                        <Button
+                            endContent={<ChevronDownIcon className="text-small" />}
+                            variant="flat"
+                            className="bg-white min-h-full"
+                        >
+                            {
+                                selectedTag.split(',').length > 1 ?
+                                    selectedTag.split(',').length + ' Tags'
+                                    :
+                                    selectedTag.split(',')[0]
+                            }
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        disallowEmptySelection
+                        aria-label="Table Columns"
+                        closeOnSelect={false}
                         selectedKeys={tagValue}
-                        selectionMode="single"
-                        onSelectionChange={handleSetTag}
-                        
+                        selectionMode="multiple"
+                        onSelectionChange={setTagValue}
+                        className="max-h-40 overflow-y-auto"
                     >
                         {listTags.map((tag, index) => (
-                            <DropdownItem key={tag}
-                            >
+                            <DropdownItem key={tag}>
                                 {tag}
                             </DropdownItem>
                         ))}
@@ -216,7 +223,7 @@ const ChartTrending = (props) => {
 
                 <div className="grow flex flex-col gap-4">
                     <I18nProvider locale="id-ID">
-                        <DateRangePicker label="Date Range Filter" value={props.date} onChange={props.setDate} 
+                        <DateRangePicker label="Date Range Filter" value={props.date} onChange={props.setDate}
                         />
                     </I18nProvider>
                 </div>

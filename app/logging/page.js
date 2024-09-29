@@ -16,14 +16,16 @@ export default function page() {
   const router = useRouter(); // Initialize the router
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
-  const [childData, setChildData] = useState('L102');
+  const [childGroupTags, setChildGroupTags] = useState();
+  const [childTags, setChildTags] = useState();
   const [imageGenerated, setImageGenerated] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [bodyList, setBodyList] = useState([]);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
   const { data, error, isLoading } = useSWR(
-    childData && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
-    () => selectTlgDonggi(`${childData}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+    childGroupTags && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
+    () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
     { refreshInterval: 1000 }
   );
 
@@ -43,31 +45,43 @@ export default function page() {
   const padZero = (num) => String(num).padStart(2, '0');
 
   // Callback function that will be passed to the child
-  const handleChildData = (data) => {
-    // console.log('Child Data in function', data)
-    setChildData(data); // Updating parent state with data from child
+  const handleChildGroupTags = (group) => {
+    console.log('Child Group in function', group.replaceAll(' ', ''))
+    const groupTag = group.replaceAll(' ', '')
+
+    setChildGroupTags(groupTag); // Updating parent state with data from child
   };
 
-  // Ensure the data is processed before setting isReady
-  let bodyList = data?.every(item => !item.hasOwnProperty('alarmid')) && data.length > 0 ?
-    data.map(item => {
-      // console.log('instanceof', item.timestamp instanceof Date)
-      if (item.timestamp) {  // Check if timestamp exists
-        const dateObject = new Date(item.timestamp);  // Convert to Date object
-        const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
-
-        return {
-          ...item,
-          timestamp: formattedDate  // Update the timestamp format
-        };
-      }
-      return item;  // Return item even if there's no valid timestamp
-    }) : [];
+  const handleChildTags = (data) => {
+    // console.log('Child Data in function', data)
+    setChildTags(data); // Updating parent state with data from child
+  };
 
   useEffect(() => {
 
-    if (bodyList.length == 0 || bodyList.length > 0) {
-      setIsReady(true);  // Set isReady only if there is data
+    if (data && data.length > 0 && data.every(item => !item.hasOwnProperty('alarmid'))) {
+      const dataList = data.map(item => {
+        if (item.timestamp) {
+          const dateObject = new Date(item.timestamp);  // Convert to Date object
+          const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}-${dateObject.getDate()
+            .toString()
+            .padStart(2, '0')} ${dateObject.getHours()
+            .toString()
+            .padStart(2, '0')}:${dateObject.getMinutes()
+            .toString()
+            .padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
+
+          return {
+            ...item,
+            timestamp: formattedDate  // Update the timestamp format
+          };
+        }
+        return item;  // Return item even if there's no valid timestamp
+      });
+
+      setBodyList(dataList);  // Update bodyList state with the processed data
     }
 
     const canvas = canvasRef.current;
@@ -75,11 +89,12 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/logging.webp`;
+    bgImage.src = `/donggi/v2/data-logger.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions
       if (!bgImage.complete) return;
+      setImageGenerated(true)
 
       const canvasWidth = window.innerWidth;
       imgAspectRatio = bgImage.width / bgImage.height;
@@ -105,7 +120,6 @@ export default function page() {
       // Draw the background image to fill the canvas
       ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
 
-
       // Draw buttons
       menuButton.forEach(button => {
         const btnX = button.x * canvasWidth;
@@ -124,8 +138,6 @@ export default function page() {
         // Optionally draw button visuals here
 
         button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-
-        setImageGenerated(true)
 
         // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
         const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
@@ -188,14 +200,14 @@ export default function page() {
       canvas.removeEventListener('click', handleClick);
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuButton, date, fromDate, toDate, bodyList, childData]);
+  }, [menuButton, date, fromDate, toDate, data]);
 
   const tableMaxHeight = canvasSize.height * 0.6
   const tableMaxWidth = canvasSize.width * 0.95
   const tableMinWidth = canvasSize.width * 0.9
   const tableMarginTop = canvasSize.height * 0.17
 
-  console.log('data logging', data)
+  // console.log('data logging', bodyList)
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -212,7 +224,7 @@ export default function page() {
       >
         {
           imageGenerated ?
-            <TableLoggerComp sendTagValue={handleChildData} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoading} isReady={isReady}/>
+            <TableLoggerComp sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoading} />
             :
             undefined
         }

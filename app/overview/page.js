@@ -19,7 +19,9 @@ import {
   indicatorLamp,
   radiusIndicator,
   startAngleIndicator,
-  endAngleIndicator
+  endAngleIndicator,
+  setATHHH,
+  setATHH
 } from '@/utils/coordinates';
 import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
@@ -27,6 +29,7 @@ import LoadingComp from '@/components/LoadingComp';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
+  const [indicatorValue, setIndicatorValue] = React.useState()
   const { data, error, isLoading } = useSWR(
     '/api/selectDonggiData',
     selectRealtimeDonggi,
@@ -45,7 +48,7 @@ export default function page() {
       let imgAspectRatio = 1; // Default aspect ratio
 
       const bgImage = new Image();
-      bgImage.src = `/donggi/overview.webp`;
+      bgImage.src = `/donggi/v2/overview.webp`;
 
       const resizeCanvas = () => {
         // Ensure the image is loaded before calculating dimensions
@@ -95,14 +98,17 @@ export default function page() {
         });
 
         // Draw Indicator Lamp
-        indicatorLamp.forEach(indicator => {
+        indicatorValue?.forEach(indicator => {
           const indicatorX = indicator.x * canvasWidth;
           const indicatorY = indicator.y * canvasHeight;
 
           // Draw indicator background
           ctx.beginPath();
           ctx.arc(indicatorX, indicatorY, 10, startAngleIndicator, endAngleIndicator);  // Create the circle
-          ctx.fillStyle = 'yellow';
+          ctx.fillStyle = 
+          indicator.value > setATHHH ? 'red' : //DANGER
+          indicator.value > setATHH && indicator.value < setATHHH ? 'yellow' : //WARNING
+          'white'; //NORMAL
           ctx.fill();  // Fill the circle with the specified color
           ctx.stroke();  // Outline the circle (use ctx.fill() to fill it with color)
         });
@@ -130,6 +136,7 @@ export default function page() {
 
         // Draw Min Max Avg
         panelValue?.forEach(value => {
+
           const valueWidth = value.width * canvasWidth;
           const valueHeight = value.height * canvasHeight;
 
@@ -317,7 +324,25 @@ export default function page() {
     }
 
     setPanelValue(newData)
-    // console.log('newData', newData)
+
+    let newIndicatorLamp = [...indicatorLamp]
+
+    panelValue?.forEach(panel => {
+      newIndicatorLamp = newIndicatorLamp.map(indicator => {
+        if(panel.tag == indicator.group){
+
+          return {
+            ...indicator,
+            value: panel.data[1].tvalue
+          }
+        }
+        return indicator
+      })
+    })
+
+    setIndicatorValue(newIndicatorLamp)
+
+    console.log('indicatorValue', indicatorValue)
   };
 
   // if (error) return <p>Error when loading page</p>

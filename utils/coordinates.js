@@ -2,8 +2,8 @@ export const menuButton = [
     { label: 'ARCHITECTURE', x: 0.18, y: 0.93, width: 0.101, height: 0.052, href: '/' },
     { label: 'OVERVIEW', x: 0.288, y: 0.93, width: 0.101, height: 0.052, href: '/overview' },
     { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
-    { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trend' },
-    { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/log' },
+    { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trending' },
+    { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/logging' },
     { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
 ];
 
@@ -18,28 +18,28 @@ export const menuButtonV2 = [
 
 export const indicatorLamp = [
     //LINE 1
-    { label: '1', x: 0.262, y: 0.305, },
-    { label: '2', x: 0.329, y: 0.305, },
-    { label: '3', x: 0.396, y: 0.305, },
-    { label: '4', x: 0.463, y: 0.305, },
-    { label: '5', x: 0.530, y: 0.305, },
-    { label: '6', x: 0.597, y: 0.305, },
-    { label: '7', x: 0.664, y: 0.305, },
-    { label: '8', x: 0.731, y: 0.305, },
+    { label: '1', x: 0.262, y: 0.305, group: 'L102' },
+    { label: '2', x: 0.329, y: 0.305, group: 'L103' },
+    { label: '3', x: 0.396, y: 0.305, group: 'L104' },
+    { label: '4', x: 0.463, y: 0.305, group: 'L105' },
+    { label: '5', x: 0.530, y: 0.305, group: 'L202' },
+    { label: '6', x: 0.597, y: 0.305, group: 'L203' },
+    { label: '7', x: 0.664, y: 0.305, group: 'L204' },
+    { label: '8', x: 0.731, y: 0.305, group: 'L205' },
 
     // LINE 2
-    { label: '1', x: 0.141, y: 0.645, },
-    { label: '2', x: 0.208, y: 0.645, },
-    { label: '3', x: 0.275, y: 0.645, },
-    { label: '4', x: 0.342, y: 0.645, },
-    { label: '5', x: 0.409, y: 0.645, },
-    { label: '6', x: 0.476, y: 0.645, },
-    { label: '7', x: 0.543, y: 0.645, },
-    { label: '8', x: 0.610, y: 0.645, },
-    { label: '9', x: 0.677, y: 0.645, },
-    { label: '10', x: 0.744, y: 0.645, },
-    { label: '11', x: 0.811, y: 0.645, },
-    { label: '12', x: 0.878, y: 0.645, }
+    { label: '1', x: 0.141, y: 0.645, group: 'L209' },
+    { label: '2', x: 0.208, y: 0.645, group: 'L210' },
+    { label: '3', x: 0.275, y: 0.645, group: 'L212' },
+    { label: '4', x: 0.342, y: 0.645, group: 'L213' },
+    { label: '5', x: 0.409, y: 0.645, group: 'L215' },
+    { label: '6', x: 0.476, y: 0.645, group: 'L216' },
+    { label: '7', x: 0.543, y: 0.645, group: 'L217' },
+    { label: '8', x: 0.610, y: 0.645, group: 'L219' },
+    { label: '9', x: 0.677, y: 0.645, group: 'L220' },
+    { label: '10', x: 0.744, y: 0.645, group: 'L221' },
+    { label: '11', x: 0.811, y: 0.645, group: 'L222' },
+    { label: '12', x: 0.878, y: 0.645, group: 'L223' }
 ]
 
 export const panelButtonDonggi = [
@@ -156,9 +156,14 @@ export const minYValue2 = 0.829
 export const maxYValue2 = 0.847
 export const avgYValue2 = 0.865
 
-export const listTags = ["L102","L103","L104","L105","L202","L203","L204","L205","L209","L210","L212","L213","L215","L216","L217","L219","L220","L221","L223","L224"]
+export const setATHHH = 45
+export const setATHH = 35
 
-export const headerLogger = ["id","T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11","T12","timestamp"]
+export const listGroupTags = ["L102","L103","L104","L105","L202","L203","L204","L205","L209","L210","L212","L213","L215","L216","L217","L219","L220","L221","L223","L224"]
+
+export const listTags = ["T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11","T12"]
+
+export const headerLogger = ["timestamp","T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11","T12"]
 
 export const listStatus = ["All","Ack","Active","Normal"]
 

@@ -36,7 +36,7 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/alarm.webp`;
+    bgImage.src = `/donggi/v2/alarm.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions

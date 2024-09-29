@@ -9,7 +9,9 @@ import useSWR from 'swr';
 
 import dynamic from 'next/dynamic';
 
-const ChartTrending = dynamic(() => import('@/components/ChartTrending'))
+const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
+    loading: () => <p>Loading...</p>, // Optional: You can show a fallback component while loading
+})
 
 export default function page() {
     const canvasRef = useRef(null);
@@ -17,12 +19,13 @@ export default function page() {
     const [imageGenerated, setImageGenerated] = useState(false);
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
-    const [childData, setChildData] = useState('L102');
+    const [childGroupTags, setChildGroupTags] = useState('L102');
+    const [dataList, setDataList] = useState([]);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
     const { data, error, isLoading } = useSWR(
-        childData && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
-        () => selectTlgDonggi(`${childData}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+        childGroupTags && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
+        () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
         { refreshInterval: 1000 }
     );
 
@@ -42,35 +45,46 @@ export default function page() {
     const padZero = (num) => String(num).padStart(2, '0');
 
     // Callback function that will be passed to the child
-    const handleChildData = (data) => {
-        // console.log('Child Data in function', data)
-        setChildData(data); // Updating parent state with data from child
+    const handleChildGroupTags = (group) => {
+        // console.log('Child Group in function', group.replaceAll(' ', ''))
+        const groupTag = group.replaceAll(' ', '')
+
+        setChildGroupTags(groupTag); // Updating parent state with data from child
     };
 
-    // Ensure the data is processed before setting isReady
-    let dataList = data?.every(item => !item.hasOwnProperty('alarmid')) && data.length > 0 ?
-        data.map(item => {
-            // console.log('instanceof', item.timestamp instanceof Date)
-            if (item.timestamp) {  // Check if timestamp exists
-                const dateObject = new Date(item.timestamp);  // Convert to Date object
-                const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
-
-                return {
-                    ...item,
-                    timestamp: formattedDate  // Update the timestamp format
-                };
-            }
-            return item;  // Return item even if there's no valid timestamp
-        }) : [];
-
     useEffect(() => {
+
+        if (data && data.length > 0 && data.every(item => !item.hasOwnProperty('alarmid'))) {
+            const newData = data.map(item => {
+                if (item.timestamp) {
+                    const dateObject = new Date(item.timestamp);  // Convert to Date object
+                    const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}-${dateObject.getDate()
+                            .toString()
+                            .padStart(2, '0')} ${dateObject.getHours()
+                                .toString()
+                                .padStart(2, '0')}:${dateObject.getMinutes()
+                                    .toString()
+                                    .padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
+
+                    return {
+                        ...item,
+                        timestamp: formattedDate  // Update the timestamp format
+                    };
+                }
+                return item;  // Return item even if there's no valid timestamp
+            });
+
+            setDataList(newData);  // Update dataList state with the processed data
+        }
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
-        bgImage.src = `/donggi/trending.webp`;
+        bgImage.src = `/donggi/v2/trending.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -182,7 +196,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.removeEventListener('mousemove', handleMouseMove);
         };
-    }, [menuButton, date, fromDate, toDate, dataList, childData]);
+    }, [menuButton, date, fromDate, toDate, data]);
 
     const minWidth = canvasSize.width * 0.67;
     const marginTop = canvasSize.height * 0.22;
@@ -206,7 +220,7 @@ export default function page() {
             >
                 {
                     imageGenerated ?
-                        <ChartTrending sendTagValue={handleChildData} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} />
+                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} />
                         :
                         undefined
                 }
