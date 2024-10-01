@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
-    menuButtonV2 as menuButton, 
+    menuButton, 
     detailValuesV2 as detailValues, 
     exportChartToImage 
 } from '@/utils/coordinates';
@@ -40,7 +40,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/donggi/v2/detail.webp`;
+        bgImage.src = `/donggi/detail.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -331,7 +331,7 @@ export default function page() {
 
     const minWidth = canvasSize.width * 0.3;
     const minHeight = canvasSize.height * 0.5;
-    const marginTop = canvasSize.height * 0.3;
+    const marginTop = canvasSize.height * 0.32;
 
     return (
         <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -340,7 +340,7 @@ export default function page() {
                 style={{
                     // overflow: 'auto',
                     // transform: 'translate(-10%, 0)',
-                    right: '75px',
+                    right: '80px',
                     // height: minHeight,
                     // width: minWidth,
                     top: marginTop

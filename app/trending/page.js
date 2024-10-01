@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { menuButtonV2 as menuButton } from '@/utils/coordinates';
+import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import { selectTlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-
+import { mutate } from 'swr';
 import dynamic from 'next/dynamic';
 
 const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
-    loading: () => <p>Loading...</p>, // Optional: You can show a fallback component while loading
+    loading: () => <p className='flex justify-center'>Chart Loading...</p>, // Optional: You can show a fallback component while loading
 })
 
 export default function page() {
@@ -26,7 +26,7 @@ export default function page() {
     const { data, error, isLoading } = useSWR(
         childGroupTags && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
         () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
-        { refreshInterval: 1000 }
+        { refreshInterval: 1000, revalidateOnFocus: true }
     );
 
     const currentDateISO = new Date().toISOString();
@@ -84,7 +84,7 @@ export default function page() {
         let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
-        bgImage.src = `/donggi/v2/trending.webp`;
+        bgImage.src = `/donggi/trending.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -159,6 +159,9 @@ export default function page() {
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
                     router.push(button.href);
+
+                    // Clear cache when navigating to loggin because with the same api
+                    mutate('/api/selectDonggiData', null, false);
                 }
             });
 

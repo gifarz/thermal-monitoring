@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { menuButtonV2 as menuButton } from '@/utils/coordinates';
+import { menuButton } from '@/utils/coordinates';
 import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-// import TableAlarmComp from '@/components/TableAlarmComp';
 import dynamic from 'next/dynamic';
 
 const TableAlarmComp = dynamic(() => import('@/components/TableAlarmComp'))
@@ -36,7 +35,7 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/v2/alarm.webp`;
+    bgImage.src = `/donggi/alarm.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions

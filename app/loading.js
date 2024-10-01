@@ -1,15 +1,9 @@
 import React from "react";
-import { Progress, Image } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 
 export default function page() {
     return (
         <>
-            <Progress
-                size="sm"
-                isIndeterminate
-                aria-label="Loading..."
-                className="w-screen"
-            />
             <div className="w-screen h-screen">
                 <div className="w-full h-full flex flex-col justify-center items-center">
                     <Image

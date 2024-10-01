@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
+import { siteLocalStorage } from '@/utils/siteLocalStorage';
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -17,7 +18,10 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/v2/architecture.webp`;
+    
+    const site = siteLocalStorage()
+
+    bgImage.src = site === 'donggi' ? `/donggi/architecture.webp` : `/matindok/architecture.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions
@@ -78,7 +82,7 @@ export default function page() {
           x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
           y > button.bounds.y && y < button.bounds.y + button.bounds.height
         ) {
-          router.push(button.href);
+          button.label === 'ARCHITECTURE' ? router.push('/') : router.push(button.href); // Override when in architecture page navigate to main page (/)
         }
       });
     };

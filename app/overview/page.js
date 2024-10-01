@@ -3,8 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  menuButtonV2 as menuButton,
-  panelButtonDonggiV2 as panelButtonDonggi,
+  menuButton,
+  indicatorLampFlag,
   fixWidth,
   fixHeight,
   initXValue,
@@ -16,8 +16,6 @@ import {
   minYValue2,
   maxYValue2,
   avgYValue2,
-  indicatorLamp,
-  radiusIndicator,
   startAngleIndicator,
   endAngleIndicator,
   setATHHH,
@@ -25,7 +23,10 @@ import {
 } from '@/utils/coordinates';
 import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-import LoadingComp from '@/components/LoadingComp';
+import { siteLocalStorage } from '@/utils/siteLocalStorage';
+import { boundClickDonggi, boundHoverDonggi, menuButtonDonggi, panelButtonDonggi } from '@/utils/boundDonggi';
+import { boundClickMatindok, boundHoverMatindok, menuButtonMatindok, panelButtonMatindok } from '@/utils/boundMatindok';
+import { indicatorLampCoordinate } from '@/utils/coordinateDonggi';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
@@ -38,17 +39,21 @@ export default function page() {
 
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
-  const [locStorage, setLocStorage] = React.useState('DONGGI');
 
   useEffect(() => {
+    // Validation site localStorage
+    const site = siteLocalStorage()
+
     const canvas = canvasRef.current;
 
     if (canvas) {
+      console.log('site', site)
       const ctx = canvas.getContext('2d');
       let imgAspectRatio = 1; // Default aspect ratio
 
       const bgImage = new Image();
-      bgImage.src = `/donggi/v2/overview.webp`;
+
+      bgImage.src = site === 'donggi' ? `/donggi/overview.webp` : `/matindok/overview.webp`
 
       const resizeCanvas = () => {
         // Ensure the image is loaded before calculating dimensions
@@ -77,87 +82,76 @@ export default function page() {
         // Draw the background image to fill the canvas
         ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
 
-        // Draw buttons
-        menuButton.forEach(button => {
-          const btnX = button.x * canvasWidth;
-          const btnY = button.y * canvasHeight;
-          const btnWidth = button.width * canvasWidth;
-          const btnHeight = button.height * canvasHeight;
-
-          // Draw button background
-          ctx.fillStyle = 'transparent';
-          ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-          // Draw button background
-          // ctx.fillStyle = 'black';
-          // ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-          // Optionally draw button visuals here
-
-          button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-        });
-
-        // Draw Indicator Lamp
-        indicatorValue?.forEach(indicator => {
+        // Draw Indicator Lamp Flag
+        indicatorLampFlag.forEach(indicator => {
           const indicatorX = indicator.x * canvasWidth;
           const indicatorY = indicator.y * canvasHeight;
 
           // Draw indicator background
           ctx.beginPath();
-          ctx.arc(indicatorX, indicatorY, 10, startAngleIndicator, endAngleIndicator);  // Create the circle
-          ctx.fillStyle = 
-          indicator.value > setATHHH ? 'red' : //DANGER
-          indicator.value > setATHH && indicator.value < setATHHH ? 'yellow' : //WARNING
-          'white'; //NORMAL
+          ctx.arc(indicatorX, indicatorY, 7, startAngleIndicator, endAngleIndicator);  // Create the circle
+          ctx.fillStyle = indicator.color
           ctx.fill();  // Fill the circle with the specified color
-          ctx.stroke();  // Outline the circle (use ctx.fill() to fill it with color)
+          ctx.strokeStyle = '';
         });
 
-        // Draw Panel
-        panelButtonDonggi.forEach(panel => {
-          const panelX = panel.x * canvasWidth;
-          const panelY = panel.y * canvasHeight;
-          const panelWidth = panel.width * canvasWidth;
-          const panelHeight = panel.height * canvasHeight;
+        if (site === 'donggi') {
+          /** ------------------ START DONGGI SCOPE ------------------ */
+          // Draw buttons
+          menuButtonDonggi(ctx, canvasWidth, canvasHeight)
 
-          // Draw panel background
-          // ctx.fillStyle = 'black';
-          // ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+          // Draw Panel
+          panelButtonDonggi(ctx, canvasWidth, canvasHeight)
 
-          // Draw panel label
-          // ctx.fillStyle = 'black';
-          // ctx.font = `${panelHeight * 0.1}px Arial`;
-          // ctx.textAlign = 'center';
-          // ctx.textBaseline = 'middle';
-          // ctx.fillText(panel.label, panelX + panelWidth / 2, panelY + panelHeight / 2);
+          // Draw Indicator Lamp
+          indicatorValue?.forEach(indicator => {
+            const indicatorX = indicator.x * canvasWidth;
+            const indicatorY = indicator.y * canvasHeight;
 
-          panel.bounds = { x: panelX, y: panelY, width: panelWidth, height: panelHeight };
-        });
+            // Draw indicator background
+            ctx.beginPath();
+            ctx.arc(indicatorX, indicatorY, 10, startAngleIndicator, endAngleIndicator);  // Create the circle
+            ctx.fillStyle =
+              indicator.value > setATHHH ? 'red' : //DANGER
+                indicator.value > setATHH && indicator.value < setATHHH ? 'yellow' : //WARNING
+                  indicator.value > 0 && indicator.value < setATHH ? 'green' : //NORMAL
+                    'white'; //DISCONNECTED
 
-        // Draw Min Max Avg
-        panelValue?.forEach(value => {
+            ctx.fill();  // Fill the circle with the specified color
+          });
 
-          const valueWidth = value.width * canvasWidth;
-          const valueHeight = value.height * canvasHeight;
+          // Draw Min Max Avg
+          panelValue?.forEach(value => {
+            const valueWidth = value.width * canvasWidth;
+            const valueHeight = value.height * canvasHeight;
 
-          value.data.forEach(item => {
-            const valueX = value.x * canvasWidth;
-            const valueY = item.y * canvasHeight;
+            value.data.forEach(item => {
+              const valueX = value.x * canvasWidth;
+              const valueY = item.y * canvasHeight;
 
-            // Draw value background
-            ctx.fillStyle = 'transparent';
-            ctx.fillRect(valueX, valueY, valueWidth, valueHeight);
+              // Draw value background
+              ctx.fillStyle = 'transparent';
+              ctx.fillRect(valueX, valueY, valueWidth, valueHeight);
 
-            // Draw value label
-            ctx.fillStyle = 'black';
-            ctx.font = `${valueHeight * 0.5}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(item.tvalue, valueX + valueWidth / 2, valueY + valueHeight / 2);
+              // Draw value label
+              ctx.fillStyle = 'black';
+              ctx.font = `${valueHeight * 0.5}px Arial`;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(item.tvalue, valueX + valueWidth / 2, valueY + valueHeight / 2);
 
-            item.bounds = { x: valueX, y: valueY, width: valueWidth, height: valueHeight };
-          })
-        });
+              item.bounds = { x: valueX, y: valueY, width: valueWidth, height: valueHeight };
+            })
+          });
+          /** ------------------ END DONGGI SCOPE ------------------ */
+
+        } else if (site === 'matindok') {
+          /** ------------------ START DONGGI SCOPE ------------------ */
+          menuButtonMatindok(ctx, canvasWidth, canvasHeight)
+          panelButtonMatindok(ctx, canvasWidth, canvasHeight)
+          /** ------------------ END DONGGI SCOPE ------------------ */
+        }
+
       };
 
       const handleClick = event => {
@@ -165,55 +159,22 @@ export default function page() {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        menuButton.forEach(button => {
-          if (
-            x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-            y > button.bounds.y && y < button.bounds.y + button.bounds.height
-          ) {
-            // Navigate to the respective page without a full page refresh
-            router.push(button.href);
-          }
-        });
-
-        panelButtonDonggi.forEach(panel => {
-          if (
-            x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
-            y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
-          ) {
-            // Navigate to the respective page without a full page refresh
-            router.push(panel.href);
-          }
-        });
+        if (site === 'donggi') {
+          boundClickDonggi(x, y, router)
+        } else if (site === 'matindok') {
+          boundClickMatindok(x, y, router)
+        }
       };
 
       const handleMouseMove = event => {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-        let hovering = false;
 
-        menuButton.forEach(button => {
-          if (
-            x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-            y > button.bounds.y && y < button.bounds.y + button.bounds.height
-          ) {
-            hovering = true;
-          }
-        });
-
-        panelButtonDonggi.forEach(panel => {
-          if (
-            x > panel.bounds.x && x < panel.bounds.x + panel.bounds.width &&
-            y > panel.bounds.y && y < panel.bounds.y + panel.bounds.height
-          ) {
-            hovering = true;
-          }
-        });
-
-        if (hovering) {
-          canvas.style.cursor = 'pointer';
-        } else {
-          canvas.style.cursor = 'default';
+        if (site === 'donggi') {
+          boundHoverDonggi(x, y, canvas)
+        } else if (site === 'matindok') {
+          boundHoverMatindok(x, y, canvas)
         }
       };
 
@@ -325,11 +286,11 @@ export default function page() {
 
     setPanelValue(newData)
 
-    let newIndicatorLamp = [...indicatorLamp]
+    let newIndicatorLamp = [...indicatorLampCoordinate]
 
     panelValue?.forEach(panel => {
       newIndicatorLamp = newIndicatorLamp.map(indicator => {
-        if(panel.tag == indicator.group){
+        if (panel.tag == indicator.group) {
 
           return {
             ...indicator,
@@ -341,8 +302,6 @@ export default function page() {
     })
 
     setIndicatorValue(newIndicatorLamp)
-
-    console.log('indicatorValue', indicatorValue)
   };
 
   // if (error) return <p>Error when loading page</p>

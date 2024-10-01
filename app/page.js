@@ -2,16 +2,15 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-// import { menuButton } from '@/utils/coordinates';
+import { siteLocalStorage } from '@/utils/siteLocalStorage';
 
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
-    const [locStorage, setLocStorage] = React.useState("DONGGI")
 
     const menuButton = [
-        { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '/overview' },
-        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: `/architecture` },
+        { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '' },
+        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: '' },
         { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
         { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
         { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/logging' },
@@ -19,20 +18,22 @@ export default function page() {
     ];
 
     const sites = [
-        { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
-        { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/overview' },
+        { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/architecture' },
+        { label: 'MATINDOK', x: 0.62, y: 0.35, width: 0.35, height: 0.53, href: '/architecture' },
     ];
 
     useEffect(() => {
 
-        setLocStorage(localStorage.getItem('site') ? localStorage.getItem('site') : 'DONGGI')
+        // Validation site localStorage
+        siteLocalStorage()
+
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
 
-        bgImage.src = `/donggi/arsitektur.webp`;
+        bgImage.src = `/architecture.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -126,6 +127,9 @@ export default function page() {
                 ) {
                     // Navigate to the respective page without a full page refresh
                     router.push(button.href);
+
+                    // Switch site localStorage
+                    localStorage.setItem('site', button.label.toLowerCase())
                 }
             });
         };

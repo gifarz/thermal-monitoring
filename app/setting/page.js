@@ -2,7 +2,8 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { menuButtonV2 as menuButton } from '@/utils/coordinates';
+import { menuButton } from '@/utils/coordinates';
+import { siteLocalStorage } from '@/utils/siteLocalStorage';
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -10,12 +11,13 @@ export default function page() {
 
   useEffect(() => {
 
+    console.log('siteLocalStorage', siteLocalStorage())
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/v2/setting.webp`;
+    bgImage.src = `/donggi/setting.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions

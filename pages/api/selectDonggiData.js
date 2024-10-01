@@ -21,7 +21,6 @@ export async function selectRealtimeDonggi(req, res) {
 
 export async function selectTlgDonggi(req, res) {
     try {
-        // console.log('req tlg', req)
         let tlg = req.split('+')[0]
         let gte = req.split('+')[1]
         let lte = req.split('+')[2]
@@ -151,7 +150,7 @@ export async function selectAlgDonggi(req, res) {
                 id: 'asc'
             },
             where: status !== 'All' ? { status: status } : undefined,
-            take: 10
+            take: 20
         }
 
         const data = await prisma.alg_2409.findMany(condition)
