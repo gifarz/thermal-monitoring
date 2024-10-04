@@ -145,10 +145,10 @@ export default function page() {
   const tableMinWidth = canvasSize.width * 0.9
   const tableMarginTop = canvasSize.height * 0.17
 
-  console.log('tableMaxHeight',tableMaxHeight)
-  console.log('tableMaxWidth',tableMaxWidth)
-  console.log('tableMinWidth',tableMinWidth)
-  console.log('tableMarginTop',tableMarginTop)
+  // console.log('tableMaxHeight',tableMaxHeight)
+  // console.log('tableMaxWidth',tableMaxWidth)
+  // console.log('tableMinWidth',tableMinWidth)
+  // console.log('tableMarginTop',tableMarginTop)
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>

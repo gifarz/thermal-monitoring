@@ -26,7 +26,8 @@ import useSWR from 'swr';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 import { boundClickDonggi, boundHoverDonggi, menuButtonDonggi, panelButtonDonggi } from '@/utils/boundDonggi';
 import { boundClickMatindok, boundHoverMatindok, menuButtonMatindok, panelButtonMatindok } from '@/utils/boundMatindok';
-import { indicatorLampCoordinate } from '@/utils/coordinateDonggi';
+import { indicatorLampCoordinate as indicatorLampCoordinateDonggi } from '@/utils/coordinateDonggi';
+import { indicatorLampCoordinate as indicatorLampCoordinateMatindok } from '@/utils/coordinateMatindok';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
@@ -47,7 +48,6 @@ export default function page() {
     const canvas = canvasRef.current;
 
     if (canvas) {
-      console.log('site', site)
       const ctx = canvas.getContext('2d');
       let imgAspectRatio = 1; // Default aspect ratio
 
@@ -149,6 +149,19 @@ export default function page() {
           /** ------------------ START DONGGI SCOPE ------------------ */
           menuButtonMatindok(ctx, canvasWidth, canvasHeight)
           panelButtonMatindok(ctx, canvasWidth, canvasHeight)
+
+          // NOT FIXED
+          indicatorLampCoordinateMatindok.forEach(indicator => {
+            const indicatorX = indicator.x * canvasWidth;
+            const indicatorY = indicator.y * canvasHeight;
+
+            // Draw indicator background
+            ctx.beginPath();
+            ctx.arc(indicatorX, indicatorY, 10, startAngleIndicator, endAngleIndicator);  // Create the circle
+            ctx.fillStyle = 'white'
+            ctx.fill();  // Fill the circle with the specified color
+            ctx.stroke();
+          })
           /** ------------------ END DONGGI SCOPE ------------------ */
         }
 
@@ -286,7 +299,7 @@ export default function page() {
 
     setPanelValue(newData)
 
-    let newIndicatorLamp = [...indicatorLampCoordinate]
+    let newIndicatorLamp = [...indicatorLampCoordinateDonggi]
 
     panelValue?.forEach(panel => {
       newIndicatorLamp = newIndicatorLamp.map(indicator => {
@@ -294,7 +307,7 @@ export default function page() {
 
           return {
             ...indicator,
-            value: panel.data[1].tvalue
+            value: panel.data[1].tvalue // Take the value of Max value from panelValue
           }
         }
         return indicator

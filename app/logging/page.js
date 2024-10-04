@@ -48,7 +48,6 @@ export default function page() {
 
   // Callback function that will be passed to the child
   const handleChildGroupTags = (group) => {
-    console.log('Child Group in function', group.replaceAll(' ', ''))
     const groupTag = group.replaceAll(' ', '')
 
     setChildGroupTags(groupTag); // Updating parent state with data from child

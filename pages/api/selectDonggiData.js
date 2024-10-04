@@ -1,17 +1,17 @@
 'use server'
 
-import prisma from '@/lib/prisma';
+import { prismaDonggi } from "@/lib/prisma"
 
 export async function selectRealtimeDonggi(req, res) {
     try {
         // console.log('halo')
-        const data = await prisma.realtime.findMany({
+        const data = await prismaDonggi.realtime.findMany({
             orderBy: {
                 id: 'asc'
             },
         })
 
-        // console.log('data prisma direct', data)
+        // console.log('data prismaDonggi direct', data)
 
         return data
     } catch (error) {
@@ -42,64 +42,64 @@ export async function selectTlgDonggi(req, res) {
             tlg.split(',').map(async (tlg) => {
 
                 if (tlg == "L102") {
-                    return await prisma.tlg_l102_24.findMany(condition)
+                    return await prismaDonggi.tlg_l102_24.findMany(condition)
 
                 } else if (tlg == "L103") {
-                    return await prisma.tlg_l103_24.findMany(condition)
+                    return await prismaDonggi.tlg_l103_24.findMany(condition)
 
                 } else if (tlg == "L104") {
-                    return await prisma.tlg_l104_24.findMany(condition)
+                    return await prismaDonggi.tlg_l104_24.findMany(condition)
 
                 } else if (tlg == "L105") {
-                    return await prisma.tlg_l105_24.findMany(condition)
+                    return await prismaDonggi.tlg_l105_24.findMany(condition)
 
                 } else if (tlg == "L202") {
-                    return await prisma.tlg_l202_24.findMany(condition)
+                    return await prismaDonggi.tlg_l202_24.findMany(condition)
 
                 } else if (tlg == "L203") {
-                    return await prisma.tlg_l203_24.findMany(condition)
+                    return await prismaDonggi.tlg_l203_24.findMany(condition)
 
                 } else if (tlg == "L204") {
-                    return await prisma.tlg_l204_24.findMany(condition)
+                    return await prismaDonggi.tlg_l204_24.findMany(condition)
 
                 } else if (tlg == "L205") {
-                    return await prisma.tlg_l205_24.findMany(condition)
+                    return await prismaDonggi.tlg_l205_24.findMany(condition)
 
                 } else if (tlg == "L209") {
-                    return await prisma.tlg_l209_24.findMany(condition)
+                    return await prismaDonggi.tlg_l209_24.findMany(condition)
 
                 } else if (tlg == "L210") {
-                    return await prisma.tlg_l210_24.findMany(condition)
+                    return await prismaDonggi.tlg_l210_24.findMany(condition)
 
                 } else if (tlg == "L212") {
-                    return await prisma.tlg_l212_24.findMany(condition)
+                    return await prismaDonggi.tlg_l212_24.findMany(condition)
 
                 } else if (tlg == "L213") {
-                    return await prisma.tlg_l213_24.findMany(condition)
+                    return await prismaDonggi.tlg_l213_24.findMany(condition)
 
                 } else if (tlg == "L215") {
-                    return await prisma.tlg_l215_24.findMany(condition)
+                    return await prismaDonggi.tlg_l215_24.findMany(condition)
 
                 } else if (tlg == "L216") {
-                    return await prisma.tlg_l216_24.findMany(condition)
+                    return await prismaDonggi.tlg_l216_24.findMany(condition)
 
                 } else if (tlg == "L217") {
-                    return await prisma.tlg_l217_24.findMany(condition)
+                    return await prismaDonggi.tlg_l217_24.findMany(condition)
 
                 } else if (tlg == "L219") {
-                    return await prisma.tlg_l219_24.findMany(condition)
+                    return await prismaDonggi.tlg_l219_24.findMany(condition)
 
                 } else if (tlg == "L220") {
-                    return await prisma.tlg_l220_24.findMany(condition)
+                    return await prismaDonggi.tlg_l220_24.findMany(condition)
 
                 } else if (tlg == "L221") {
-                    return await prisma.tlg_l221_24.findMany(condition)
+                    return await prismaDonggi.tlg_l221_24.findMany(condition)
 
                 } else if (tlg == "L223") {
-                    return await prisma.tlg_l223_24.findMany(condition)
+                    return await prismaDonggi.tlg_l223_24.findMany(condition)
 
                 } else if (tlg == "L224") {
-                    return await prisma.tlg_l224_24.findMany(condition)
+                    return await prismaDonggi.tlg_l224_24.findMany(condition)
                 }
 
                 return []
@@ -134,7 +134,7 @@ export async function selectTlgDonggi(req, res) {
         // Convert merged data object back to an array
         const result = Object.values(mergedData);
 
-        // console.log('data prisma direct', result)
+        // console.log('data prismaDonggi direct', result)
 
         return result
     } catch (error) {
@@ -153,9 +153,9 @@ export async function selectAlgDonggi(req, res) {
             take: 20
         }
 
-        const data = await prisma.alg_2409.findMany(condition)
+        const data = await prismaDonggi.alg_2409.findMany(condition)
 
-        // console.log('data prisma direct', data)
+        // console.log('data prismaDonggi direct', data)
 
         return data
     } catch (error) {

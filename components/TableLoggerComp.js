@@ -9,11 +9,12 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { listGroupTags, listTags, headerLogger } from "@/utils/coordinates";
+import { listGroupTags, listTags, headerLogger, listSites } from "@/utils/coordinates";
 
 export default function TableLoggerComp(props) {
     const [groupTagValue, setGroupTagValue] = React.useState(new Set(["L102"]));
     const [tagValue, setTagValue] = React.useState(new Set(["T01"]));
+    const [site, setSite] = React.useState("Donggi");
 
     const selectedGroupTag = React.useMemo(
         () => Array.from(groupTagValue).join(", ").replaceAll("_", " "),
@@ -27,6 +28,14 @@ export default function TableLoggerComp(props) {
 
     props.sendGroupTagValue(selectedGroupTag)
     props.sendTagValue(selectedTag)
+
+    const handleSetSite = (e) => {
+        setSite(() => {
+            const newSite = e.currentKey
+            // props.sendSite(e.currentKey)
+            return newSite
+        })
+    }
 
     const headerList = headerLogger.flatMap(header => {
 
@@ -110,7 +119,41 @@ export default function TableLoggerComp(props) {
 
     return (
         <div className="p-0">
-            <div className="flex items-center gap-3 mb-4 px-40">
+            <div className="flex items-center gap-3 mb-4 px-32">
+
+                <Dropdown
+                    className="h-full"
+                >
+                    <DropdownTrigger className="hidden sm:flex">
+                        <Button
+                            endContent={<ChevronDownIcon className="text-small" />}
+                            variant="flat"
+                            className="bg-white min-h-full"
+                            style={{
+                                fontSize: "14px",
+                                maxHeight: "50px"
+                            }}
+                        >
+                            {site}
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        disallowEmptySelection
+                        aria-label="Table Columns"
+                        closeOnSelect={true}
+                        selectedKeys={site}
+                        selectionMode="single"
+                        onSelectionChange={handleSetSite}
+                        disabledKeys={["Matindok"]}
+                    >
+                        {listSites.map((site, index) => (
+                            <DropdownItem key={site}>
+                                {site}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </Dropdown>
+
                 <Dropdown>
                     <DropdownTrigger className="hidden sm:flex">
                         <Button

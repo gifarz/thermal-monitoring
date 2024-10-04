@@ -11,15 +11,31 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { listGroupTags, listTags, headerLogger } from "@/utils/coordinates";
+import { listGroupTags, listTags, listSites } from "@/utils/coordinates";
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 // Register required components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, zoomPlugin);
 
 const ChartTrending = (props) => {
     const chartRef = React.useRef(null);
     const [groupTagValue, setGroupTagValue] = React.useState(new Set(["L102"]));
     const [tagValue, setTagValue] = React.useState(new Set(["T01"]));
+    const [site, setSite] = React.useState("Donggi");
+
+    React.useEffect(() => {
+        const chartInstance = chartRef.current;
+        if (chartInstance) {
+            // Force fixed dimensions on canvas
+            const canvas = chartInstance.canvas;
+            canvas.style.width = `${props.chartWidth}px`;
+            canvas.style.height = `${props.chartHeight}px`;
+        }
+
+    })
+
+    // console.log('props.chartWidth', props.chartWidth)
+    // console.log('props.chartHeight', props.chartHeight)
 
     const selectedGroupTag = React.useMemo(
         () => Array.from(groupTagValue).join(", ").replaceAll("_", " "),
@@ -32,6 +48,14 @@ const ChartTrending = (props) => {
     );
 
     props.sendGroupTagValue(selectedGroupTag)
+
+    const handleSetSite = (e) => {
+        setSite(() => {
+            const newSite = e.currentKey
+            // props.sendSite(e.currentKey)
+            return newSite
+        })
+    }
 
     // console.log('selectedGroupTag', selectedGroupTag)
     // console.log('selectedTag', selectedTag)
@@ -132,6 +156,21 @@ const ChartTrending = (props) => {
             legend: {
                 position: 'top',
             },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'x', // allows panning in the x-axis
+                },
+                zoom: {
+                    wheel: {
+                        enabled: true, // Activate zoom on mouse wheel
+                    },
+                    pinch: {
+                        enabled: true, // Enable pinch zooming on touch screens
+                    },
+                    mode: 'x', // Zoom only on the x-axis
+                },
+            },
             // title: {
             //     display: true,
             //     text: 'Trending',
@@ -156,7 +195,41 @@ const ChartTrending = (props) => {
 
     return (
         <>
-            <div className="flex items-center gap-3 mb-4 px-10">
+            <div className="flex items-center gap-3 mb-4">
+
+                <Dropdown
+                    className="h-full"
+                >
+                    <DropdownTrigger className="hidden sm:flex">
+                        <Button
+                            endContent={<ChevronDownIcon className="text-small" />}
+                            variant="flat"
+                            className="bg-white min-h-full"
+                            style={{
+                                fontSize: "14px",
+                                maxHeight: "50px"
+                            }}
+                        >
+                            {site}
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                        disallowEmptySelection
+                        aria-label="Table Columns"
+                        closeOnSelect={true}
+                        selectedKeys={site}
+                        selectionMode="single"
+                        onSelectionChange={handleSetSite}
+                        disabledKeys={["Matindok"]}
+                    >
+                        {listSites.map((site, index) => (
+                            <DropdownItem key={site}>
+                                {site}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </Dropdown>
+
                 <Dropdown>
                     <DropdownTrigger className="hidden sm:flex">
                         <Button
@@ -221,7 +294,7 @@ const ChartTrending = (props) => {
                     </DropdownMenu>
                 </Dropdown>
 
-                <div className="grow flex flex-col gap-4">
+                <div className="grow flex flex-col">
                     <I18nProvider locale="id-ID">
                         <DateRangePicker label="Date Range Filter" value={props.date} onChange={props.setDate}
                         />

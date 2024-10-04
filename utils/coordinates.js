@@ -88,3 +88,5 @@ export const headerLogger = ["timestamp","T01","T02","T03","T04","T05","T06","T0
 export const listStatus = ["All","Ack","Active","Normal"]
 
 export const headerAlarm = ["timestamp","alarmid","status"]
+
+export const listSites = ["Donggi","Matindok"]

@@ -2,20 +2,20 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-    menuButton, 
-    detailValuesV2 as detailValues, 
-    exportChartToImage 
+import {
+    menuButton,
+    detailValuesV2 as detailValues,
+    exportChartToImage
 } from '@/utils/coordinates';
 import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-// import Chart from 'chart.js/auto';
 import dynamic from 'next/dynamic';
 
 const ChartDetail = dynamic(() => import('@/components/ChartDetail'))
 
 export default function page() {
     const [detailValue, setDetailValue] = React.useState(detailValues)
+    const [chartValue, setChartValue] = React.useState([])
     const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 })
     const [imageGenerated, setImageGenerated] = React.useState(false);
     const { data, error, isLoading } = useSWR(
@@ -24,8 +24,19 @@ export default function page() {
         { refreshInterval: 1000 }
     )
 
+    const borderColors = [
+        "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige",
+        "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown"
+    ]
+    const objectChartData = {
+        label: '',
+        data: [],  // Initially empty data
+        borderColor: '',
+        tension: 0.1,
+    }
+
     const canvasRef = React.useRef(null);
-    const chartInstanceRef = React.useRef(null);  // Store chart instance
+
     const router = useRouter(); // Initialize the router
     const searchParams = useSearchParams()
 
@@ -157,15 +168,6 @@ export default function page() {
                 }
             });
 
-            // exportChartToImage.forEach(button => {
-            //     if (
-            //         x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
-            //         y > button.bounds.y && y < button.bounds.y + button.bounds.height
-            //     ) {
-            //         // Navigate to the respective page without a full page refresh
-            //         handleExport()
-            //     }
-            // });
         };
 
         const handleMouseMove = (event) => {
@@ -199,74 +201,6 @@ export default function page() {
             }
         };
 
-        // const lineChart = (imgWidth, imgHeight) => {
-        //     if (chartInstanceRef.current) {
-        //         chartInstanceRef.current.destroy();
-        //     }
-
-        //     // Create a new offscreen canvas to use with Chart.js
-        //     const offscreenCanvas = document.createElement('canvas');
-        //     offscreenCanvas.width = imgWidth * 0.2;  // Example width
-        //     offscreenCanvas.height = imgHeight * 0.4;  // Example height
-        //     const offscreenCtx = offscreenCanvas.getContext('2d');
-
-        //     // Set the scaling factors for chart elements to adjust with canvas size
-        //     const fontScale = Math.min(imgWidth, imgHeight) / 800;  // Example scaling factor for fonts
-
-        //     chartInstanceRef.current = new Chart(offscreenCtx, {
-        //         type: 'line',
-        //         data: {
-        //             labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        //             datasets: [{
-        //                 label: 'Dataset',
-        //                 data: [65, 59, 80, 81, 56, 55],
-        //                 borderColor: 'rgb(105, 106, 107)',
-        //                 tension: 0.05,
-        //             }],
-        //         },
-        //         options: {
-        //             responsive: false,
-        //             animation: false,
-        //             plugins: {
-        //                 legend: {
-        //                     display: true,
-        //                     labels: {
-        //                         font: {
-        //                             size: 12 * fontScale  // Scale font size
-        //                         }
-        //                     }
-        //                 },
-        //                 title: {
-        //                     display: false,
-        //                     text: 'Line Chart Example',
-        //                     font: {
-        //                         size: 16 * fontScale  // Scale title size
-        //                     }
-        //                 }
-        //             },
-        //             scales: {
-        //                 x: {
-        //                     ticks: {
-        //                         font: {
-        //                             size: 10 * fontScale  // Scale x-axis label font size
-        //                         }
-        //                     }
-        //                 },
-        //                 y: {
-        //                     ticks: {
-        //                         font: {
-        //                             size: 10 * fontScale  // Scale y-axis label font size
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     });
-
-        //     // Draw the chart from the offscreen canvas onto the main canvas
-        //     ctx.drawImage(offscreenCanvas, 0.65 * imgWidth, 0.28 * imgHeight, offscreenCanvas.width, offscreenCanvas.height);
-        // }
-
         bgImage.onload = resizeCanvas;
         window.addEventListener('resize', resizeCanvas);
         canvas.addEventListener('click', handleClick);
@@ -276,11 +210,6 @@ export default function page() {
             window.removeEventListener('resize', resizeCanvas);
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
-
-            // Destroy the chart instance when the component is unmounted
-            // if (chartInstanceRef.current) {
-            //     chartInstanceRef.current.destroy();
-            // }
         };
 
     }, [menuButton, detailValue]);
@@ -299,16 +228,60 @@ export default function page() {
                     return matchingData != undefined ? { ...data, value: matchingData.tvalue } : data;
                 });
 
-                // console.log('updatedValue', updatedValue)
-
                 setDetailValue(updatedValue);
+
+                // SET THE VALUE FOR REALTIME CHART 
+
+                const newChartData = updatedValue.map(item => ({
+                    ...objectChartData,  // Spread the default object structure
+                    label: item.tag,        // Update the label from the API data
+                    data: [item.value],  // Set the data array from the API value
+                }));
+
+                // Append to the existing chartData without removing previous data
+                setChartValue(prevChartValue => {
+
+                    // If prevChartValue is empty, return the newChartData directly
+                    if (!prevChartValue || prevChartValue.length === 0) {
+                        return newChartData;
+                    }
+
+                    // If prevChartValue has data, merge new data
+                    return prevChartValue.map((prevItem, index) => {
+
+                        // Choose the borderColor
+                        const pickedColor = borderColors[index]
+
+                        // Find if there's a matching label in newChartData
+                        const newItem = newChartData.find(newData => newData.label === prevItem.label);
+
+                        if (newItem) {
+                            // Append new data, then limit to the last 4 entries
+                            const updatedData = [...prevItem.data, ...newItem.data].slice(-4);  // Keep only the last 4 items
+                            // Append new data to the existing item's data array
+                            return {
+                                ...prevItem,
+                                data: updatedData,
+                                borderColor: pickedColor
+                            };
+                        }
+
+                        // Remove the picked color from the list
+                        borderColors.splice(index, 1);
+
+                        // If no matching label is found, return the previous item unchanged
+                        return prevItem;
+                    })
+                    
+                });
+
             }
         };
 
         const intervalId = setInterval(() => {
             updateDetailValue()
-            // console.log('detailValue', detailValue)
-        }, 1000);
+            // console.log('chartValue', chartValue)
+        }, 5000);
 
         return () => {
             clearInterval(intervalId);
@@ -316,39 +289,23 @@ export default function page() {
 
     }, [data, refPrefix])
 
-    const handleExport = () => {
-        const chart = chartInstanceRef.current;
-
-        // Convert chart to Base64 Image
-        const image = chart.toBase64Image();
-
-        // Create a link element to download the image
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = `Chart_${ref}.png`; // Name the file as 'chart.png'
-        link.click(); // Programmatically click the link to trigger download
-    };
-
-    const minWidth = canvasSize.width * 0.3;
-    const minHeight = canvasSize.height * 0.5;
+    const minWidth = canvasSize.width * 0.31;
+    const minHeight = canvasSize.height * 0.6;
     const marginTop = canvasSize.height * 0.32;
+    const marginRight = canvasSize.height * 0.06;
 
     return (
         <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
             <div
                 className='absolute z-10'
                 style={{
-                    // overflow: 'auto',
-                    // transform: 'translate(-10%, 0)',
-                    right: '80px',
-                    // height: minHeight,
-                    // width: minWidth,
+                    right: marginRight,
                     top: marginTop
                 }}
             >
                 {
                     imageGenerated ?
-                        <ChartDetail />
+                        <ChartDetail chartValue={chartValue} chartWidth={minWidth} chartHeight={minHeight} />
                         :
                         undefined
                 }

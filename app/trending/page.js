@@ -26,7 +26,7 @@ export default function page() {
     const { data, error, isLoading } = useSWR(
         childGroupTags && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
         () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
-        { refreshInterval: 1000, revalidateOnFocus: true }
+        { refreshInterval: 1000 }
     );
 
     const currentDateISO = new Date().toISOString();
@@ -201,29 +201,30 @@ export default function page() {
         };
     }, [menuButton, date, fromDate, toDate, data]);
 
-    const minWidth = canvasSize.width * 0.67;
-    const marginTop = canvasSize.height * 0.22;
+    const minWidth = canvasSize.width * 0.8;
+    const minHeight = canvasSize.height * 0.3;
+    const marginTop = canvasSize.height * 0.2;
 
     // console.log('childData', childData)
     // console.log('fromDate', fromDate)
-    // console.log('toDate', toDate)
-    // console.log('dataList', dataList)
+    // console.log('minWidth', minWidth)
+    // console.log('minHeight', minHeight)
 
     return (
         <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
             <div
-                className='absolute w-1/2 z-10 left-1/2'
+                className='absolute z-10 left-1/2'
                 style={{
                     overflow: 'auto',
                     transform: 'translate(-50%, 0)',
                     // minHeight: '50%',
-                    minWidth: minWidth,
+                    // minWidth: minWidth,
                     top: marginTop
                 }}
             >
                 {
                     imageGenerated ?
-                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} />
+                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} chartWidth={minWidth} chartHeight={minHeight}/>
                         :
                         undefined
                 }

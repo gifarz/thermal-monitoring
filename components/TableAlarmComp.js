@@ -8,30 +8,27 @@ import {
     DateRangePicker
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
-import { listStatus, headerAlarm } from "@/utils/coordinates";
+import { listStatus, headerAlarm, listSites } from "@/utils/coordinates";
 import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 
 export default function TableAlarmComp(props) {
     const [status, setStatus] = React.useState("All");
-    const [canvasWidth, setCanvasWidth] = React.useState("All");
-    const [canvasHeight, setCanvasHeight] = React.useState("All");
-
-    // const { data, error, isLoading } = useSWR(
-    //     status ? `/api/selectDonggiData` : null,
-    //     () => selectAlgDonggi(status),
-    //     { refreshInterval: 1000 }
-    // );
-
-    // if (error) return <p>Error when loading page</p>
-    // if (isLoading) return <LoadingComp flag={'page'} />
-    // if (data) return <LoadingComp flag={'page'} />
+    const [site, setSite] = React.useState("Donggi");
 
     const handleSetStatus = (e) => {
         setStatus(() => {
             const newStatus = e.currentKey
             props.sendStatus(e.currentKey)
             return newStatus
+        })
+    }
+
+    const handleSetSite = (e) => {
+        setSite(() => {
+            const newSite = e.currentKey
+            // props.sendSite(e.currentKey)
+            return newSite
         })
     }
 
@@ -65,39 +62,74 @@ export default function TableAlarmComp(props) {
 
     return (
         <>
-            <div className="w-full flex items-center gap-3 mb-4">
-                <Dropdown
-                    className="h-full"
-                >
-                    <DropdownTrigger className="hidden sm:flex">
-                        <Button
-                            endContent={<ChevronDownIcon className="text-small" />}
-                            variant="flat"
-                            className="bg-white min-h-full"
-                            style={{
-                                fontSize: "14px",
-                                maxHeight: "50px"
-                            }}
-                        >
-                            {status}
-                        </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                        disallowEmptySelection
-                        aria-label="Table Columns"
-                        closeOnSelect={true}
-                        selectedKeys={status}
-                        selectionMode="single"
-                        onSelectionChange={handleSetStatus}
-
+            <div className="w-full flex justify-between items-center gap-3 mb-4">
+                <div className="flex gap-3">
+                    <Dropdown
+                        className="h-full"
                     >
-                        {listStatus.map((status, index) => (
-                            <DropdownItem key={status}>
+                        <DropdownTrigger className="hidden sm:flex">
+                            <Button
+                                endContent={<ChevronDownIcon className="text-small" />}
+                                variant="flat"
+                                className="bg-white min-h-full"
+                                style={{
+                                    fontSize: "14px",
+                                    maxHeight: "50px"
+                                }}
+                            >
+                                {site}
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            disallowEmptySelection
+                            aria-label="Table Columns"
+                            closeOnSelect={true}
+                            selectedKeys={site}
+                            selectionMode="single"
+                            onSelectionChange={handleSetSite}
+                            disabledKeys={["Matindok"]}
+                        >
+                            {listSites.map((site, index) => (
+                                <DropdownItem key={site}>
+                                    {site}
+                                </DropdownItem>
+                            ))}
+                        </DropdownMenu>
+                    </Dropdown>
+
+                    <Dropdown
+                        className="h-full"
+                    >
+                        <DropdownTrigger className="hidden sm:flex">
+                            <Button
+                                endContent={<ChevronDownIcon className="text-small" />}
+                                variant="flat"
+                                className="bg-white min-h-full"
+                                style={{
+                                    fontSize: "14px",
+                                    maxHeight: "50px"
+                                }}
+                            >
                                 {status}
-                            </DropdownItem>
-                        ))}
-                    </DropdownMenu>
-                </Dropdown>
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            disallowEmptySelection
+                            aria-label="Table Columns"
+                            closeOnSelect={true}
+                            selectedKeys={status}
+                            selectionMode="single"
+                            onSelectionChange={handleSetStatus}
+
+                        >
+                            {listStatus.map((status, index) => (
+                                <DropdownItem key={status}>
+                                    {status}
+                                </DropdownItem>
+                            ))}
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
 
                 <Button
                     variant="flat"
@@ -134,9 +166,9 @@ export default function TableAlarmComp(props) {
                             props.isLoading ?
                                 <tr>
                                     <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500"
-                                    style={{
-                                        fontSize: "12px",
-                                    }}
+                                        style={{
+                                            fontSize: "12px",
+                                        }}
                                     >
                                         Fetching Data
                                     </td>
@@ -165,9 +197,9 @@ export default function TableAlarmComp(props) {
                                     ) : (
                                         <tr>
                                             <td colSpan={headerAlarm.length} className="px-4 py-2 text-sm text-center text-gray-500"
-                                            style={{
-                                                fontSize: "12px",
-                                            }}
+                                                style={{
+                                                    fontSize: "12px",
+                                                }}
                                             >
                                                 No data available
                                             </td>
