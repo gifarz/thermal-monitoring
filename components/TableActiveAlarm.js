@@ -9,13 +9,13 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { listStatus, headerAlarm, listSites } from "@/utils/coordinates";
-import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 
-export default function TableAlarmComp(props) {
+export default function TableActiveAlarm(props) {
+
     const [status, setStatus] = React.useState("All");
     const [site, setSite] = React.useState("Donggi");
-
+    
     const handleSetStatus = (e) => {
         setStatus(() => {
             const newStatus = e.currentKey
@@ -62,7 +62,7 @@ export default function TableAlarmComp(props) {
 
     return (
         <>
-            <div className="w-full flex justify-between items-center gap-3 mb-4">
+            <div className="w-full flex justify-between items-center gap-3 mb-4 px-2">
                 <div className="flex gap-3">
                     <Dropdown
                         className="h-full"
@@ -144,7 +144,7 @@ export default function TableAlarmComp(props) {
                 </Button>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center px-2">
                 <table className="min-w-full border-collapse table-auto bg-white shadow-md rounded-md overflow-hidden">
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
@@ -175,8 +175,8 @@ export default function TableAlarmComp(props) {
                                 </tr>
                                 :
                                 <>
-                                    {props.data?.length > 0 ? (
-                                        props.data.map((row, rowIndex) => (
+                                    {props.dataAlg?.length > 0 ? (
+                                        props.dataAlg.map((row, rowIndex) => (
                                             <tr
                                                 key={row.id}
                                                 className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}

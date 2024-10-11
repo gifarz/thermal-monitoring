@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { menuButton } from '@/utils/coordinates';
-import { selectAlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
+import { selectAlgDonggi } from '@/pages/api/donggi/selectAlg';
+import { selectAlarmTagsDonggi } from '@/pages/api/donggi/selectAlarmTags';
 
-const TableAlarmComp = dynamic(() => import('@/components/TableAlarmComp'))
+const TableActiveAlarm = dynamic(() => import('@/components/TableActiveAlarm'))
+const TableHistoricalAlarm = dynamic(() => import('@/components/TableHistoricalAlarm'))
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -15,12 +18,28 @@ export default function page() {
   const [imageGenerated, setImageGenerated] = useState(false);
   const [childData, setChildData] = useState('All');
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
+  const [newHistorical, setNewHistorical] = useState([])
 
-  const { data, error, isLoading } = useSWR(
-    childData ? `/api/selectDonggiData` : null,
+  const { data: dataAlg, error, isLoading } = useSWR(
+    childData ? `/api/donggi/selectAlg` : null,
     () => selectAlgDonggi(childData),
     { refreshInterval: 1000 }
   );
+
+  const { data: dataAlarmTags, error: errorAlarmTags, isLoading: isLoadingAlarmTags } = useSWR(
+    `/api/donggi/selectAlarmTags`, selectAlarmTagsDonggi,
+    { refreshInterval: 1000 }
+  );
+
+  let objectHistorical =
+  {
+    timestamp: "",
+    alarmid: "",
+    group: "",
+    tag: "",
+    text: "",
+    status: ""
+  }
 
   // Callback function that will be passed to the child
   const handleChildData = (data) => {
@@ -29,6 +48,45 @@ export default function page() {
   };
 
   useEffect(() => {
+
+    // Iterate over dataAlg
+    dataAlg?.forEach(alg => {
+
+      // Create a new object for historical data
+      let updatedHistorical = {
+        ...objectHistorical
+      };
+
+      // console.log('status', alg.status.toLowerCase())
+
+      let tag = dataAlarmTags?  dataAlarmTags[alg.alarmid] : undefined
+
+      // Iterate over dataHistorical to match alarmid
+      dataAlarmTags?.forEach(item => {
+
+        // console.log('include constant', item.constant.includes(alg.status.toLowerCase()))
+
+        if (item.id == alg.alarmid) {
+
+          // console.log('masuk', item)
+          updatedHistorical = {
+            ...updatedHistorical,
+            timestamp: alg.timestamp,
+            alarmid: alg.alarmid,
+            status: alg.status,
+            group: item.group,
+            text: item.text,
+            tag: item.tag
+          };
+
+          // Update the state with the new objectHistorical
+          setNewHistorical(prevValue => [...prevValue, updatedHistorical]);
+        }
+
+      });
+
+    });
+
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -138,17 +196,18 @@ export default function page() {
       canvas.removeEventListener('click', handleClick);
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuButton]);
+  }, [menuButton, dataAlg, dataAlarmTags]);
 
-  const tableMaxHeight = canvasSize.height * 0.6
+  const tableMaxHeight = canvasSize.height * 0.65
   const tableMaxWidth = canvasSize.width * 0.95
   const tableMinWidth = canvasSize.width * 0.9
   const tableMarginTop = canvasSize.height * 0.17
 
   // console.log('tableMaxHeight',tableMaxHeight)
   // console.log('tableMaxWidth',tableMaxWidth)
-  // console.log('tableMinWidth',tableMinWidth)
-  // console.log('tableMarginTop',tableMarginTop)
+  // console.log('dataAlarmTags',dataAlarmTags)
+  // console.log('dataAlg',dataAlg)
+  console.log('newHistorical', newHistorical)
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -165,11 +224,43 @@ export default function page() {
       >
         {
           imageGenerated ?
-            <TableAlarmComp
-              sendStatus={handleChildData}
-              data={data}
-              isLoading={isLoading}
-            />
+            <div className="flex w-full flex-col">
+              <Tabs
+                disabledKeys={['configuration']}
+                aria-label="Options"
+              >
+                <Tab key="configuration" title="Alarm Configuration">
+                  <Card>
+                    <CardBody>
+                      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </CardBody>
+                  </Card>
+                </Tab>
+                <Tab key="active" title="Active Alarms">
+                  <Card>
+                    <CardBody>
+                      <TableActiveAlarm
+                        sendStatus={handleChildData}
+                        dataAlg={dataAlg}
+                        isLoading={isLoading}
+                      />
+                    </CardBody>
+                  </Card>
+                </Tab>
+                <Tab key="historical" title="Historical Alarms">
+                  <Card>
+                    <CardBody>
+                      <TableHistoricalAlarm
+                        sendStatus={handleChildData}
+                        // dataAlg={dataAlg}
+                        newHistorical={newHistorical}
+                        isLoading={isLoading}
+                      />
+                    </CardBody>
+                  </Card>
+                </Tab>
+              </Tabs>
+            </div>
             :
             undefined
         }

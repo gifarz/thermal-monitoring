@@ -21,29 +21,60 @@ import {
   setATHHH,
   setATHH
 } from '@/utils/coordinates';
-import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 import { boundClickDonggi, boundHoverDonggi, menuButtonDonggi, panelButtonDonggi } from '@/utils/boundDonggi';
 import { boundClickMatindok, boundHoverMatindok, menuButtonMatindok, panelButtonMatindok } from '@/utils/boundMatindok';
 import { indicatorLampCoordinate as indicatorLampCoordinateDonggi } from '@/utils/coordinateDonggi';
-import { indicatorLampCoordinate as indicatorLampCoordinateMatindok } from '@/utils/coordinateMatindok';
+import {
+  indicatorLampCoordinate as indicatorLampCoordinateMatindok,
+  fixWidth as fixWidthMat,
+  fixHeight as fixHeightMat,
+  initXValue as initXValueMat,
+  initXValue2 as initXValue2Mat,
+  fibbXValue as fibbXValueMat,
+  minYValue as minYValueMat,
+  maxYValue as maxYValueMat,
+  avgYValue as avgYValueMat,
+  minYValue2 as minYValue2Mat,
+  maxYValue2 as maxYValue2Mat,
+  avgYValue2 as avgYValue2Mat,
+  // startAngleIndicator,
+  // endAngleIndicator,
+  // setATHHH,
+  // setATHH
+} from '@/utils/coordinateMatindok';
+import { selectRealtimeDonggi } from '@/pages/api/donggi/selectRealtime';
+import { selectRealtimeMatindok } from '@/pages/api/matindok/selectRealtime';
+import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
   const [indicatorValue, setIndicatorValue] = React.useState()
-  const { data, error, isLoading } = useSWR(
-    '/api/selectDonggiData',
-    selectRealtimeDonggi,
-    { refreshInterval: 1000 }
+  const [site, setSite] = React.useState()
+
+  // const { data: dataRealtimeDonggi, error: errorRealtimeDonggi, isLoading: isLoadingRealtimeDonggi } = useSWR(
+  //   '/api/donggi/selectRealtime',
+  //   selectRealtimeDonggi
+  // )
+
+  // const { data: dataRealtimeMatindok, error: errorRealtimeMatindok, isLoading: isLoadingRealtimeMatindok } = useSWR(
+  //   '/api/matindok/selectRealtime',
+  //   selectRealtimeMatindok
+  // )
+
+  const { data: dataRealtimeGeneral, error: errorRealtimeGeneral, isLoading: isLoadingRealtimeGeneral } = useSWR(
+    site ? '/api/general/selectRealtime' : null,
+    () => selectRealtimeGeneral(site)
   )
 
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
 
   useEffect(() => {
+
     // Validation site localStorage
-    const site = siteLocalStorage()
+    setSite(siteLocalStorage)
 
     const canvas = canvasRef.current;
 
@@ -150,18 +181,46 @@ export default function page() {
           menuButtonMatindok(ctx, canvasWidth, canvasHeight)
           panelButtonMatindok(ctx, canvasWidth, canvasHeight)
 
-          // NOT FIXED
-          indicatorLampCoordinateMatindok.forEach(indicator => {
+          // Draw Indicator Lamp
+          indicatorValue?.forEach(indicator => {
             const indicatorX = indicator.x * canvasWidth;
             const indicatorY = indicator.y * canvasHeight;
 
             // Draw indicator background
             ctx.beginPath();
             ctx.arc(indicatorX, indicatorY, 10, startAngleIndicator, endAngleIndicator);  // Create the circle
-            ctx.fillStyle = 'white'
+            ctx.fillStyle =
+              indicator.value > setATHHH ? 'red' : //DANGER
+                indicator.value > setATHH && indicator.value < setATHHH ? 'yellow' : //WARNING
+                  indicator.value > 0 && indicator.value < setATHH ? 'green' : //NORMAL
+                    'white'; //DISCONNECTED
+
             ctx.fill();  // Fill the circle with the specified color
-            ctx.stroke();
-          })
+          });
+
+          // Draw Min Max Avg
+          panelValue?.forEach(value => {
+            const valueWidth = value.width * canvasWidth;
+            const valueHeight = value.height * canvasHeight;
+
+            value.data.forEach(item => {
+              const valueX = value.x * canvasWidth;
+              const valueY = item.y * canvasHeight;
+
+              // Draw value background
+              ctx.fillStyle = 'transparent';
+              ctx.fillRect(valueX, valueY, valueWidth, valueHeight);
+
+              // Draw value label
+              ctx.fillStyle = 'black';
+              ctx.font = `${valueHeight * 0.5}px Arial`;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(item.tvalue, valueX + valueWidth / 2, valueY + valueHeight / 2);
+
+              item.bounds = { x: valueX, y: valueY, width: valueWidth, height: valueHeight };
+            })
+          });
           /** ------------------ END DONGGI SCOPE ------------------ */
         }
 
@@ -197,7 +256,7 @@ export default function page() {
       canvas.addEventListener('mousemove', handleMouseMove);
 
       const intervalId = setInterval(() => {
-        updatePanelValue(data)
+        updatePanelValue(dataRealtimeGeneral)
         // console.log('panelValue', panelValue)
       }, 1000);
 
@@ -208,14 +267,14 @@ export default function page() {
         clearInterval(intervalId);
       };
     }
-  }, [menuButton, panelValue, data]);
+  }, [menuButton, panelValue, dataRealtimeGeneral]);
 
   const updatePanelValue = (data) => {
 
     let newData = []
     let isFirst = true
-    let xValueTop = initXValue
-    let xValueBottom = initXValue2
+    let xValueTop = site ? (site == 'donggi' ? initXValue : initXValueMat) : null
+    let xValueBottom = site ? (site == 'donggi' ? initXValue2 : initXValue2Mat) : null
 
     if (data) {
       // Iterate over each data object
@@ -230,7 +289,9 @@ export default function page() {
 
         if (containsMax || containsMin || containsAvg) {
 
-          if (dataItem.id >= 244 && dataItem.id <= 267) {
+          let topPanel = site == 'donggi' ? dataItem.id >= 244 && dataItem.id <= 267 : dataItem.id >= 256 && dataItem.id <= 299
+
+          if (topPanel) {
 
             // Find if there's already an entry in newData with the same tag
             let group = newData.find(item => item.tag === label);
@@ -254,12 +315,16 @@ export default function page() {
               newData.push(group);
             }
 
+            let minYValueFix = site == 'donggi' ? minYValue : minYValueMat
+            let maxYValueFix = site == 'donggi' ? maxYValue : maxYValueMat
+            let avgYValueFix = site == 'donggi' ? avgYValue : avgYValueMat
+
             // Push the current object to the data array of the group
             group.data.push({
               id: dataItem.id,
               tname: tag,
               tvalue: dataItem.tvalue == '' ? 0 : dataItem.tvalue,
-              y: tag == 'Min' ? minYValue : tag == 'Max' ? maxYValue : tag == 'Avg' ? avgYValue : 0
+              y: tag == 'Min' ? minYValueFix : tag == 'Max' ? maxYValueFix : tag == 'Avg' ? avgYValueFix : 0
             });
 
           } else {
@@ -285,12 +350,16 @@ export default function page() {
               newData.push(group);
             }
 
+            let minYValue2Fix = site == 'donggi' ? minYValue2 : minYValue2Mat
+            let maxYValue2Fix = site == 'donggi' ? maxYValue2 : maxYValue2Mat
+            let avgYValue2Fix = site == 'donggi' ? avgYValue2 : avgYValue2Mat
+
             // Push the current object to the data array of the group
             group.data.push({
               id: dataItem.id,
               tname: tag,
               tvalue: dataItem.tvalue == '' ? 0 : dataItem.tvalue,
-              y: tag == 'Min' ? minYValue2 : tag == 'Max' ? maxYValue2 : tag == 'Avg' ? avgYValue2 : 0
+              y: tag == 'Min' ? minYValue2Fix : tag == 'Max' ? maxYValue2Fix : tag == 'Avg' ? avgYValue2Fix : 0
             });
           }
         }
@@ -299,7 +368,7 @@ export default function page() {
 
     setPanelValue(newData)
 
-    let newIndicatorLamp = [...indicatorLampCoordinateDonggi]
+    let newIndicatorLamp = site == 'donggi' ? [...indicatorLampCoordinateDonggi] : [...indicatorLampCoordinateMatindok]
 
     panelValue?.forEach(panel => {
       newIndicatorLamp = newIndicatorLamp.map(indicator => {
@@ -320,6 +389,8 @@ export default function page() {
   // if (error) return <p>Error when loading page</p>
   // if (isLoading) return <LoadingComp flag={'page'} />
   // if (panelValue == undefined) return <LoadingComp flag={'panel'} />
+
+  // console.log('data matindok', dataRealtimeMatindok)
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>

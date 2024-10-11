@@ -7,9 +7,11 @@ import {
     detailValuesV2 as detailValues,
     exportChartToImage
 } from '@/utils/coordinates';
-import { selectRealtimeDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
+import { selectRealtimeDonggi } from '@/pages/api/donggi/selectRealtime';
 import dynamic from 'next/dynamic';
+import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
+import { siteLocalStorage } from '@/utils/siteLocalStorage';
 
 const ChartDetail = dynamic(() => import('@/components/ChartDetail'))
 
@@ -18,9 +20,11 @@ export default function page() {
     const [chartValue, setChartValue] = React.useState([])
     const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 })
     const [imageGenerated, setImageGenerated] = React.useState(false);
+    const [site, setSite] = React.useState()
+
     const { data, error, isLoading } = useSWR(
-        '/api/selectDonggiData',
-        selectRealtimeDonggi,
+        site ? '/api/general/selectRealtime' : null,
+        () => selectRealtimeGeneral(site),
         { refreshInterval: 1000 }
     )
 
@@ -44,6 +48,9 @@ export default function page() {
     const refPrefix = ref.split('-')[1] // ex donggi-L102, the value is L102
 
     React.useEffect(() => {
+
+        // Validation site localStorage
+        setSite(siteLocalStorage)
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');

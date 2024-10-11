@@ -2,23 +2,6 @@
 
 import { prismaDonggi } from "@/lib/prisma"
 
-export async function selectRealtimeDonggi(req, res) {
-    try {
-        // console.log('halo')
-        const data = await prismaDonggi.realtime.findMany({
-            orderBy: {
-                id: 'asc'
-            },
-        })
-
-        // console.log('data prismaDonggi direct', data)
-
-        return data
-    } catch (error) {
-        console.log('error', error)
-    }
-}
-
 export async function selectTlgDonggi(req, res) {
     try {
         let tlg = req.split('+')[0]
@@ -137,27 +120,6 @@ export async function selectTlgDonggi(req, res) {
         // console.log('data prismaDonggi direct', result)
 
         return result
-    } catch (error) {
-        console.log('error', error)
-    }
-}
-
-export async function selectAlgDonggi(req, res) {
-    try {
-        let status = req.split('+')[0]
-        let condition = {
-            orderBy: {
-                id: 'asc'
-            },
-            where: status !== 'All' ? { status: status } : undefined,
-            take: 20
-        }
-
-        const data = await prismaDonggi.alg_2409.findMany(condition)
-
-        // console.log('data prismaDonggi direct', data)
-
-        return data
     } catch (error) {
         console.log('error', error)
     }

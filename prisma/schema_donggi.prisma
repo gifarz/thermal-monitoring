@@ -13,20 +13,6 @@ model realtime {
   tvalue String? @db.VarChar(45)
 }
 
-model alg_24 {
-  id        BigInt  @id @default(autoincrement())
-  timestamp BigInt
-  alarmid   Int
-  status    String? @db.VarChar(45)
-}
-
-model alg_2409 {
-  id        BigInt  @id @default(autoincrement())
-  timestamp BigInt
-  alarmid   Int
-  status    String? @db.VarChar(45)
-}
-
 model tlg_l102_24 {
   id        BigInt   @id
   L102_T01  Float?
@@ -374,4 +360,33 @@ model tlg_thd_24 {
   THDB_T    Float?
   THDB_H    Float?
   timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tbalarms {
+  id        Int     @id
+  group     String? @db.VarChar(45)
+  tag       String? @db.VarChar(45)
+  condition String? @db.VarChar(45)
+  constant  String? @db.VarChar(45)
+  text      String? @db.LongText
+}
+
+model tbtags {
+  id   Int     @id
+  tag  String? @db.VarChar(45)
+  desc String? @db.LongText
+}
+
+model alg_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
+}
+
+model alg_2409 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
 }

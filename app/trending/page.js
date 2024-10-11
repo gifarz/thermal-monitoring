@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
-import { selectTlgDonggi } from '@/pages/api/selectDonggiData';
 import useSWR from 'swr';
-import { mutate } from 'swr';
 import dynamic from 'next/dynamic';
+import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
 
 const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
     loading: () => <p className='flex justify-center'>Chart Loading...</p>, // Optional: You can show a fallback component while loading
@@ -24,7 +23,7 @@ export default function page() {
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
     const { data, error, isLoading } = useSWR(
-        childGroupTags && fromDate && toDate ? `/api/selectDonggiData` : null,  // A key that changes dynamically
+        childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
         () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
         { refreshInterval: 1000 }
     );
@@ -159,9 +158,6 @@ export default function page() {
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
                     router.push(button.href);
-
-                    // Clear cache when navigating to loggin because with the same api
-                    mutate('/api/selectDonggiData', null, false);
                 }
             });
 

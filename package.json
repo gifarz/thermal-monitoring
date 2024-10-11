@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "ngrok": "next dev && ngrok http 3000",
     "analyze": "cross-env ANALYZE=true next build",
     "db:pull:donggi": "npx prisma db pull --schema=prisma/schema_donggi.prisma",
-    "db:pull:matindok": "npx prisma db pull --schema=prisma/schema_matindok.prisma"
+    "db:pull:matindok": "npx prisma db pull --schema=prisma/schema_matindok.prisma",
+    "generate:donggi": "npx prisma generate --schema=prisma/schema_donggi.prisma",
+    "generate:matindok": "npx prisma generate --schema=prisma/schema_matindok.prisma"
   },
   "dependencies": {
     "@internationalized/date": "^3.5.5",

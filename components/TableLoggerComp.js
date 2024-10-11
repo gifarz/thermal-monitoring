@@ -49,8 +49,6 @@ export default function TableLoggerComp(props) {
         return [header]
     });
 
-    console.log('headerList', headerList)
-
     // Filter the array to include 'timestamp' and only the selected T-tags
     const filteredHeaderList = headerList.filter(header => {
         // Always include 'timestamp'
@@ -62,7 +60,6 @@ export default function TableLoggerComp(props) {
         // Only include if the tag is in selectedTags
         return selectedTag.includes(tag);
     });
-    console.log('filteredHeaderList', filteredHeaderList)
 
     // Custom sort function
     const sortedHeaderList = filteredHeaderList.sort((a, b) => {
@@ -85,7 +82,6 @@ export default function TableLoggerComp(props) {
         // If both prefix and tag are equal, keep the original order
         return 0;
     });
-    console.log('sortedHeaderList', sortedHeaderList)
 
     // Function to convert table data to CSV and trigger a download
     const handleExportToCSV = () => {
@@ -114,8 +110,6 @@ export default function TableLoggerComp(props) {
         a.click();
         document.body.removeChild(a);
     };
-
-    console.log('props.bodyList', props.bodyList)
 
     return (
         <div className="p-0">
