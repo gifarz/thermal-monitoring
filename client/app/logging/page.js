@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
 import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
 
@@ -15,16 +15,16 @@ const TableLoggerComp = dynamic(() => import('@/components/TableLoggerComp'), {
 export default function page() {
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
+
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
   const [childGroupTags, setChildGroupTags] = useState();
   const [childTags, setChildTags] = useState();
   const [imageGenerated, setImageGenerated] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [bodyList, setBodyList] = useState([]);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-  const { data, error, isLoading } = useSWR(
+  const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
     childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
     () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
     { refreshInterval: 1000 }
@@ -59,8 +59,8 @@ export default function page() {
 
   useEffect(() => {
 
-    if (data && data.length > 0 && data.every(item => !item.hasOwnProperty('alarmid'))) {
-      const dataList = data.map(item => {
+    if (dataLogging && dataLogging.length > 0 && dataLogging.every(item => !item.hasOwnProperty('alarmid'))) {
+      const dataList = dataLogging.map(item => {
         if (item.timestamp) {
           const dateObject = new Date(item.timestamp);  // Convert to Date object
           const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
@@ -162,6 +162,9 @@ export default function page() {
           x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
           y > button.bounds.y && y < button.bounds.y + button.bounds.height
         ) {
+          // Clear cache for a specific key (API endpoint)
+          mutate('/api/donggi/selectTlg', null, false);
+
           router.push(button.href);
         }
       });
@@ -200,7 +203,7 @@ export default function page() {
       canvas.removeEventListener('click', handleClick);
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuButton, date, fromDate, toDate, data]);
+  }, [menuButton, date, fromDate, toDate, dataLogging]);
 
   const tableMaxHeight = canvasSize.height * 0.6
   const tableMaxWidth = canvasSize.width * 0.95
@@ -224,7 +227,7 @@ export default function page() {
       >
         {
           imageGenerated ?
-            <TableLoggerComp sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoading} />
+            <TableLoggerComp sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
             :
             undefined
         }

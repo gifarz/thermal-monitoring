@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_MATINDOK")
+}
+
+model active_alarm {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}
+
+model alg_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  status    String? @db.VarChar(45)
+}
+
+model realtime {
+  id     Int     @id
+  tname  String? @db.VarChar(50)
+  tvalue String? @db.VarChar(50)
+}
+
+model tbalarms {
+  id        Int     @id
+  group     String? @db.Text
+  tag       String? @db.Text
+  condition String? @db.Text
+  constant  String? @db.Text
+  text      String? @db.Text
+}
+
+model tbtags {
+  id   Int     @id
+  tag  String? @db.Text
+  desc String? @db.Text
+}
+
+model history_alarm {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}
+
+model history_alarm_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}

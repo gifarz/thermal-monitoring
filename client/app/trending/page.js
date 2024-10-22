@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
 import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
 
@@ -15,6 +15,7 @@ const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
+
     const [imageGenerated, setImageGenerated] = useState(false);
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
@@ -22,7 +23,7 @@ export default function page() {
     const [dataList, setDataList] = useState([]);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-    const { data, error, isLoading } = useSWR(
+    const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
         childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
         () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
         { refreshInterval: 1000 }
@@ -53,8 +54,8 @@ export default function page() {
 
     useEffect(() => {
 
-        if (data && data.length > 0 && data.every(item => !item.hasOwnProperty('alarmid'))) {
-            const newData = data.map(item => {
+        if (dataTrending && dataTrending.length > 0 && dataTrending.every(item => !item.hasOwnProperty('alarmid'))) {
+            const newData = dataTrending.map(item => {
                 if (item.timestamp) {
                     const dateObject = new Date(item.timestamp);  // Convert to Date object
                     const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
@@ -157,6 +158,9 @@ export default function page() {
                     x > button.bounds.x && x < button.bounds.x + button.bounds.width &&
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
+                    // Clear cache for a specific key (API endpoint)
+                    mutate('/api/donggi/selectTlg', null, false);
+
                     router.push(button.href);
                 }
             });
@@ -195,7 +199,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.removeEventListener('mousemove', handleMouseMove);
         };
-    }, [menuButton, date, fromDate, toDate, data]);
+    }, [menuButton, date, fromDate, toDate, dataTrending]);
 
     const minWidth = canvasSize.width * 0.8;
     const minHeight = canvasSize.height * 0.3;
@@ -220,7 +224,7 @@ export default function page() {
             >
                 {
                     imageGenerated ?
-                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} chartWidth={minWidth} chartHeight={minHeight}/>
+                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight}/>
                         :
                         undefined
                 }

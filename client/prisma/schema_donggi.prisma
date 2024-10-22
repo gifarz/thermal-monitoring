@@ -7,10 +7,49 @@ datasource db {
   url      = env("DATABASE_URL_DONGGI")
 }
 
+model active_alarm {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}
+
+model alg_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
+}
+
+model alg_2409 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt
+  alarmid   Int
+  status    String? @db.VarChar(45)
+}
+
 model realtime {
   id     Int     @id
   tname  String  @db.VarChar(45)
   tvalue String? @db.VarChar(45)
+}
+
+model tbalarms {
+  id        Int     @id
+  group     String? @db.VarChar(45)
+  tag       String? @db.VarChar(45)
+  condition String? @db.VarChar(45)
+  constant  String? @db.VarChar(45)
+  text      String? @db.LongText
+}
+
+model tbtags {
+  id   Int     @id
+  tag  String? @db.VarChar(45)
+  desc String? @db.LongText
 }
 
 model tlg_l102_24 {
@@ -362,31 +401,22 @@ model tlg_thd_24 {
   timestamp DateTime @default(now()) @db.Timestamp(0)
 }
 
-model tbalarms {
-  id        Int     @id
-  group     String? @db.VarChar(45)
-  tag       String? @db.VarChar(45)
-  condition String? @db.VarChar(45)
-  constant  String? @db.VarChar(45)
-  text      String? @db.LongText
-}
-
-model tbtags {
-  id   Int     @id
-  tag  String? @db.VarChar(45)
-  desc String? @db.LongText
-}
-
-model alg_24 {
+model history_alarm {
   id        BigInt  @id @default(autoincrement())
-  timestamp BigInt
-  alarmid   Int
-  status    String? @db.VarChar(45)
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
 }
 
-model alg_2409 {
+model history_alarm_24 {
   id        BigInt  @id @default(autoincrement())
-  timestamp BigInt
-  alarmid   Int
-  status    String? @db.VarChar(45)
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
 }

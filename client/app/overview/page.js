@@ -44,24 +44,12 @@ import {
   // setATHHH,
   // setATHH
 } from '@/utils/coordinateMatindok';
-import { selectRealtimeDonggi } from '@/pages/api/donggi/selectRealtime';
-import { selectRealtimeMatindok } from '@/pages/api/matindok/selectRealtime';
 import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
   const [indicatorValue, setIndicatorValue] = React.useState()
   const [site, setSite] = React.useState()
-
-  // const { data: dataRealtimeDonggi, error: errorRealtimeDonggi, isLoading: isLoadingRealtimeDonggi } = useSWR(
-  //   '/api/donggi/selectRealtime',
-  //   selectRealtimeDonggi
-  // )
-
-  // const { data: dataRealtimeMatindok, error: errorRealtimeMatindok, isLoading: isLoadingRealtimeMatindok } = useSWR(
-  //   '/api/matindok/selectRealtime',
-  //   selectRealtimeMatindok
-  // )
 
   const { data: dataRealtimeGeneral, error: errorRealtimeGeneral, isLoading: isLoadingRealtimeGeneral } = useSWR(
     site ? '/api/general/selectRealtime' : null,
@@ -280,8 +268,6 @@ export default function page() {
       // Iterate over each data object
       data.forEach(dataItem => {
         const [label, tag] = dataItem?.tname?.split('_');  // Split tname into label and tag
-        // console.log('label', label)
-        // console.log('tag', tag)
 
         const containsMax = tag?.includes('Max')
         const containsMin = tag?.includes('Min')
