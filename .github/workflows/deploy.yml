@@ -41,17 +41,33 @@ jobs:
           #PORT: ${{ github.ref == 'refs/heads/deploytest' && '3000' || github.ref == 'refs/heads/deployprod' && '3001' }}
         run: |
           ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << EOF
-            export PATH=/root/.nvm/versions/node/v20.17.0/bin:$PATH #'which pm2' command on terminal will give the right path
+            # Set up the correct Node.js version path (get the correct path using 'which pm2')
+            export PATH=/root/.nvm/versions/node/v20.17.0/bin:$PATH
+
+            # Change to the target directory on the server
             cd $TARGET_DIR
+
+            # Ensure correct Git configuration to handle divergent branches
+            git config pull.rebase true  # Use rebase for pulling to avoid conflicts
+
+            # Pull changes from the specific branch (using GITHUB_REF for dynamic branches)
             git pull origin ${GITHUB_REF#refs/heads/}
+
+            # Install dependencies
             npm install
+
+            # Build the application
             npm run build
+
+            # Check if the app is already running under PM2, and restart if necessary
             if pm2 list | grep -q $APP_NAME; then
               echo "Restarting application: $APP_NAME"
               pm2 restart $APP_NAME
             else
               echo "Starting application: $APP_NAME"
               pm2 start npm --name $APP_NAME -- start -- --port=$PORT
-            fi            
+            fi
+
+            # Save PM2 process list for auto-start on reboot
             pm2 save
           EOF
