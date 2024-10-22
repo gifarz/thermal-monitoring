@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "../../components/ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { menuButton, setATHH, setATHHH, listSites, listTags, groupAlarm, tagAlarmDonggi, tagAlarmMatindok } from '@/utils/coordinates';
+import { menuButton, listSites, groupAlarm, tagAlarmDonggi, tagAlarmMatindok } from '@/utils/coordinates';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
