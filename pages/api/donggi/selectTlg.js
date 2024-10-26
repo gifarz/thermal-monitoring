@@ -4,6 +4,8 @@ import { prismaDonggi } from "@/lib/prisma"
 
 export async function selectTlgDonggi(req, res) {
     try {
+
+        console.log('req selectTlg Donggi', req)
         let tlg = req.split('+')[0]
         let gte = req.split('+')[1]
         let lte = req.split('+')[2]
@@ -88,6 +90,8 @@ export async function selectTlgDonggi(req, res) {
                 return []
             }))
 
+        // console.log('result selectTlg Donggi', results)
+
         // Flatten the results array (in case there are multiple datasets)
         const data = results.flat();
 
@@ -121,6 +125,6 @@ export async function selectTlgDonggi(req, res) {
 
         return result
     } catch (error) {
-        console.log('error', error)
+        console.log('error selectTlg Donggi', error)
     }
 }

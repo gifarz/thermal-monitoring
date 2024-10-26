@@ -24,6 +24,26 @@ model alg_24 {
   status    String? @db.VarChar(45)
 }
 
+model history_alarm {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}
+
+model history_alarm_24 {
+  id        BigInt  @id @default(autoincrement())
+  timestamp BigInt?
+  alarmid   Int?
+  group     String? @db.VarChar(50)
+  tag       String? @db.VarChar(50)
+  text      String? @db.VarChar(255)
+  status    String? @db.VarChar(50)
+}
+
 model realtime {
   id     Int     @id
   tname  String? @db.VarChar(50)
@@ -43,24 +63,4 @@ model tbtags {
   id   Int     @id
   tag  String? @db.Text
   desc String? @db.Text
-}
-
-model history_alarm {
-  id        BigInt  @id @default(autoincrement())
-  timestamp BigInt?
-  alarmid   Int?
-  group     String? @db.VarChar(50)
-  tag       String? @db.VarChar(50)
-  text      String? @db.VarChar(255)
-  status    String? @db.VarChar(50)
-}
-
-model history_alarm_24 {
-  id        BigInt  @id @default(autoincrement())
-  timestamp BigInt?
-  alarmid   Int?
-  group     String? @db.VarChar(50)
-  tag       String? @db.VarChar(50)
-  text      String? @db.VarChar(255)
-  status    String? @db.VarChar(50)
 }

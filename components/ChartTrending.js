@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { listGroupTags, listTags, listSites } from "@/utils/coordinates";
+import { donggiGroupTags, matindokGroupTags, listTags, listSites } from "@/utils/coordinates";
 import zoomPlugin from 'chartjs-plugin-zoom';
 
 // Register required components
@@ -19,7 +19,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const ChartTrending = (props) => {
     const chartRef = React.useRef(null);
-    const [groupTagValue, setGroupTagValue] = React.useState(new Set(["L102"]));
+    const [donggiGroupTag, setDonggiGroupTag] = React.useState(new Set(["L102"]));
+    const [matindokGroupTag, setMatindokGroupTag] = React.useState(new Set(["L01"]));
     const [tagValue, setTagValue] = React.useState(new Set(["T01"]));
     const [site, setSite] = React.useState("Donggi");
 
@@ -38,8 +39,8 @@ const ChartTrending = (props) => {
     // console.log('props.chartHeight', props.chartHeight)
 
     const selectedGroupTag = React.useMemo(
-        () => Array.from(groupTagValue).join(", ").replaceAll("_", " "),
-        [groupTagValue]
+        () => Array.from(site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag).join(", ").replaceAll("_", " "),
+        [site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag]
     );
 
     const selectedTag = React.useMemo(
@@ -57,10 +58,6 @@ const ChartTrending = (props) => {
         })
     }
 
-    // console.log('selectedGroupTag', selectedGroupTag)
-    // console.log('selectedTag', selectedTag)
-    // console.log('props.dataList', props.dataList)
-
     let timestamp = []
 
     // Initialize an object to store sensor arrays dynamically
@@ -73,9 +70,9 @@ const ChartTrending = (props) => {
 
         // Iterate over each key in the object
         Object.keys(entry).forEach(key => {
-            // console.log('key dataList', key)
+
             // Validate if the key matches the pattern 'LXXX_TYY' (e.g., L102_T01, L103_T01)
-            if (key.match(/^L\d{3}_T\d{2}$/)) {
+            if (key.match(/^L\d{3}_T\d{2}$/) || key.match(/^L\d{2}_T\d{2}$/)) {
 
                 const newKey = key.split('_')[1]
                 selectedTag.replaceAll(' ', '').split(',').map(tag => {
@@ -105,10 +102,6 @@ const ChartTrending = (props) => {
         link.download = `Trending Chart.png`; // Name the file as 'chart.png'
         link.click(); // Programmatically click the link to trigger download
     };
-
-    // console.log('timestamp', timestamp)
-    // console.log('sensorData', sensorData)
-    // console.log('Object.keys(sensorData)', Object.keys(sensorData))
 
     const datasetArray = []
     const borderColors = [
@@ -220,7 +213,6 @@ const ChartTrending = (props) => {
                         selectedKeys={site}
                         selectionMode="single"
                         onSelectionChange={handleSetSite}
-                        disabledKeys={["Matindok"]}
                     >
                         {listSites.map((site, index) => (
                             <DropdownItem key={site}>
@@ -249,16 +241,30 @@ const ChartTrending = (props) => {
                         disallowEmptySelection
                         aria-label="Table Columns"
                         closeOnSelect={false}
-                        selectedKeys={groupTagValue}
+                        selectedKeys={
+                            site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag
+
+                        }
                         selectionMode="multiple"
-                        onSelectionChange={setGroupTagValue}
+                        onSelectionChange={
+                            site.toLowerCase() == 'donggi' ? setDonggiGroupTag : setMatindokGroupTag
+                        }
                         className="max-h-40 overflow-y-auto"
                     >
-                        {listGroupTags.map((groupTag, index) => (
+                        {
+                        site.toLowerCase() == 'donggi' ? 
+                        donggiGroupTags.map((groupTag, index) => (
                             <DropdownItem key={groupTag}>
                                 {groupTag}
                             </DropdownItem>
-                        ))}
+                        ))
+                        :
+                        matindokGroupTags.map((groupTag, index) => (
+                            <DropdownItem key={groupTag}>
+                                {groupTag}
+                            </DropdownItem>
+                        ))
+                        }
                     </DropdownMenu>
                 </Dropdown>
 

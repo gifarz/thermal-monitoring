@@ -7,6 +7,8 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
 import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
+import { fetchTlgDonggi } from '@/pages/api/general/fetchTlg';
+import { formattedDate } from '@/utils/convertTimestamp';
 
 const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
     loading: () => <p className='flex justify-center'>Chart Loading...</p>, // Optional: You can show a fallback component while loading
@@ -23,9 +25,15 @@ export default function page() {
     const [dataList, setDataList] = useState([]);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
+    // const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
+    //     childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
+    //     () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+    //     // { refreshInterval: 1000 }
+    // );
+
     const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
-        childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
-        () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+        childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
+        () => fetchTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
         { refreshInterval: 1000 }
     );
 
@@ -58,19 +66,11 @@ export default function page() {
             const newData = dataTrending.map(item => {
                 if (item.timestamp) {
                     const dateObject = new Date(item.timestamp);  // Convert to Date object
-                    const formattedDate = `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
-                        .toString()
-                        .padStart(2, '0')}-${dateObject.getDate()
-                            .toString()
-                            .padStart(2, '0')} ${dateObject.getHours()
-                                .toString()
-                                .padStart(2, '0')}:${dateObject.getMinutes()
-                                    .toString()
-                                    .padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`;
+                    const timestamp = formattedDate(dateObject)
 
                     return {
                         ...item,
-                        timestamp: formattedDate  // Update the timestamp format
+                        timestamp: timestamp  // Update the timestamp format
                     };
                 }
                 return item;  // Return item even if there's no valid timestamp
@@ -159,7 +159,7 @@ export default function page() {
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
                     // Clear cache for a specific key (API endpoint)
-                    mutate('/api/donggi/selectTlg', null, false);
+                    mutate('/api/donggi/fetchTlg', null, false);
 
                     router.push(button.href);
                 }
@@ -224,7 +224,7 @@ export default function page() {
             >
                 {
                     imageGenerated ?
-                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight}/>
+                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight} />
                         :
                         undefined
                 }

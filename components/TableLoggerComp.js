@@ -9,16 +9,17 @@ import {
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
-import { listGroupTags, listTags, headerLogger, listSites } from "@/utils/coordinates";
+import { donggiGroupTags, matindokGroupTags, listTags, headerLogger, listSites } from "@/utils/coordinates";
 
 export default function TableLoggerComp(props) {
-    const [groupTagValue, setGroupTagValue] = React.useState(new Set(["L102"]));
+    const [donggiGroupTag, setDonggiGroupTag] = React.useState(new Set(["L102"]));
+    const [matindokGroupTag, setMatindokGroupTag] = React.useState(new Set(["L01"]));
     const [tagValue, setTagValue] = React.useState(new Set(["T01"]));
     const [site, setSite] = React.useState("Donggi");
 
     const selectedGroupTag = React.useMemo(
-        () => Array.from(groupTagValue).join(", ").replaceAll("_", " "),
-        [groupTagValue]
+        () => Array.from(site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag).join(", ").replaceAll("_", " "),
+        [site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag]
     );
 
     const selectedTag = React.useMemo(
@@ -138,7 +139,6 @@ export default function TableLoggerComp(props) {
                         selectedKeys={site}
                         selectionMode="single"
                         onSelectionChange={handleSetSite}
-                        disabledKeys={["Matindok"]}
                     >
                         {listSites.map((site, index) => (
                             <DropdownItem key={site}>
@@ -167,16 +167,30 @@ export default function TableLoggerComp(props) {
                         disallowEmptySelection
                         aria-label="Table Columns"
                         closeOnSelect={false}
-                        selectedKeys={groupTagValue}
+                        selectedKeys={
+                            site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag
+
+                        }
                         selectionMode="multiple"
-                        onSelectionChange={setGroupTagValue}
+                        onSelectionChange={
+                            site.toLowerCase() == 'donggi' ? setDonggiGroupTag : setMatindokGroupTag
+                        }
                         className="max-h-40 overflow-y-auto"
                     >
-                        {listGroupTags.map((groupTag, index) => (
+                        {
+                        site.toLowerCase() == 'donggi' ? 
+                        donggiGroupTags.map((groupTag, index) => (
                             <DropdownItem key={groupTag}>
                                 {groupTag}
                             </DropdownItem>
-                        ))}
+                        ))
+                        :
+                        matindokGroupTags.map((groupTag, index) => (
+                            <DropdownItem key={groupTag}>
+                                {groupTag}
+                            </DropdownItem>
+                        ))
+                        }
                     </DropdownMenu>
                 </Dropdown>
 
