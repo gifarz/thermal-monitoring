@@ -49,6 +49,7 @@ const ChartTrending = (props) => {
     );
 
     props.sendGroupTagValue(selectedGroupTag)
+    props.site(site)
 
     const handleSetSite = (e) => {
         setSite(() => {

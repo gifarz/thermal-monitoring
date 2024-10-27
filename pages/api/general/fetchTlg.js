@@ -7,27 +7,35 @@ export async function fetchTlgDonggi(req, res) {
     try {
 
         // console.log('req fetchTlg Donggi', req)
-        let tlg = req.split('+')[0]
-        let gte = req.split('+')[1]
-        let lte = req.split('+')[2]
+        let site = req.split('+')[0]
+        let tlg = req.split('+')[1]
+        let gte = req.split('+')[2]
+        let lte = req.split('+')[3]
+        let page = req.split('+')[4]
+        let limit = req.split('+')[5]
 
         const formattedgte = formattedDate(gte)
         const formattedlte = formattedDate(lte)
 
-        const timestamp = {
+        const queryParams = {
             gte: formattedgte,
-            lte: formattedlte
+            lte: formattedlte,
+            page: page,
+            limit: limit
         }
+
+        const baseUrl = site.toLowerCase() == "donggi" ? 
+        "http://localhost:3003/api/donggi" : "http://localhost:3003/api/matindok"
+
+        // console.log('queryParams', queryParams)
 
         const results = await Promise.all(
             tlg.split(',').map(async (tlg) => {
 
-                const url = `http://localhost:3003/api/donggi/tlg/${tlg.toLowerCase()}`
+                const url = `${baseUrl}/tlg/${tlg.toLowerCase()}`
 
-                return await fetcher(url, timestamp)
+                return await fetcher(url, queryParams)
             }))
-
-        // console.log('result fetchTlg Donggi', results)
 
         // Flatten the results array (in case there are multiple datasets)
         const data = results.flat();

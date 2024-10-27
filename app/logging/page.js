@@ -20,21 +20,21 @@ export default function page() {
 
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
+  const [site, setSite] = useState();
   const [childGroupTags, setChildGroupTags] = useState();
   const [childTags, setChildTags] = useState();
   const [imageGenerated, setImageGenerated] = useState(false);
-  const [bodyList, setBodyList] = useState([]);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-  // const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
-  //   childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
-  //   () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
-  //   // { refreshInterval: 1000 }
-  // );
+  // PAGINATION
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(50);
+  const [loading, setLoading] = useState(false);
+  const [bodyList, setBodyList] = useState([]);
 
   const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
-    childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
-    () => fetchTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+    site && childGroupTags && fromDate && toDate && page ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
+    () => fetchTlgDonggi(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),  // Function call inside the fetcher
     { refreshInterval: 1000 }
   );
 
@@ -54,6 +54,11 @@ export default function page() {
   const padZero = (num) => String(num).padStart(2, '0');
 
   // Callback function that will be passed to the child
+  const handleSite = (site) => {
+
+    setSite(site); // Updating parent state with data from child
+  };
+
   const handleChildGroupTags = (group) => {
     const groupTag = group.replaceAll(' ', '')
 
@@ -63,6 +68,17 @@ export default function page() {
   const handleChildTags = (data) => {
     // console.log('Child Data in function', data)
     setChildTags(data); // Updating parent state with data from child
+  };
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+    if (!loading && scrollTop + clientHeight >= scrollHeight - 5) {
+      console.log('handleScroll', 'masuk if')
+
+      setPage((prevPage) => prevPage + 1);
+      setLoading(true)
+    }
   };
 
   useEffect(() => {
@@ -81,7 +97,8 @@ export default function page() {
         return item;  // Return item even if there's no valid timestamp
       });
 
-      setBodyList(dataList);  // Update bodyList state with the processed data
+      setBodyList(prevData => [...prevData, ...dataList]);
+      setLoading(false)
     }
 
     const canvas = canvasRef.current;
@@ -215,6 +232,7 @@ export default function page() {
   return (
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
       <div
+        onScroll={handleScroll}
         className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
         style={{
           overflow: 'auto',
@@ -227,7 +245,7 @@ export default function page() {
       >
         {
           imageGenerated ?
-            <TableLoggerComp sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
+            <TableLoggerComp site={handleSite} loading={loading} sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
             :
             undefined
         }

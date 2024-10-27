@@ -22,18 +22,16 @@ export default function page() {
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
     const [childGroupTags, setChildGroupTags] = useState('L102');
+    const [site, setSite] = useState();
     const [dataList, setDataList] = useState([]);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-    // const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
-    //     childGroupTags && fromDate && toDate ? `/api/donggi/selectTlg` : null,  // A key that changes dynamically
-    //     () => selectTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
-    //     // { refreshInterval: 1000 }
-    // );
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(100000);
 
     const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
-        childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
-        () => fetchTlgDonggi(`${childGroupTags}+${fromDate}+${toDate}`),  // Function call inside the fetcher
+        site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
+        () => fetchTlgDonggi(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),
         { refreshInterval: 1000 }
     );
 
@@ -60,9 +58,14 @@ export default function page() {
         setChildGroupTags(groupTag); // Updating parent state with data from child
     };
 
+    const handleSite = (site) => {
+
+        setSite(site); // Updating parent state with data from child
+    };
+
     useEffect(() => {
 
-        if (dataTrending && dataTrending.length > 0 && dataTrending.every(item => !item.hasOwnProperty('alarmid'))) {
+        if (dataTrending && dataTrending.length > 0) {
             const newData = dataTrending.map(item => {
                 if (item.timestamp) {
                     const dateObject = new Date(item.timestamp);  // Convert to Date object
@@ -224,7 +227,7 @@ export default function page() {
             >
                 {
                     imageGenerated ?
-                        <ChartTrending sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight} />
+                        <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight} />
                         :
                         undefined
                 }

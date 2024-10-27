@@ -5,7 +5,8 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    DateRangePicker
+    DateRangePicker,
+    Spinner
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "./ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
@@ -29,6 +30,7 @@ export default function TableLoggerComp(props) {
 
     props.sendGroupTagValue(selectedGroupTag)
     props.sendTagValue(selectedTag)
+    props.site(site)
 
     const handleSetSite = (e) => {
         setSite(() => {
@@ -178,18 +180,18 @@ export default function TableLoggerComp(props) {
                         className="max-h-40 overflow-y-auto"
                     >
                         {
-                        site.toLowerCase() == 'donggi' ? 
-                        donggiGroupTags.map((groupTag, index) => (
-                            <DropdownItem key={groupTag}>
-                                {groupTag}
-                            </DropdownItem>
-                        ))
-                        :
-                        matindokGroupTags.map((groupTag, index) => (
-                            <DropdownItem key={groupTag}>
-                                {groupTag}
-                            </DropdownItem>
-                        ))
+                            site.toLowerCase() == 'donggi' ?
+                                donggiGroupTags.map((groupTag, index) => (
+                                    <DropdownItem key={groupTag}>
+                                        {groupTag}
+                                    </DropdownItem>
+                                ))
+                                :
+                                matindokGroupTags.map((groupTag, index) => (
+                                    <DropdownItem key={groupTag}>
+                                        {groupTag}
+                                    </DropdownItem>
+                                ))
                         }
                     </DropdownMenu>
                 </Dropdown>
@@ -241,7 +243,7 @@ export default function TableLoggerComp(props) {
                 </Button>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex flex-row justify-center">
                 <table className="min-w-full border-collapse table-auto bg-white shadow-md rounded-md overflow-hidden">
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
@@ -270,7 +272,7 @@ export default function TableLoggerComp(props) {
                                                         key={columnKey}
                                                         className="px-4 py-2 text-xs text-center text-gray-600 border-b border-gray-200"
                                                     >
-                                                        {row[columnKey] !== undefined ? row[columnKey].toString() : "N/A"}
+                                                        {row[columnKey] !== undefined ? row[columnKey] : "N/A"}
                                                     </td>
                                                 ))}
                                             </tr>
@@ -296,6 +298,13 @@ export default function TableLoggerComp(props) {
                 </table>
 
             </div>
+
+            {
+                props.loading ?
+                    <Spinner className="flex justify-center mt-2"/>
+                    :
+                    null
+            }
         </div>
     );
 }
