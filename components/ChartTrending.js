@@ -29,14 +29,11 @@ const ChartTrending = (props) => {
         if (chartInstance) {
             // Force fixed dimensions on canvas
             const canvas = chartInstance.canvas;
-            canvas.style.width = `${props.chartWidth}px`;
-            canvas.style.height = `${props.chartHeight}px`;
+            canvas.style.width = props.chartWidth * 0.8 +'px' ;
+            canvas.style.height = props.chartHeight * 0.52 +'px' ;
         }
 
-    })
-
-    // console.log('props.chartWidth', props.chartWidth)
-    // console.log('props.chartHeight', props.chartHeight)
+    }, [props.chartWidth, props.chartHeight])
 
     const selectedGroupTag = React.useMemo(
         () => Array.from(site.toLowerCase() == 'donggi' ? donggiGroupTag : matindokGroupTag).join(", ").replaceAll("_", " "),
@@ -146,6 +143,7 @@ const ChartTrending = (props) => {
     // Configuration options for the chart
     const options = {
         responsive: true,
+        maintainAspectRatio: false,  // Allows setting custom aspect ratio
         plugins: {
             legend: {
                 position: 'top',
@@ -188,7 +186,10 @@ const ChartTrending = (props) => {
     };
 
     return (
-        <>
+        <div style={{
+            width: props.chartWidth * 0.8,
+            height: props.chartHeight * 0.62
+        }}>
             <div className="flex items-center gap-3 mb-4">
 
                 <Dropdown
@@ -323,7 +324,7 @@ const ChartTrending = (props) => {
                 </Button>
             </div>
             <Line ref={chartRef} data={data} options={options} />
-        </>
+        </div>
     )
 }
 

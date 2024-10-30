@@ -6,8 +6,7 @@ import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
-import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
-import { fetchTlgDonggi } from '@/pages/api/general/fetchTlg';
+import { fetchTlgTrending } from '@/pages/api/general/fetchTlgTrending';
 import { formattedDate } from '@/utils/convertTimestamp';
 
 const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
@@ -30,9 +29,9 @@ export default function page() {
     const [limit, setLimit] = useState(100000);
 
     const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
-        site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
-        () => fetchTlgDonggi(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),
-        { refreshInterval: 1000 }
+        site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlgTrending` : null,
+        () => fetchTlgTrending(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),
+        // { refreshInterval: 1000 }
     );
 
     const currentDateISO = new Date().toISOString();
@@ -60,6 +59,9 @@ export default function page() {
 
     const handleSite = (site) => {
 
+        // Clear cache for a specific key (API endpoint)
+        mutate('/api/general/fetchTlgTrending', null, false);
+        
         setSite(site); // Updating parent state with data from child
     };
 
@@ -162,7 +164,7 @@ export default function page() {
                     y > button.bounds.y && y < button.bounds.y + button.bounds.height
                 ) {
                     // Clear cache for a specific key (API endpoint)
-                    mutate('/api/donggi/fetchTlg', null, false);
+                    mutate('/api/general/fetchTlgTrending', null, false);
 
                     router.push(button.href);
                 }
@@ -205,7 +207,7 @@ export default function page() {
     }, [menuButton, date, fromDate, toDate, dataTrending]);
 
     const minWidth = canvasSize.width * 0.8;
-    const minHeight = canvasSize.height * 0.3;
+    const minHeight = canvasSize.height * 0.5;
     const marginTop = canvasSize.height * 0.2;
 
     // console.log('childData', childData)
@@ -214,20 +216,17 @@ export default function page() {
     // console.log('minHeight', minHeight)
 
     return (
-        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
             <div
                 className='absolute z-10 left-1/2'
                 style={{
-                    overflow: 'auto',
                     transform: 'translate(-50%, 0)',
-                    // minHeight: '50%',
-                    // minWidth: minWidth,
                     top: marginTop
                 }}
             >
                 {
                     imageGenerated ?
-                        <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={minWidth} chartHeight={minHeight} />
+                        <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={canvasSize.width} chartHeight={canvasSize.height} />
                         :
                         undefined
                 }

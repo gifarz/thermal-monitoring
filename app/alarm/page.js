@@ -17,7 +17,7 @@ import {
 import { ChevronDownIcon } from "../../components/ChevronDownIcon";
 import { I18nProvider } from "@react-aria/i18n";
 import { menuButton, listSites, groupAlarm, tagAlarmDonggi, tagAlarmMatindok } from '@/utils/coordinates';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 import { selectActiveAlarmDonggi } from "@/pages/api/donggi/selectActiveAlarm";
@@ -42,6 +42,12 @@ export default function page() {
   const [tagValueMatindok, setTagValueMatindok] = useState(new Set(["L01_T01"]));
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
+
+  // PAGINATION
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(50);
+  const [loading, setLoading] = useState(false);
+  const [bodyList, setBodyList] = useState([]);
 
   const selectedGroup = useMemo(
     () => Array.from(groupValue).join(", ").replaceAll("_", " "),
@@ -92,7 +98,7 @@ export default function page() {
     isLoading: isLoadingHistoryAlarmDonggi
   } = useSWR(
     fromDate && toDate ? `/api/donggi/selectHistoryAlarm` : null,
-    () => selectHistoryAlarmDonggi(`${fromDate}+${toDate}`),
+    () => selectHistoryAlarmDonggi(`${fromDate}+${toDate}+${page}+${limit}`),
     { refreshInterval: 1000 }
   );
 
@@ -102,7 +108,7 @@ export default function page() {
     isLoading: isLoadingHistoryAlarmMatindok
   } = useSWR(
     fromDate && toDate ? `/api/matindok/selectHistoryAlarm` : null,
-    () => selectHistoryAlarmMatindok(`${fromDate}+${toDate}`),
+    () => selectHistoryAlarmMatindok(`${fromDate}+${toDate}+${page}+${limit}`),
     { refreshInterval: 1000 }
   );
   // ============== HISTORY ALARM SCOPE ==============
@@ -114,6 +120,11 @@ export default function page() {
   }
 
   const handleSetSiteHistory = (e) => {
+
+    if(siteHistory !== e.currentKey){
+      setBodyList([]) // Clear the bodyList when the siteHistory is changed
+    }
+
     setSiteHistory(() => {
       return e.currentKey
     })
@@ -124,8 +135,27 @@ export default function page() {
 
   useEffect(() => {
 
+    // STILL TESTING FOR PAGINATION
+    setBodyList([])
+
+    if(siteHistory.toLowerCase() == 'donggi'){
+
+      if(bodyList.length == 0 && dataHistoryAlarmDonggi){
+        setBodyList((prevData) => [...prevData, ...dataHistoryAlarmDonggi])
+      }
+
+    } else {
+      
+      if(bodyList.length == 0 && dataHistoryAlarmMatindok){
+        setBodyList((prevData) => [...prevData, ...dataHistoryAlarmMatindok])
+      }
+    }
+
+    // console.log('bodyList', bodyList)
+    // STILL TESTING FOR PAGINATION
+
     setTagValue(()=> {
-      return siteHistory.toLowerCase() == 'donggi' ? tagValueDonggi:tagValueMatindok
+      return siteHistory.toLowerCase() == 'donggi' ? tagValueDonggi : tagValueMatindok
     })
 
     // Format the date objects into 'yyMMddHHmmss' format
@@ -247,12 +277,12 @@ export default function page() {
       canvas.removeEventListener('click', handleClick);
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuButton, date, fromDate, toDate, tagValue, tagValueDonggi, tagValueMatindok]);
+  }, [menuButton, date, fromDate, toDate, tagValue, tagValueDonggi, tagValueMatindok, siteHistory, dataHistoryAlarmDonggi, dataHistoryAlarmMatindok]);
 
-  const tableMaxHeight = canvasSize.height * 0.65
+  const tableMaxHeight = canvasSize.height * 0.7
   const tableMaxWidth = canvasSize.width * 0.95
   const tableMinWidth = canvasSize.width * 0.9
-  const tableMarginTop = canvasSize.height * 0.17
+  const tableMarginTop = canvasSize.height * 0.15
 
   // console.log('tableMaxHeight',tableMaxHeight)
   // console.log('tableMaxWidth',tableMaxWidth)
@@ -437,7 +467,8 @@ export default function page() {
 
                         <div className="grow flex flex-col gap-4">
                           <I18nProvider locale="id-ID">
-                            <DateRangePicker label="Date Range Filter" value={date} onChange={setDate} />
+                            <DateRangePicker label="Date Range Filter" value={date} 
+                            onChange={setDate} />
                           </I18nProvider>
                         </div>
                       </div>

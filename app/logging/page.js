@@ -6,8 +6,7 @@ import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
-import { selectTlgDonggi } from '@/pages/api/donggi/selectTlg';
-import { fetchTlgDonggi } from '@/pages/api/general/fetchTlg';
+import { fetchTlgLogging } from '@/pages/api/general/fetchTlgLogging';
 import { formattedDate } from '@/utils/convertTimestamp';
 
 const TableLoggerComp = dynamic(() => import('@/components/TableLoggerComp'), {
@@ -33,8 +32,8 @@ export default function page() {
   const [bodyList, setBodyList] = useState([]);
 
   const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
-    site && childGroupTags && fromDate && toDate && page ? `/api/donggi/fetchTlg` : null,  // A key that changes dynamically
-    () => fetchTlgDonggi(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),  // Function call inside the fetcher
+    site && childGroupTags && fromDate && toDate && page ? `/api/donggi/fetchTlgLogging` : null,  // A key that changes dynamically
+    () => fetchTlgLogging(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),  // Function call inside the fetcher
     { refreshInterval: 1000 }
   );
 
@@ -54,9 +53,17 @@ export default function page() {
   const padZero = (num) => String(num).padStart(2, '0');
 
   // Callback function that will be passed to the child
-  const handleSite = (site) => {
+  const handleSite = (currSite) => {
 
-    setSite(site); // Updating parent state with data from child
+    if(currSite.toLowerCase() !== site?.toLowerCase()){
+
+      setBodyList([])
+
+      // Clear cache for a specific key (API endpoint)
+      mutate('/api/general/fetchTlg', null, false);
+    }
+
+    setSite(currSite); // Updating parent state with data from child
   };
 
   const handleChildGroupTags = (group) => {
@@ -74,8 +81,6 @@ export default function page() {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
 
     if (!loading && scrollTop + clientHeight >= scrollHeight - 5) {
-      console.log('handleScroll', 'masuk if')
-
       setPage((prevPage) => prevPage + 1);
       setLoading(true)
     }
@@ -83,7 +88,7 @@ export default function page() {
 
   useEffect(() => {
 
-    if (dataLogging && dataLogging.length > 0 && dataLogging.every(item => !item.hasOwnProperty('alarmid'))) {
+    if (dataLogging && dataLogging.length > 0) {
       const dataList = dataLogging.map(item => {
         if (item.timestamp) {
           const dateObject = new Date(item.timestamp);  // Convert to Date object
@@ -180,7 +185,7 @@ export default function page() {
           y > button.bounds.y && y < button.bounds.y + button.bounds.height
         ) {
           // Clear cache for a specific key (API endpoint)
-          mutate('/api/donggi/fetchTlg', null, false);
+          mutate('/api/general/fetchTlgLogging', null, false);
 
           router.push(button.href);
         }
@@ -222,10 +227,10 @@ export default function page() {
     };
   }, [menuButton, date, fromDate, toDate, dataLogging]);
 
-  const tableMaxHeight = canvasSize.height * 0.6
+  const tableMaxHeight = canvasSize.height * 0.7
   const tableMaxWidth = canvasSize.width * 0.95
   const tableMinWidth = canvasSize.width * 0.9
-  const tableMarginTop = canvasSize.height * 0.17
+  const tableMarginTop = canvasSize.height * 0.15
 
   // console.log('data logging', bodyList)
 
@@ -233,7 +238,7 @@ export default function page() {
     <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
       <div
         onScroll={handleScroll}
-        className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10'
+        className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10 px-2'
         style={{
           overflow: 'auto',
           transform: 'translate(-50%, 0)',

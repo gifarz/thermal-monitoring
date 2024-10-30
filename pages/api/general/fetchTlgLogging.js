@@ -3,7 +3,7 @@
 import { fetcher } from "@/lib/apiHelper"
 import { formattedDate } from "@/utils/convertTimestamp"
 
-export async function fetchTlgDonggi(req, res) {
+export async function fetchTlgLogging(req, res) {
     try {
 
         // console.log('req fetchTlg Donggi', req)
