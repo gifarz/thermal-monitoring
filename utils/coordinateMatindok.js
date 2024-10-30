@@ -1,7 +1,7 @@
 export const indicatorLampCoordinate = [
     //LINE 1
-    { label: '1', x: 0.18, y: 0.297, group: 'L01' },
-    { label: '2', x: 0.245, y: 0.297, group: 'L02' },
+    { label: '1', x: 0.182, y: 0.297, group: 'L01' },
+    { label: '2', x: 0.243, y: 0.297, group: 'L02' },
     { label: '3', x: 0.314, y: 0.297, group: 'L03' },
     { label: '4', x: 0.381, y: 0.297, group: 'L04' },
     { label: '5', x: 0.448, y: 0.297, group: 'L05' },
@@ -10,14 +10,14 @@ export const indicatorLampCoordinate = [
     { label: '8', x: 0.647, y: 0.297, group: 'L11' },
     { label: '9', x: 0.714, y: 0.297, group: 'L12' },
     { label: '10', x: 0.781, y: 0.297, group: 'L13' },
-    { label: '11', x: 0.844, y: 0.297, group: 'L14' },
+    { label: '11', x: 0.845, y: 0.297, group: 'L14' },
 
     // LINE 2
-    { label: '1', x: 0.205, y: 0.645, group: 'L19' },
-    { label: '2', x: 0.272, y: 0.645, group: 'L20' },
-    { label: '3', x: 0.339, y: 0.645, group: 'L21' },
-    { label: '4', x: 0.406, y: 0.645, group: 'L22' },
-    { label: '5', x: 0.473, y: 0.645, group: 'L23' },
+    { label: '1', x: 0.207, y: 0.645, group: 'L19' },
+    { label: '2', x: 0.274, y: 0.645, group: 'L20' },
+    { label: '3', x: 0.340, y: 0.645, group: 'L21' },
+    { label: '4', x: 0.407, y: 0.645, group: 'L22' },
+    { label: '5', x: 0.474, y: 0.645, group: 'L23' },
     { label: '6', x: 0.541, y: 0.645, group: 'L24' },
     { label: '7', x: 0.607, y: 0.645, group: 'L26' },
     { label: '8', x: 0.674, y: 0.645, group: 'L29' },
