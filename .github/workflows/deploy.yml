@@ -30,11 +30,11 @@ jobs:
 
       - name: Deploy to Server
         env:
-          HOST: 77.37.47.23
-          USERNAME: root
-          TARGET_DIR: /var/www/thermal-monitoring
-          APP_NAME: thermal-monitoring #should match the name of the server block
-          PORT: 3000
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
+          APP_NAME: ${{ secrets.APP_NAME }} #should match the name of the server block
+          PORT: ${{ secrets.PORT }}
           #if multiple deploys are needed from different branches
           #TARGET_DIR: ${{ github.ref == 'refs/heads/deploytest' && '/var/www/folder_name' || github.ref == 'refs/heads/deployprod' && '/var/www/another-location' }}
           #APP_NAME: ${{ github.ref == 'refs/heads/deploytest' && 'folder_name' || github.ref == 'refs/heads/deployprod' && 'folder_name_2' }}
