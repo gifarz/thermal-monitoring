@@ -4,6 +4,9 @@ import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { menuButton } from '@/utils/coordinates';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
+import dynamic from 'next/dynamic';
+
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -11,7 +14,6 @@ export default function page() {
 
   useEffect(() => {
 
-    console.log('siteLocalStorage', siteLocalStorage())
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let imgAspectRatio = 1; // Default aspect ratio
@@ -118,8 +120,12 @@ export default function page() {
   }, [menuButton]);
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-    </div>
+    <>
+      <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
+      </div>
+
+      <LoginComp/>
+    </>
   );
 }

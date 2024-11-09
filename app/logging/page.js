@@ -13,6 +13,8 @@ const TableLoggerComp = dynamic(() => import('@/components/TableLoggerComp'), {
   loading: () => <p className='flex justify-center'>Generating Component...</p>, // Optional: You can show a fallback component while loading
 })
 
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
+
 export default function page() {
   const canvasRef = useRef(null);
   const router = useRouter(); // Initialize the router
@@ -235,27 +237,31 @@ export default function page() {
   // console.log('data logging', bodyList)
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-      <div
-        onScroll={handleScroll}
-        className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10 px-2'
-        style={{
-          overflow: 'auto',
-          transform: 'translate(-50%, 0)',
-          maxHeight: tableMaxHeight,
-          maxWidth: tableMaxWidth,
-          minWidth: tableMinWidth,
-          top: tableMarginTop
-        }}
-      >
-        {
-          imageGenerated ?
-            <TableLoggerComp site={handleSite} loading={loading} sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
-            :
-            undefined
-        }
+    <>
+      <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <div
+          onScroll={handleScroll}
+          className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10 px-2'
+          style={{
+            overflow: 'auto',
+            transform: 'translate(-50%, 0)',
+            maxHeight: tableMaxHeight,
+            maxWidth: tableMaxWidth,
+            minWidth: tableMinWidth,
+            top: tableMarginTop
+          }}
+        >
+          {
+            imageGenerated ?
+              <TableLoggerComp site={handleSite} loading={loading} sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
+              :
+              undefined
+          }
+        </div>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
       </div>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-    </div>
+
+      <LoginComp/>
+    </>
   );
 }

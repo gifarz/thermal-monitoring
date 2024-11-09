@@ -14,6 +14,7 @@ import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 
 const ChartDetail = dynamic(() => import('@/components/ChartDetail'))
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
 export default function page() {
     const [detailValue, setDetailValue] = React.useState(detailValues)
@@ -302,22 +303,26 @@ export default function page() {
     const marginRight = canvasSize.height * 0.06;
 
     return (
-        <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-            <div
-                className='absolute z-10'
-                style={{
-                    right: marginRight,
-                    top: marginTop
-                }}
-            >
-                {
-                    imageGenerated ?
-                        <ChartDetail chartValue={chartValue} chartWidth={minWidth} chartHeight={minHeight} />
-                        :
-                        undefined
-                }
+        <>
+            <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+                <div
+                    className='absolute z-10'
+                    style={{
+                        right: marginRight,
+                        top: marginTop
+                    }}
+                >
+                    {
+                        imageGenerated ?
+                            <ChartDetail chartValue={chartValue} chartWidth={minWidth} chartHeight={minHeight} />
+                            :
+                            undefined
+                    }
+                </div>
+                <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
             </div>
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-        </div>
+
+            <LoginComp/>
+        </>
     );
 };

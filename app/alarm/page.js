@@ -28,6 +28,7 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 
 const TableActiveAlarm = dynamic(() => import('@/components/TableActiveAlarm'))
 const TableHistoricalAlarm = dynamic(() => import('@/components/TableHistoricalAlarm'))
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
 export default function page() {
   const canvasRef = useRef(null);
@@ -291,77 +292,30 @@ export default function page() {
   // console.log('newHistorical', newHistorical)
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-      <div
-        className='absolute w-1/2 z-10 left-1/2 mt-10'
-        style={{
-          overflow: 'auto',
-          transform: 'translate(-50%, 0)',
-          maxHeight: tableMaxHeight,
-          maxWidth: tableMaxWidth,
-          minWidth: tableMinWidth,
-          top: tableMarginTop
-        }}
-      >
-        {
-          imageGenerated ?
-            <div className="flex flex-col">
-              <Tabs
-                aria-label="Options"
-              >
-                <Tab key="active" title="Active Alarms">
-                  <Card>
-                    <div className="w-1/3 flex my-2 px-2">
-                      <Dropdown
-                        className="w-full"
-                      >
-                        <DropdownTrigger className="hidden sm:flex">
-                          <Button
-                            endContent={<ChevronDownIcon className="text-small" />}
-                            variant="flat"
-                            className="bg-white min-h-full"
-                            style={{
-                              fontSize: "14px",
-                              maxHeight: "50px"
-                            }}
-                          >
-                            {siteActive}
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          disallowEmptySelection
-                          aria-label="Table Columns"
-                          closeOnSelect={true}
-                          selectedKeys={siteActive}
-                          selectionMode="single"
-                          onSelectionChange={handleSetSiteActive}
-                        >
-                          {listSites.map((site, index) => (
-                            <DropdownItem key={site}>
-                              {site}
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
-                    </div>
-                    <CardBody>
-                      <TableActiveAlarm
-                        dataActiveAlarm={
-                          siteActive.toLowerCase() == 'donggi' ? dataActiveAlarmDonggi : dataActiveAlarmMatindok
-                        }
-                        isLoadingActiveAlarm={
-                          siteActive.toLowerCase() == 'donggi' ? isLoadingActiveAlarmDonggi : isLoadingActiveAlarmMatindok
-                        }
-                      />
-                    </CardBody>
-                  </Card>
-                </Tab>
-                <Tab key="historical" title="Historical Alarms">
-                  <Card>
-                    <div className="w-full flex justify-between items-center gap-3 my-4 px-2">
-                      <div className="flex gap-3">
+    <>
+      <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <div
+          className='absolute w-1/2 z-10 left-1/2 mt-10'
+          style={{
+            overflow: 'auto',
+            transform: 'translate(-50%, 0)',
+            maxHeight: tableMaxHeight,
+            maxWidth: tableMaxWidth,
+            minWidth: tableMinWidth,
+            top: tableMarginTop
+          }}
+        >
+          {
+            imageGenerated ?
+              <div className="flex flex-col">
+                <Tabs
+                  aria-label="Options"
+                >
+                  <Tab key="active" title="Active Alarms">
+                    <Card>
+                      <div className="w-1/3 flex my-2 px-2">
                         <Dropdown
-                          className="h-full"
+                          className="w-full"
                         >
                           <DropdownTrigger className="hidden sm:flex">
                             <Button
@@ -373,16 +327,16 @@ export default function page() {
                                 maxHeight: "50px"
                               }}
                             >
-                              {siteHistory}
+                              {siteActive}
                             </Button>
                           </DropdownTrigger>
                           <DropdownMenu
                             disallowEmptySelection
                             aria-label="Table Columns"
                             closeOnSelect={true}
-                            selectedKeys={siteHistory}
+                            selectedKeys={siteActive}
                             selectionMode="single"
-                            onSelectionChange={handleSetSiteHistory}
+                            onSelectionChange={handleSetSiteActive}
                           >
                             {listSites.map((site, index) => (
                               <DropdownItem key={site}>
@@ -391,110 +345,161 @@ export default function page() {
                             ))}
                           </DropdownMenu>
                         </Dropdown>
+                      </div>
+                      <CardBody>
+                        <TableActiveAlarm
+                          dataActiveAlarm={
+                            siteActive.toLowerCase() == 'donggi' ? dataActiveAlarmDonggi : dataActiveAlarmMatindok
+                          }
+                          isLoadingActiveAlarm={
+                            siteActive.toLowerCase() == 'donggi' ? isLoadingActiveAlarmDonggi : isLoadingActiveAlarmMatindok
+                          }
+                        />
+                      </CardBody>
+                    </Card>
+                  </Tab>
+                  <Tab key="historical" title="Historical Alarms">
+                    <Card>
+                      <div className="w-full flex justify-between items-center gap-3 my-4 px-2">
+                        <div className="flex gap-3">
+                          <Dropdown
+                            className="h-full"
+                          >
+                            <DropdownTrigger className="hidden sm:flex">
+                              <Button
+                                endContent={<ChevronDownIcon className="text-small" />}
+                                variant="flat"
+                                className="bg-white min-h-full"
+                                style={{
+                                  fontSize: "14px",
+                                  maxHeight: "50px"
+                                }}
+                              >
+                                {siteHistory}
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                              disallowEmptySelection
+                              aria-label="Table Columns"
+                              closeOnSelect={true}
+                              selectedKeys={siteHistory}
+                              selectionMode="single"
+                              onSelectionChange={handleSetSiteHistory}
+                            >
+                              {listSites.map((site, index) => (
+                                <DropdownItem key={site}>
+                                  {site}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </Dropdown>
 
-                        <Dropdown>
-                          <DropdownTrigger className="hidden sm:flex">
-                            <Button
-                              endContent={<ChevronDownIcon className="text-small" />}
-                              variant="flat"
-                              className="bg-white min-h-full"
+                          <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
+                              <Button
+                                endContent={<ChevronDownIcon className="text-small" />}
+                                variant="flat"
+                                className="bg-white min-h-full"
+                              >
+                                {
+                                  selectedGroup.split(',').length > 1 ?
+                                    selectedGroup.split(',').length + ' Groups'
+                                    :
+                                    selectedGroup.split(',')[0]
+                                }
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                              disallowEmptySelection
+                              aria-label="Table Columns"
+                              closeOnSelect={false}
+                              selectedKeys={groupValue}
+                              selectionMode="multiple"
+                              onSelectionChange={setGroupValue}
+                              className="max-h-40 overflow-y-auto"
+                            >
+                              {groupAlarm.map((groupAlarm, index) => (
+                                <DropdownItem key={groupAlarm}>
+                                  {groupAlarm}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </Dropdown>
+
+                          <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
+                              <Button
+                                endContent={<ChevronDownIcon className="text-small" />}
+                                variant="flat"
+                                className="bg-white min-h-full"
+                              >
+                                {
+                                  selectedTag.split(',').length > 1 ?
+                                    selectedTag.split(',').length + ' Tags'
+                                    :
+                                    selectedTag.split(',')[0]
+                                }
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                              disallowEmptySelection
+                              aria-label="Table Columns"
+                              closeOnSelect={false}
+                              selectedKeys={siteHistory.toLowerCase() == 'donggi' ? tagValueDonggi:tagValueMatindok}
+                              selectionMode="multiple"
+                              onSelectionChange={siteHistory.toLowerCase() == 'donggi' ? setTagValueDonggi:setTagValueMatindok}
+                              className="max-h-40 overflow-y-auto"
                             >
                               {
-                                selectedGroup.split(',').length > 1 ?
-                                  selectedGroup.split(',').length + ' Groups'
+                                siteHistory.toLowerCase() == "donggi" ?
+                                  tagAlarmDonggi.map((tag, index) => (
+                                    <DropdownItem key={tag}>
+                                      {tag}
+                                    </DropdownItem>
+                                  ))
                                   :
-                                  selectedGroup.split(',')[0]
+                                  tagAlarmMatindok.map((tag, index) => (
+                                    <DropdownItem key={tag}>
+                                      {tag}
+                                    </DropdownItem>
+                                  ))
                               }
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            disallowEmptySelection
-                            aria-label="Table Columns"
-                            closeOnSelect={false}
-                            selectedKeys={groupValue}
-                            selectionMode="multiple"
-                            onSelectionChange={setGroupValue}
-                            className="max-h-40 overflow-y-auto"
-                          >
-                            {groupAlarm.map((groupAlarm, index) => (
-                              <DropdownItem key={groupAlarm}>
-                                {groupAlarm}
-                              </DropdownItem>
-                            ))}
-                          </DropdownMenu>
-                        </Dropdown>
+                            </DropdownMenu>
+                          </Dropdown>
 
-                        <Dropdown>
-                          <DropdownTrigger className="hidden sm:flex">
-                            <Button
-                              endContent={<ChevronDownIcon className="text-small" />}
-                              variant="flat"
-                              className="bg-white min-h-full"
-                            >
-                              {
-                                selectedTag.split(',').length > 1 ?
-                                  selectedTag.split(',').length + ' Tags'
-                                  :
-                                  selectedTag.split(',')[0]
-                              }
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            disallowEmptySelection
-                            aria-label="Table Columns"
-                            closeOnSelect={false}
-                            selectedKeys={siteHistory.toLowerCase() == 'donggi' ? tagValueDonggi:tagValueMatindok}
-                            selectionMode="multiple"
-                            onSelectionChange={siteHistory.toLowerCase() == 'donggi' ? setTagValueDonggi:setTagValueMatindok}
-                            className="max-h-40 overflow-y-auto"
-                          >
-                            {
-                              siteHistory.toLowerCase() == "donggi" ?
-                                tagAlarmDonggi.map((tag, index) => (
-                                  <DropdownItem key={tag}>
-                                    {tag}
-                                  </DropdownItem>
-                                ))
-                                :
-                                tagAlarmMatindok.map((tag, index) => (
-                                  <DropdownItem key={tag}>
-                                    {tag}
-                                  </DropdownItem>
-                                ))
-                            }
-                          </DropdownMenu>
-                        </Dropdown>
-
-                        <div className="grow flex flex-col gap-4">
-                          <I18nProvider locale="id-ID">
-                            <DateRangePicker label="Date Range Filter" value={date} 
-                            onChange={setDate} />
-                          </I18nProvider>
+                          <div className="grow flex flex-col gap-4">
+                            <I18nProvider locale="id-ID">
+                              <DateRangePicker label="Date Range Filter" value={date} 
+                              onChange={setDate} />
+                            </I18nProvider>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <CardBody>
-                      <TableHistoricalAlarm
-                        selectedGroup={selectedGroup}
-                        selectedTag={selectedTag}
-                        dataHistoryAlarm={
-                          siteHistory.toLowerCase() == 'donggi' ? dataHistoryAlarmDonggi : dataHistoryAlarmMatindok
-                        }
-                        isLoadingHistoryAlarm={
-                          siteHistory.toLowerCase() == 'donggi' ? isLoadingHistoryAlarmDonggi : isLoadingHistoryAlarmMatindok
-                        }
-                      />
-                    </CardBody>
-                  </Card>
-                </Tab>
-              </Tabs>
-            </div>
-            :
-            undefined
-        }
+                      <CardBody>
+                        <TableHistoricalAlarm
+                          selectedGroup={selectedGroup}
+                          selectedTag={selectedTag}
+                          dataHistoryAlarm={
+                            siteHistory.toLowerCase() == 'donggi' ? dataHistoryAlarmDonggi : dataHistoryAlarmMatindok
+                          }
+                          isLoadingHistoryAlarm={
+                            siteHistory.toLowerCase() == 'donggi' ? isLoadingHistoryAlarmDonggi : isLoadingHistoryAlarmMatindok
+                          }
+                        />
+                      </CardBody>
+                    </Card>
+                  </Tab>
+                </Tabs>
+              </div>
+              :
+              undefined
+          }
+        </div>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
       </div>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-    </div>
+
+      <LoginComp/>
+    </>
   );
 }

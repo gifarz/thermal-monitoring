@@ -45,6 +45,9 @@ import {
   // setATHH
 } from '@/utils/coordinateMatindok';
 import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
+import dynamic from 'next/dynamic';
+
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
 export default function page() {
   const [panelValue, setPanelValue] = React.useState()
@@ -379,9 +382,13 @@ export default function page() {
   // console.log('data matindok', dataRealtimeMatindok)
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-    </div>
+    <>
+      <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
+      </div>
+
+      <LoginComp/>
+    </>
   );
 }
 

@@ -13,6 +13,8 @@ const ChartTrending = dynamic(() => import('@/components/ChartTrending'), {
     loading: () => <p className='flex justify-center'>Chart Loading...</p>, // Optional: You can show a fallback component while loading
 })
 
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
+
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
@@ -216,22 +218,26 @@ export default function page() {
     // console.log('minHeight', minHeight)
 
     return (
-        <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
-            <div
-                className='absolute z-10 left-1/2'
-                style={{
-                    transform: 'translate(-50%, 0)',
-                    top: marginTop
-                }}
-            >
-                {
-                    imageGenerated ?
-                        <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={canvasSize.width} chartHeight={canvasSize.height} />
-                        :
-                        undefined
-                }
+        <>
+            <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
+                <div
+                    className='absolute z-10 left-1/2'
+                    style={{
+                        transform: 'translate(-50%, 0)',
+                        top: marginTop
+                    }}
+                >
+                    {
+                        imageGenerated ?
+                            <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={canvasSize.width} chartHeight={canvasSize.height} />
+                            :
+                            undefined
+                    }
+                </div>
+                <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
             </div>
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
-        </div>
+
+            <LoginComp/>
+        </>
     );
 }

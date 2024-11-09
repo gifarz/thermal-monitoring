@@ -3,6 +3,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
+import dynamic from 'next/dynamic';
+
+const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
 export default function page() {
     const canvasRef = useRef(null);
@@ -178,8 +181,12 @@ export default function page() {
     }, [menuButton, router]);
 
     return (
-        <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto' }}>
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: 'auto' }} />
-        </div>
+        <>
+            <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto' }}>
+                <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: 'auto' }} />
+            </div>
+
+            <LoginComp/>
+        </>
     );
 };
