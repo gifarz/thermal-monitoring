@@ -122,14 +122,14 @@ export default function LoginComp(props) {
                         <p className='text-white font-bold'>Checking Eligibility...</p>
                         :
                         isExpired ?
-                            <Card fullWidth="true" className='py-5 px-10 w-1/3'>
+                            <Card fullWidth="true" className='py-5 px-7 w-1/2 lg:w-1/3'>
                                 <CardHeader className="flex-col">
-                                    <Image
+                                    {/* <Image
                                         width={50}
                                         alt="Logo Image"
                                         src="/logopertamina.png"
-                                    />
-                                    <p className='mt-4 font-semibold text-center'>Welcome To Thermal Monitoring Dashboard</p>
+                                    /> */}
+                                    <p className='font-semibold text-center'>Welcome to Thermal Monitoring Dashboard</p>
                                     <p className='mt-4 text-sm text-center'>Please fill the username and password</p>
                                 </CardHeader>
                                 <CardBody className="overflow-visible py-2">
