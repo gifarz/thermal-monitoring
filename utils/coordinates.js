@@ -4,7 +4,7 @@ export const menuButton = [
     { label: 'ALARM', x: 0.396, y: 0.93, width: 0.101, height: 0.052, href: '/alarm' },
     { label: 'TREND', x: 0.504, y: 0.93, width: 0.101, height: 0.052, href: '/trending' },
     { label: 'LOG', x: 0.612, y: 0.93, width: 0.101, height: 0.052, href: '/logging' },
-    { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
+    // { label: 'SETTING', x: 0.720, y: 0.93, width: 0.101, height: 0.052, href: '/setting' },
 ];
 
 export const indicatorLampFlag = [

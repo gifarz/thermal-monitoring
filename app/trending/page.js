@@ -28,7 +28,7 @@ export default function page() {
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(100000);
+    const [limit, setLimit] = useState(100000); // Data limit for data chart
 
     const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
         site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlgTrending` : null,

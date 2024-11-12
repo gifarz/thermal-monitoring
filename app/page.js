@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 import dynamic from 'next/dynamic';
@@ -10,6 +10,7 @@ const LoginComp = dynamic(() => import('@/components/LoginComp'))
 export default function page() {
     const canvasRef = useRef(null);
     const router = useRouter(); // Initialize the router
+    const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
     const menuButton = [
         { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '' },
@@ -17,7 +18,7 @@ export default function page() {
         { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
         { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
         { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/logging' },
-        { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
+        // { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
     ];
 
     const sites = [
@@ -57,6 +58,7 @@ export default function page() {
             ctx.scale(dpr, dpr);
 
             drawCanvas(canvasWidth, canvasHeight);
+            setCanvasSize({ width: canvasWidth, height: canvasHeight }); // Update canvas size
         };
 
         const drawCanvas = (canvasWidth, canvasHeight) => {
@@ -186,7 +188,7 @@ export default function page() {
                 <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: 'auto' }} />
             </div>
 
-            <LoginComp/>
+            <LoginComp canvasWidth={canvasSize.width} canvasHeight={canvasSize.height}/>
         </>
     );
 };

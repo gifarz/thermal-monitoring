@@ -6,6 +6,7 @@ import { EyeSlashFilledIcon } from './EyeSlashFilledIcon';
 import { EyeFilledIcon } from './EyeFilledIcon';
 import { decryptData, encryptData } from '@/utils/encryptDecrypt';
 import { getTime, format, addDays, addHours } from 'date-fns';
+import { usePathname } from 'next/navigation';
 
 export default function LoginComp(props) {
     const [username, setUsername] = React.useState('');
@@ -16,8 +17,11 @@ export default function LoginComp(props) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isExpired, setIsExpired] = React.useState(null);
+    const [isLogout, setIsLogout] = React.useState(false);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const pathName = usePathname();
 
     React.useEffect(() => {
 
@@ -36,6 +40,7 @@ export default function LoginComp(props) {
                 const loginSecretCode = localStorage.getItem('loginSecretCode');
 
                 if (loginSecretCode) {
+
                     const decryption = decryptData(loginSecretCode, secretKey);
 
                     const decryptDate = new Date(decryption);
@@ -48,12 +53,11 @@ export default function LoginComp(props) {
 
                     if (formattedDecryptDate < formattedCurrDate) {
                         setIsExpired(true)
-                        console.log('Expired');
 
                         localStorage.removeItem('loginSecretCode')
                     } else {
                         setIsExpired(false)
-                        console.log('Not Yet Expired');
+                        setIsLogout(false)
                     }
 
                 } else {
@@ -70,6 +74,7 @@ export default function LoginComp(props) {
     }, [responseData])
 
     const handleLogin = async () => {
+
         setIsLoading(true)
 
         // Get the current date as epoch time (in milliseconds)
@@ -109,13 +114,18 @@ export default function LoginComp(props) {
         }
     };
 
+    const handleLogout = async () => {
+        localStorage.removeItem('loginSecretCode')
+        setResponseData('Logout')
+    }
+
     return (
         <>
-            <div 
-            style={{
-                display: isExpired == false ? 'none' : ''
-            }}
-            className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50'
+            <div
+                style={{
+                    display: isExpired == false ? 'none' : ''
+                }}
+                className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50'
             >
                 {
                     isExpired == null ?
@@ -124,11 +134,6 @@ export default function LoginComp(props) {
                         isExpired ?
                             <Card fullWidth="true" className='py-5 px-7 w-1/2 lg:w-1/3'>
                                 <CardHeader className="flex-col">
-                                    {/* <Image
-                                        width={50}
-                                        alt="Logo Image"
-                                        src="/logopertamina.png"
-                                    /> */}
                                     <p className='font-semibold text-center'>Welcome to Thermal Monitoring Dashboard</p>
                                     <p className='mt-4 text-sm text-center'>Please fill the username and password</p>
                                 </CardHeader>
@@ -174,9 +179,22 @@ export default function LoginComp(props) {
                                     }
                                 </Button>
                             </Card>
-                        :
-                        <></>
+                            :
+                            <></>
                 }
+            </div>
+
+            <div
+                style={{ 
+                    display: isExpired == false && pathName == '/' ? '' : 'none',
+                    top: props.canvasHeight * 0.125,
+                    right: props.canvasWidth * 0.06,
+                    fontSize: props.canvasWidth * 0.01,
+                }}
+                className='absolute z-20'>
+                <Button radius='full' size='lg' color='danger' onClick={handleLogout}>
+                    Logout
+                </Button>
             </div>
 
             {/* MODAL RESPONSE */}
