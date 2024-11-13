@@ -104,9 +104,9 @@ export default function LoginComp(props) {
                 localStorage.setItem('loginSecretCode', encryption)
             } else {
                 setResponseData(response.resultDesc)
+                setIsOpen(true)
             }
 
-            setIsOpen(true)
             setIsLoading(false)
 
         } catch (error) {
