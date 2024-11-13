@@ -11,8 +11,6 @@ export default async function fetchUserByUsername(req, res) {
         const { username, password } = req.body;
 
         const queryParams = { username, password };
-
-        console.log('queryParams', queryParams)
         
         const baseUrl = "http://localhost:3003/api/user/list";
 

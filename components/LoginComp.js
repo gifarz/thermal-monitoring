@@ -102,6 +102,10 @@ export default function LoginComp(props) {
                 const encryption = encryptData(epochTime, loginKey)
 
                 localStorage.setItem('loginSecretCode', encryption)
+
+                setUsername(null)
+                setPassword(null)
+
             } else {
                 setResponseData(response.resultDesc)
                 setIsOpen(true)
