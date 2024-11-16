@@ -59,7 +59,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/donggi/detail.webp`;
+        bgImage.src = `/detail.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions

@@ -6,7 +6,7 @@ import { menuButton } from '@/utils/coordinates';
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import useSWR, { mutate } from 'swr';
 import dynamic from 'next/dynamic';
-import { fetchTlgLogging } from '@/pages/api/general/fetchTlgLogging';
+// import { fetchTlgLogging } from '@/pages/api/general/fetchTlgLogging';
 import { formattedDate } from '@/utils/convertTimestamp';
 
 const TableLoggerComp = dynamic(() => import('@/components/TableLoggerComp'), {
@@ -29,15 +29,17 @@ export default function page() {
 
   // PAGINATION
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(100);
   const [loading, setLoading] = useState(false);
   const [bodyList, setBodyList] = useState([]);
 
-  const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
-    site && childGroupTags && fromDate && toDate && page ? `/api/donggi/fetchTlgLogging` : null,  // A key that changes dynamically
-    () => fetchTlgLogging(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),  // Function call inside the fetcher
-    { refreshInterval: 1000 }
-  );
+  // const { data: dataLogging, error: errorLogging, isLoading: isLoadingLogging } = useSWR(
+  //   site && childGroupTags && fromDate && toDate && page ? `/api/general/fetchTlgLogging` : null,  // A key that changes dynamically
+  //   () => fetchTlgLogging(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),  // Function call inside the fetcher
+  //   {
+  //     refreshInterval: 1000
+  //   }
+  // );
 
   const currentDateISO = new Date().toISOString();
 
@@ -57,28 +59,27 @@ export default function page() {
   // Callback function that will be passed to the child
   const handleSite = (currSite) => {
 
-    if(currSite.toLowerCase() !== site?.toLowerCase()){
+    if (currSite.toLowerCase() !== site?.toLowerCase()) {
 
       setBodyList([])
-
-      // Clear cache for a specific key (API endpoint)
-      mutate('/api/general/fetchTlg', null, false);
     }
 
     setSite(currSite); // Updating parent state with data from child
   };
 
   const handleChildGroupTags = (group) => {
+
     const groupTag = group.replaceAll(' ', '')
 
     setChildGroupTags(groupTag); // Updating parent state with data from child
   };
 
   const handleChildTags = (data) => {
-    // console.log('Child Data in function', data)
+
     setChildTags(data); // Updating parent state with data from child
   };
 
+  // FOR INFINITE SCROLL AND REFETCHING DATA
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
 
@@ -90,30 +91,103 @@ export default function page() {
 
   useEffect(() => {
 
-    if (dataLogging && dataLogging.length > 0) {
-      const dataList = dataLogging.map(item => {
-        if (item.timestamp) {
-          const dateObject = new Date(item.timestamp);  // Convert to Date object
-          const timestamp = formattedDate(dateObject)
+    // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
+    const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
+      `${padZero(date.start.hour)}:${padZero(date.start.minute)}:${padZero(date.start.second)}`;
 
-          return {
-            ...item,
-            timestamp: timestamp  // Update the timestamp format
-          };
-        }
-        return item;  // Return item even if there's no valid timestamp
-      });
+    const to = `${date.end.year}-${padZero(date.end.month)}-${padZero(date.end.day)} ` +
+      `${padZero(date.end.hour)}:${padZero(date.end.minute)}:${padZero(date.end.second)}`;
 
-      setBodyList(prevData => [...prevData, ...dataList]);
-      setLoading(false)
-    }
+    // Convert to ISO String and set state
+    setFromDate(new Date(`${from}`).toISOString());
+    setToDate(new Date(`${to}`).toISOString());
+
+    const fetchData = async () => {
+
+      if(!site && !childGroupTags && !fromDate && !toDate) return;
+
+      setLoading(true)
+      try {
+        const response = await fetch(`/api/general/fetchTlgLogging?site=${site}&tlg=${childGroupTags}&gte=${fromDate}&lte=${toDate}&page=${page}&limit=${limit}`);
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        const result = await response.json();
+        const dataList = result.map(item => {
+          if (item.timestamp) {
+            const dateObject = new Date(item.timestamp);  // Convert to Date object
+            const timestamp = formattedDate(dateObject)
+  
+            return {
+              ...item,
+              timestamp: timestamp  // Update the timestamp format
+            };
+          }
+          return item;  // Return item even if there's no valid timestamp
+        });
+  
+        setBodyList(dataList)
+
+      } catch (err) {
+        console.log('err', err.message);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // if (dataLogging && dataLogging.length > 0) {
+
+    //   const dataList = dataLogging.map(item => {
+    //     if (item.timestamp) {
+    //       const dateObject = new Date(item.timestamp);  // Convert to Date object
+    //       const timestamp = formattedDate(dateObject)
+
+    //       return {
+    //         ...item,
+    //         timestamp: timestamp  // Update the timestamp format
+    //       };
+    //     }
+    //     return item;  // Return item even if there's no valid timestamp
+    //   });
+
+    //   setBodyList(dataList)
+
+    //   // setBodyList(prevData => {
+
+    //   //   const filteredDuplicateData = dataList.filter(
+    //   //     newItem => !prevData.some(existingItem => existingItem.id === newItem.id)
+    //   //   );
+
+    //   //   return [...prevData, ...filteredDuplicateData];
+    //   // });
+
+    //   // setNewBodyList(() => {
+    //   //   return bodyList.filter(item => {
+
+    //   //     const prefixesGroup = childGroupTags.split(',')
+
+    //   //     const hasAnyPrefixKey = prefixesGroup.some(prefix =>
+    //   //       Object.keys(item).some(key => key.startsWith(prefix))
+    //   //     );
+
+    //   //     return hasAnyPrefixKey
+
+    //   //   })
+    //   // })
+
+    //   // console.log('newBodyList', newBodyList)
+
+    //   setLoading(false)
+    // }
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/data-logger.webp`;
+    bgImage.src = `/data-logger.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions
@@ -162,17 +236,6 @@ export default function page() {
         // Optionally draw button visuals here
 
         button.bounds = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
-
-        // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
-        const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
-          `${padZero(date.start.hour)}:${padZero(date.start.minute)}:${padZero(date.start.second)}`;
-
-        const to = `${date.end.year}-${padZero(date.end.month)}-${padZero(date.end.day)} ` +
-          `${padZero(date.end.hour)}:${padZero(date.end.minute)}:${padZero(date.end.second)}`;
-
-        // Convert to ISO String and set state
-        setFromDate(new Date(`${from}`).toISOString());
-        setToDate(new Date(`${to}`).toISOString());
       });
     };
 
@@ -227,20 +290,22 @@ export default function page() {
       canvas.removeEventListener('click', handleClick);
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [menuButton, date, fromDate, toDate, dataLogging]);
+  }, [menuButton, date, fromDate, toDate, site, childGroupTags, childTags]);
+
+  console.log('bodyList', bodyList)
+  console.log('fromDate', fromDate)
+  console.log('toDate', toDate)
 
   const tableMaxHeight = canvasSize.height * 0.7
   const tableMaxWidth = canvasSize.width * 0.95
   const tableMinWidth = canvasSize.width * 0.9
   const tableMarginTop = canvasSize.height * 0.15
 
-  // console.log('data logging', bodyList)
-
   return (
     <>
       <div style={{ width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
         <div
-          onScroll={handleScroll}
+          // onScroll={handleScroll}
           className='absolute w-1/2 z-10 overflow-y-hidden overflow-x-hidden left-1/2 mt-10 px-2'
           style={{
             overflow: 'auto',
@@ -253,7 +318,7 @@ export default function page() {
         >
           {
             imageGenerated ?
-              <TableLoggerComp site={handleSite} loading={loading} sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={isLoadingLogging} />
+              <TableLoggerComp site={handleSite} loading={loading} sendTagValue={handleChildTags} sendGroupTagValue={handleChildGroupTags} bodyList={bodyList} date={date} setDate={setDate} isLoading={loading} />
               :
               undefined
           }
@@ -261,7 +326,7 @@ export default function page() {
         <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
       </div>
 
-      <LoginComp/>
+      <LoginComp />
     </>
   );
 }

@@ -3,16 +3,19 @@
 import { fetcher } from "@/lib/apiHelper"
 import { formattedDate } from "@/utils/convertTimestamp"
 
-export async function fetchTlgTrending(req, res) {
+export default async function fetchTlgTrending(req, res) {
     try {
 
-        // console.log('req fetchTlg Donggi', req)
-        let site = req.split('+')[0]
-        let tlg = req.split('+')[1]
-        let gte = req.split('+')[2]
-        let lte = req.split('+')[3]
-        let page = req.split('+')[4]
-        let limit = req.split('+')[5]
+        // console.log('req fetchTlgTrending', req.query)
+
+        // let site = req.split('+')[0]
+        // let tlg = req.split('+')[1]
+        // let gte = req.split('+')[2]
+        // let lte = req.split('+')[3]
+        // let page = req.split('+')[4]
+        // let limit = req.split('+')[5]
+
+        const { site, tlg, gte, lte, page, limit } = req.query
 
         const formattedgte = formattedDate(gte)
         const formattedlte = formattedDate(lte)
@@ -66,10 +69,10 @@ export async function fetchTlgTrending(req, res) {
         // Convert merged data object back to an array
         const result = Object.values(mergedData);
 
-        // console.log('data api direct', result)
+        // console.log('data api fetchTlgTrending', result)
 
-        return result
+        res.status(200).json(result)
     } catch (error) {
-        console.log('error fetchTlg Donggi', error)
+        console.log('error fetchTlgTrending', error)
     }
 }

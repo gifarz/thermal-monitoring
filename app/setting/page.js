@@ -19,7 +19,7 @@ export default function page() {
     let imgAspectRatio = 1; // Default aspect ratio
 
     const bgImage = new Image();
-    bgImage.src = `/donggi/setting.webp`;
+    bgImage.src = `/setting.webp`;
 
     const resizeCanvas = () => {
       // Ensure the image is loaded before calculating dimensions

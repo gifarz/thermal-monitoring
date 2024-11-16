@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
 import dynamic from 'next/dynamic';
+import { menuButton } from '@/utils/coordinates';
 
 const LoginComp = dynamic(() => import('@/components/LoginComp'))
 
@@ -12,14 +13,14 @@ export default function page() {
     const router = useRouter(); // Initialize the router
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-    const menuButton = [
-        { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '' },
-        { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: '' },
-        { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
-        { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
-        { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/logging' },
-        // { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
-    ];
+    // const menuButton = [
+    //     { label: 'OVERVIEW', x: 0.158, y: 0.937, width: 0.1, height: 0.053, href: '' },
+    //     { label: 'ARCHITECTURE', x: 0.26, y: 0.937, width: 0.1, height: 0.053, href: '' },
+    //     { label: 'ALARM', x: 0.361, y: 0.937, width: 0.1, height: 0.053, href: '/alarm' },
+    //     { label: 'TREND', x: 0.462, y: 0.937, width: 0.1, height: 0.053, href: '/trending' },
+    //     { label: 'LOG', x: 0.563, y: 0.937, width: 0.1, height: 0.053, href: '/logging' },
+    //     // { label: 'SETTING', x: 0.664, y: 0.937, width: 0.1, height: 0.053, href: '/setting' },
+    // ];
 
     const sites = [
         { label: 'DONGGI', x: 0.023, y: 0.35, width: 0.35, height: 0.53, href: '/architecture' },
@@ -37,7 +38,7 @@ export default function page() {
 
         const bgImage = new Image();
 
-        bgImage.src = `/architecture.webp`;
+        bgImage.src = `/main.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -180,7 +181,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.addEventListener('mousemove', handleMouseMove);
         };
-    }, [menuButton, router]);
+    }, [menuButton]);
 
     return (
         <>

@@ -29,12 +29,13 @@ export default function page() {
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(100000); // Data limit for data chart
+    const [isLoading, setIsLoading] = useState(false); // Data limit for data chart
 
-    const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
-        site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlgTrending` : null,
-        () => fetchTlgTrending(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),
-        // { refreshInterval: 1000 }
-    );
+    // const { data: dataTrending, error: errorTrending, isLoading: isLoadingTrending } = useSWR(
+    //     site && childGroupTags && fromDate && toDate ? `/api/donggi/fetchTlgTrending` : null,
+    //     () => fetchTlgTrending(`${site}+${childGroupTags}+${fromDate}+${toDate}+${page}+${limit}`),
+    //     { refreshInterval: 1000 }
+    // );
 
     const currentDateISO = new Date().toISOString();
 
@@ -61,37 +62,81 @@ export default function page() {
 
     const handleSite = (site) => {
 
-        // Clear cache for a specific key (API endpoint)
-        mutate('/api/general/fetchTlgTrending', null, false);
-        
         setSite(site); // Updating parent state with data from child
     };
 
     useEffect(() => {
 
-        if (dataTrending && dataTrending.length > 0) {
-            const newData = dataTrending.map(item => {
-                if (item.timestamp) {
-                    const dateObject = new Date(item.timestamp);  // Convert to Date object
-                    const timestamp = formattedDate(dateObject)
+        // if (dataTrending && dataTrending.length > 0) {
+        //     const newData = dataTrending.map(item => {
+        //         if (item.timestamp) {
+        //             const dateObject = new Date(item.timestamp);  // Convert to Date object
+        //             const timestamp = formattedDate(dateObject)
 
-                    return {
-                        ...item,
-                        timestamp: timestamp  // Update the timestamp format
-                    };
-                }
-                return item;  // Return item even if there's no valid timestamp
-            });
+        //             return {
+        //                 ...item,
+        //                 timestamp: timestamp  // Update the timestamp format
+        //             };
+        //         }
+        //         return item;  // Return item even if there's no valid timestamp
+        //     });
 
-            setDataList(newData);  // Update dataList state with the processed data
-        }
+        //     setDataList(newData);  // Update dataList state with the processed data
+        // }
+
+        // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
+        
+        const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
+            `${padZero(date.start.hour)}:${padZero(date.start.minute)}:${padZero(date.start.second)}`;
+
+        const to = `${date.end.year}-${padZero(date.end.month)}-${padZero(date.end.day)} ` +
+            `${padZero(date.end.hour)}:${padZero(date.end.minute)}:${padZero(date.end.second)}`;
+
+        // Convert to ISO String and set state
+        setFromDate(new Date(`${from}`).toISOString());
+        setToDate(new Date(`${to}`).toISOString());
+
+        const fetchData = async () => {
+
+            if (!site && !childGroupTags && !fromDate && !toDate) return;
+
+            setIsLoading(true)
+            try {
+                const response = await fetch(`/api/general/fetchTlgTrending?site=${site}&tlg=${childGroupTags}&gte=${fromDate}&lte=${toDate}&page=${page}&limit=${limit}`);
+                if (!response.ok) throw new Error("Network response was not ok");
+
+                const result = await response.json();
+                const filteredResult = result.map(item => {
+                    if (item.timestamp) {
+                        const dateObject = new Date(item.timestamp);  // Convert to Date object
+                        const timestamp = formattedDate(dateObject)
+
+                        return {
+                            ...item,
+                            timestamp: timestamp  // Update the timestamp format
+                        };
+                    }
+                    return item;  // Return item even if there's no valid timestamp
+                });
+
+                setDataList(filteredResult)
+
+            } catch (err) {
+                console.log('err', err.message);
+                setIsLoading(false);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         let imgAspectRatio = 1; // Default aspect ratio
 
         const bgImage = new Image();
-        bgImage.src = `/donggi/trending.webp`;
+        bgImage.src = `/trending.webp`;
 
         const resizeCanvas = () => {
             // Ensure the image is loaded before calculating dimensions
@@ -142,17 +187,6 @@ export default function page() {
             });
 
             setImageGenerated(true)
-
-            // Format the date objects into 'yyyy-MM-dd HH:mm:ss' format
-            const from = `${date.start.year}-${padZero(date.start.month)}-${padZero(date.start.day)} ` +
-                `${padZero(date.start.hour)}:${padZero(date.start.minute)}:${padZero(date.start.second)}`;
-
-            const to = `${date.end.year}-${padZero(date.end.month)}-${padZero(date.end.day)} ` +
-                `${padZero(date.end.hour)}:${padZero(date.end.minute)}:${padZero(date.end.second)}`;
-
-            // Convert to ISO String and set state
-            setFromDate(new Date(`${from}`).toISOString());
-            setToDate(new Date(`${to}`).toISOString());
         };
 
         const handleClick = event => {
@@ -206,7 +240,7 @@ export default function page() {
             canvas.removeEventListener('click', handleClick);
             canvas.removeEventListener('mousemove', handleMouseMove);
         };
-    }, [menuButton, date, fromDate, toDate, dataTrending]);
+    }, [menuButton, date, fromDate, toDate, childGroupTags, site]);
 
     const minWidth = canvasSize.width * 0.8;
     const minHeight = canvasSize.height * 0.5;
@@ -229,7 +263,7 @@ export default function page() {
                 >
                     {
                         imageGenerated ?
-                            <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoadingTrending} chartWidth={canvasSize.width} chartHeight={canvasSize.height} />
+                            <ChartTrending site={handleSite} sendGroupTagValue={handleChildGroupTags} dataList={dataList} date={date} setDate={setDate} isLoading={isLoading} chartWidth={canvasSize.width} chartHeight={canvasSize.height} />
                             :
                             undefined
                     }
@@ -237,7 +271,7 @@ export default function page() {
                 <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
             </div>
 
-            <LoginComp/>
+            <LoginComp />
         </>
     );
 }

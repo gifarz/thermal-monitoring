@@ -192,7 +192,7 @@ export default function LoginComp(props) {
                 style={{ 
                     display: isExpired == false && pathName == '/' ? '' : 'none',
                     top: props.canvasHeight * 0.125,
-                    right: props.canvasWidth * 0.06,
+                    right: props.canvasWidth * 0.02,
                     fontSize: props.canvasWidth * 0.01,
                 }}
                 className='absolute z-20'>

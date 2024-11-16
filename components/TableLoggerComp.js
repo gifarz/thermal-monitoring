@@ -86,6 +86,11 @@ export default function TableLoggerComp(props) {
         return 0;
     });
 
+    // Handle date range change
+    const handleDateChange = (newDate) => {
+        props.setDate(newDate);
+    };
+
     // Function to convert table data to CSV and trigger a download
     const handleExportToCSV = () => {
         const csvRows = [];
@@ -94,10 +99,16 @@ export default function TableLoggerComp(props) {
         csvRows.push(sortedHeaderList.join(','));
 
         // Add table body data
-        props.bodyList.forEach(row => {
-            const values = Object.values(row).map(value => String(value)); // Convert BigInt to string
-            csvRows.push(values.join(','));
-        });
+        if (props.bodyList?.length > 0) {
+            props.bodyList.forEach((row) => {
+                // Map each columnKey from sortedHeaderList to get values in the correct order
+                const rowValues = sortedHeaderList.map((columnKey) => {
+                    // Use the same logic as JSX to handle missing values
+                    return row[columnKey] !== undefined ? String(row[columnKey]) : "N/A";
+                });
+                csvRows.push(rowValues.join(',')); // Add the row to CSV
+            });
+        }
 
         // Create CSV string
         const csvString = csvRows.join('\n');
@@ -230,7 +241,7 @@ export default function TableLoggerComp(props) {
 
                 <div className="grow flex flex-col gap-4">
                     <I18nProvider locale="id-ID">
-                        <DateRangePicker label="Date Range Filter" value={props.date} onChange={props.setDate} />
+                        <DateRangePicker label="Date Range Filter" value={props.date} onChange={handleDateChange} />
                     </I18nProvider>
                 </div>
 
@@ -261,29 +272,31 @@ export default function TableLoggerComp(props) {
                         {
                             props.isLoading === false ?
                                 <>
-                                    {props.bodyList?.length > 0 ? (
-                                        props.bodyList.map((row, rowIndex) => (
-                                            <tr
-                                                key={row.id}
-                                                className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
-                                            >
-                                                {sortedHeaderList.map((columnKey) => (
-                                                    <td
-                                                        key={columnKey}
-                                                        className="px-4 py-2 text-xs text-center text-gray-600 border-b border-gray-200"
-                                                    >
-                                                        {row[columnKey] !== undefined ? row[columnKey] : "N/A"}
-                                                    </td>
-                                                ))}
+                                    {
+                                        props.bodyList?.length > 0 ? (
+                                            props.bodyList.map((row, rowIndex) => (
+                                                <tr
+                                                    key={row.id}
+                                                    className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
+                                                >
+                                                    {sortedHeaderList.map((columnKey) => (
+                                                        <td
+                                                            key={columnKey}
+                                                            className="px-4 py-2 text-xs text-center text-gray-600 border-b border-gray-200"
+                                                        >
+                                                            {row[columnKey] !== undefined ? row[columnKey] : "N/A"}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={sortedHeaderList.length} className="px-4 py-2 text-sm text-center text-gray-500">
+                                                    No data available
+                                                </td>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={sortedHeaderList.length} className="px-4 py-2 text-sm text-center text-gray-500">
-                                                No data available
-                                            </td>
-                                        </tr>
-                                    )}
+                                        )
+                                    }
                                 </>
                                 :
                                 <tr>
@@ -299,12 +312,12 @@ export default function TableLoggerComp(props) {
 
             </div>
 
-            {
+            {/* {
                 props.loading ?
-                    <Spinner className="flex justify-center mt-2"/>
+                    <Spinner className="flex justify-center mt-2" />
                     :
                     null
-            }
+            } */}
         </div>
     );
 }

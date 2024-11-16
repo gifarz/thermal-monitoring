@@ -151,7 +151,7 @@ const ChartTrending = (props) => {
             zoom: {
                 pan: {
                     enabled: true,
-                    mode: 'x', // allows panning in the x-axis
+                    mode: 'xy', // allows panning in the x-axis
                 },
                 zoom: {
                     wheel: {
@@ -160,7 +160,7 @@ const ChartTrending = (props) => {
                     pinch: {
                         enabled: true, // Enable pinch zooming on touch screens
                     },
-                    mode: 'x', // Zoom only on the x-axis
+                    mode: 'xy', // Zoom only on the x-axis
                 },
             },
             // title: {
@@ -170,7 +170,6 @@ const ChartTrending = (props) => {
         },
         scales: {
             x: {
-                type: 'category',
                 title: {
                     display: true,
                     text: 'Time',
