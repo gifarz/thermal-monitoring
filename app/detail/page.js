@@ -12,6 +12,7 @@ import { selectRealtimeDonggi } from '@/pages/api/donggi/selectRealtime';
 import dynamic from 'next/dynamic';
 import { selectRealtimeGeneral } from '@/pages/api/general/selectRealtime';
 import { siteLocalStorage } from '@/utils/siteLocalStorage';
+import { format } from 'date-fns';
 
 const ChartDetail = dynamic(() => import('@/components/ChartDetail'))
 const LoginComp = dynamic(() => import('@/components/LoginComp'))
@@ -22,6 +23,7 @@ export default function page() {
     const [canvasSize, setCanvasSize] = React.useState({ width: 0, height: 0 })
     const [imageGenerated, setImageGenerated] = React.useState(false);
     const [site, setSite] = React.useState()
+    const [xValue, setXValue] = React.useState([])
 
     const { data, error, isLoading } = useSWR(
         site ? '/api/general/selectRealtime' : null,
@@ -239,7 +241,6 @@ export default function page() {
                 setDetailValue(updatedValue);
 
                 // SET THE VALUE FOR REALTIME CHART 
-
                 const newChartData = updatedValue.map(item => ({
                     ...objectChartData,  // Spread the default object structure
                     label: item.tag,        // Update the label from the API data
@@ -280,14 +281,29 @@ export default function page() {
                         // If no matching label is found, return the previous item unchanged
                         return prevItem;
                     })
-                    
+
                 });
 
             }
         };
 
+        // X labels value
+        const xAxisValue = () => {
+            // Create a new Date object
+            const now = new Date();
+
+            // Format it to only display the time
+            const time = format(now, 'HH:mm:ss');
+            console.log('timestamp', time)
+            setXValue(prevValue => {
+
+                return [...prevValue, time].slice(-4)
+            })
+        }
+
         const intervalId = setInterval(() => {
             updateDetailValue()
+            xAxisValue()
             // console.log('chartValue', chartValue)
         }, 5000);
 
@@ -302,6 +318,8 @@ export default function page() {
     const marginTop = canvasSize.height * 0.32;
     const marginRight = canvasSize.height * 0.06;
 
+    console.log('xValue', xValue)
+
     return (
         <>
             <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -314,7 +332,7 @@ export default function page() {
                 >
                     {
                         imageGenerated ?
-                            <ChartDetail chartValue={chartValue} chartWidth={minWidth} chartHeight={minHeight} />
+                            <ChartDetail chartValue={chartValue} chartWidth={minWidth} chartHeight={minHeight} chartXValue={xValue}/>
                             :
                             undefined
                     }
@@ -322,7 +340,7 @@ export default function page() {
                 <canvas ref={canvasRef} style={{ display: 'block', width: '100%' }} />
             </div>
 
-            <LoginComp/>
+            <LoginComp />
         </>
     );
 };

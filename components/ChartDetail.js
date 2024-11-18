@@ -24,7 +24,7 @@ const ChartDetail = (props) => {
 
     // Data configuration for the chart
     const data = {
-        labels: [0, 10, 20, 30],
+        labels: props.chartXValue,
         datasets: props.chartValue
     };
 
