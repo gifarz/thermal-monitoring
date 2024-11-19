@@ -266,7 +266,7 @@ export default function page() {
 
                         if (newItem) {
                             // Append new data, then limit to the last 4 entries
-                            const updatedData = [...prevItem.data, ...newItem.data].slice(-4);  // Keep only the last 4 items
+                            const updatedData = [...prevItem.data, ...newItem.data].slice(-12);  // Keep only the last 4 items
                             // Append new data to the existing item's data array
                             return {
                                 ...prevItem,
@@ -294,10 +294,9 @@ export default function page() {
 
             // Format it to only display the time
             const time = format(now, 'HH:mm:ss');
-            console.log('timestamp', time)
             setXValue(prevValue => {
 
-                return [...prevValue, time].slice(-4)
+                return [...prevValue, time].slice(-12)
             })
         }
 
@@ -318,7 +317,7 @@ export default function page() {
     const marginTop = canvasSize.height * 0.32;
     const marginRight = canvasSize.height * 0.06;
 
-    console.log('xValue', xValue)
+    // console.log('xValue', xValue)
 
     return (
         <>
