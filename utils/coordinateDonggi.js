@@ -20,8 +20,8 @@ export const indicatorLampCoordinate = [
     { label: '8', x: 0.609, y: 0.647, group: 'L219' },
     { label: '9', x: 0.676, y: 0.647, group: 'L220' },
     { label: '10', x: 0.743, y: 0.647, group: 'L221' },
-    { label: '11', x: 0.81, y: 0.647, group: 'L222' },
-    { label: '12', x: 0.877, y: 0.647, group: 'L223' }
+    { label: '11', x: 0.81, y: 0.647, group: 'L223' },
+    { label: '12', x: 0.877, y: 0.647, group: 'L224' }
 ]
 
 export const panelButtonCoordinate = [
@@ -46,6 +46,6 @@ export const panelButtonCoordinate = [
     { label: '8', x: 0.569, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L219' },
     { label: '9', x: 0.636, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L220' },
     { label: '10', x: 0.703, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L221' },
-    { label: '11', x: 0.77, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L222' },
-    { label: '12', x: 0.837, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L223' }
+    { label: '11', x: 0.77, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L223' },
+    { label: '12', x: 0.837, y: 0.59, width: 0.065, height: 0.3, href: '/detail?ref=donggi-L224' }
 ]
