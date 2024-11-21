@@ -6,37 +6,76 @@ export default function TableHistoricalAlarm(props) {
     let newData
 
     // Filter props.dataHistoryAlarm with props.selectedGroup (GROUP)
-    newData = props.dataHistoryAlarm?.flatMap(data => {
+    // newData = props.dataHistoryAlarm?.flatMap(data => {
 
-        const stringTimestamp = '20' + data.timestamp
+    //     const stringTimestamp = '20' + data.timestamp
+    //     const year = stringTimestamp.slice(0, 4);
+    //     const month = stringTimestamp.slice(4, 6);
+    //     const day = stringTimestamp.slice(6, 8);
+    //     const hour = stringTimestamp.slice(8, 10);
+    //     const minute = stringTimestamp.slice(10, 12);
+    //     const second = stringTimestamp.slice(12, 14);
+
+    //     const formattedDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+    //     return props.selectedGroup.replaceAll(' ', '').split(',').flatMap(group => {
+
+    //         if(data.group == group){
+
+    //             // console.log('data.group', data.group)
+    //             // console.log('group', group)
+    //             return props.selectedTag.replaceAll(' ', '').split(',').map(tag => {
+                    
+    //                 if(data.tag == tag){
+    //                     // console.log('data.tag', data.tag)
+    //                     // console.log('tag', tag)
+        
+    //                     return {
+    //                         ...data,
+    //                         timestamp: formattedDate
+    //                     }
+    //                 }
+
+    //                 return null; // Explicitly return null for unmatched tags
+    //             })
+    //         }
+
+    //         return []; // Return empty array for unmatched groups
+    //     })
+    // }).filter(item => item !== null);
+
+    newData = props.dataHistoryAlarm?.flatMap(data => {
+        const stringTimestamp = '20' + data.timestamp;
         const year = stringTimestamp.slice(0, 4);
         const month = stringTimestamp.slice(4, 6);
         const day = stringTimestamp.slice(6, 8);
         const hour = stringTimestamp.slice(8, 10);
         const minute = stringTimestamp.slice(10, 12);
         const second = stringTimestamp.slice(12, 14);
-
+    
         const formattedDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    
+        // Filter matching groups
+        const matchingGroups = props.selectedGroup.replaceAll(' ', '').split(',');
+        if (!matchingGroups.includes(data.group)) {
+            return []; // Return empty array if group doesn't match
+        }
+    
+        // Filter matching tags
+        const matchingTags = props.selectedTag.replaceAll(' ', '').split(',');
+        const matchedData = matchingTags
+            .filter(tag => data.tag === tag) // Check tag matches
+            .map(() => ({
+                ...data,
+                timestamp: formattedDate,
+            })); // Create new object for each match
 
-        return props.selectedGroup.replaceAll(' ', '').split(',').flatMap(group => {
+        console.log('matchedData', matchedData)
+    
+        return matchedData; // Return matched data for the current group
+    }).filter(item => item !== null); // Clean up any null or undefined results
 
-            if(data.group == group){
-
-                return props.selectedTag.replaceAll(' ', '').split(',').map(tag => {
-
-                    if(data.tag == tag){
-        
-                        return {
-                            ...data,
-                            timestamp: formattedDate
-                        }
-                    }
-                })
-            }
-        })
-    }).filter(item => {
-        return item !== undefined
-    })
+    console.log('newData', newData)
 
     return (
         <>

@@ -46,7 +46,7 @@ export default function page() {
 
   // PAGINATION
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(100000);
   const [loading, setLoading] = useState(false);
   const [bodyList, setBodyList] = useState([]);
 
@@ -289,7 +289,7 @@ export default function page() {
   // console.log('tableMaxWidth',tableMaxWidth)
   // console.log('dataAlarmTags',dataAlarmTags)
   // console.log('dataAlg',dataAlg)
-  // console.log('newHistorical', newHistorical)
+  // console.log('dataHistoryAlarmDonggi', dataHistoryAlarmDonggi)
 
   return (
     <>
